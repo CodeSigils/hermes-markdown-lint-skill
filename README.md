@@ -1,10 +1,12 @@
 # Markdown Lint Skill for Hermes
 
-Auto-fix Markdown files to enforce GitHub Flavored Markdown (GFM) rules using
-`rumdl`. A skill for the [Hermes Agent](https://github.com/nousresearch/hermes-agent) ecosystem.
+Auto-fix Markdown files to enforce GitHub Flavored Markdown (GFM) rules.
+A skill for the [Hermes Agent](https://github.com/nousresearch/hermes-agent) ecosystem.
 
-**Why rumdl:** 12MB static binary, 26x faster than Node.js linters, same MD-numbered
-rules as markdownlint, and it ships inside this skill so it works out of the box.
+Supports two backends:
+
+-   **markdownlint-cli2** via `bunx` — zero install, works immediately
+-   **rumdl** — self-downloaded static binary (faster, one-time setup)
 
 ---
 
@@ -12,22 +14,17 @@ rules as markdownlint, and it ships inside this skill so it works out of the box
 
 ### Prerequisites
 
-**Zero-install (recommended):** The skill ships a pre-built rumdl binary. No install needed.
-
-For standalone install on PATH:
+**bun** — required for the primary (zero-install) backend.
 
 ```bash
-# Linux x86_64
-curl -L https://github.com/rvben/rumdl/releases/latest/download/rumdl-x86_64-unknown-linux-musl.tar.gz \
-  | tar xz -C /usr/local/bin rumdl
+# macOS/Linux
+curl -fsSL https://bun.sh/install | bash
+```
 
-# macOS Intel
-curl -L https://github.com/rvben/rumdl/releases/latest/download/rumdl-x86_64-apple-darwin.tar.gz \
-  | tar xz -C /usr/local/bin rumdl
+Verify:
 
-# macOS Apple Silicon
-curl -L https://github.com/rvben/rumdl/releases/latest/download/rumdl-aarch64-apple-darwin.tar.gz \
-  | tar xz -C /usr/local/bin rumdl
+```bash
+bun --version
 ```
 
 ### Install the Skill
@@ -40,20 +37,18 @@ hermes skills install CodeSigils/hermes-markdown-lint-skill/markdown-lint
 ### Quick Start
 
 ```bash
-# Bundled binary (no install needed)
-~/.hermes/skills/markdown-lint/references/rumdl check --fix <path>
+# Zero-install: lint and fix with markdownlint-cli2 (requires bun)
+bunx markdownlint-cli2 <path> --fix
 
-# Or with rumdl on PATH
+# After one-time setup: use rumdl (faster)
+~/.hermes/skills/markdown-lint/references/get-rumdl   # one-time
 rumdl check --fix <path>
-
-# Batch fix all .md files
-rumdl check --fix .
 ```
 
 For prose documentation with tables, use the two-step pipeline:
 
 ```bash
-fix-tables.py <path> && rumdl check --fix <path>
+fix-tables.py <path> && bunx markdownlint-cli2 <path> --fix
 ```
 
 ### Configuration
@@ -61,7 +56,7 @@ fix-tables.py <path> && rumdl check --fix <path>
 Copy the reference config to your project:
 
 ```bash
-cp ~/.hermes/skills/markdown-lint/references/.rumdl.toml <your-project>/
+cp ~/.hermes/skills/markdown-lint/references/.markdownlint-cli2.jsonc ./
 ```
 
 ---
@@ -74,17 +69,15 @@ cp ~/.hermes/skills/markdown-lint/references/.rumdl.toml <your-project>/
 hermes-markdown-lint-skill/
 ├── README.md
 ├── LICENSE
-├── .markdownlint.json                          # Repo lint config
-├── .markdownlint-cli2.jsonc                    # Repo CLI2 config
 └── skills/
     └── markdown-lint/
         ├── SKILL.md                            # Skill document (loaded by Hermes)
         └── references/
-            ├── rumdl                           # Pre-built 12MB static binary
-            ├── .rumdl.toml                     # GFM rule config
-            ├── .markdownlint.json              # markdownlint compat config
-            ├── .markdownlint-cli2.jsonc        # CLI2 config
-            └── fix-tables.py                   # Table separator normalizer
+            ├── get-rumdl                       # One-time rumdl download script
+            ├── fix-tables.py                   # Table separator normalizer
+            ├── .markdownlint-cli2.jsonc       # CLI2 config (fix:true, gitignore:true)
+            ├── .rumdl.toml                    # rumdl rule config
+            └── .markdownlint.json             # markdownlint compat config
 ```
 
 ### Adding to Your Own Tap

@@ -1,15 +1,15 @@
 ---
 name: Markdown-lint
 description: >
-  Lint and auto-fix GitHub Flavored Markdown (GFM) files with rumdl.
-  Use after creating or editing any .md file to enforce GFM compliance and
-  consistent formatting. Ships a self-contained 12MB rumdl binary — zero
-  dependencies, 26x faster than Node.js alternatives.
-version: 1.1.0
+  Lint and auto-fix GitHub Flavored Markdown (GFM) files. Run after creating
+  or editing any .md file to enforce consistent formatting. Supports two
+  backends: markdownlint-cli2 (via bunx, zero-install) and rumdl (self-downloaded
+  binary with fast performance).
+version: 1.2.0
 author: Hermes Agent Community
 license: MIT
 prerequisites:
-  commands: [rumdl]
+  commands: [bun]
 metadata:
   hermes:
     tags: [Markdown, lint, GFM, GitHub, formatting, quality, documentation]
@@ -20,11 +20,14 @@ metadata:
 
 # Markdown Lint
 
-Auto-fix Markdown files to enforce GitHub Flavored Markdown (GFM) rules using
-`rumdl` — a self-contained Rust binary with no runtime dependencies.
+Auto-fix Markdown files to enforce GitHub Flavored Markdown (GFM) rules.
 
-**Why rumdl:** 12MB static binary, 26x faster than Node.js linters, same MD-numbered
-rules as markdownlint, and it ships inside this skill so it works out of the box.
+This skill supports two linter backends:
+
+-   **markdownlint-cli2** via `bunx` — zero install, works out of the box if
+    you have `bun`
+-   **rumdl** — self-downloaded static binary, 26x faster than Node.js linters,
+    same MD-numbered rules
 
 Load this skill whenever you create or edit a Markdown file.
 
@@ -37,65 +40,48 @@ Load this skill whenever you create or edit a Markdown file.
 
 ## Prerequisites
 
-### Bundled binary (recommended — zero install)
+### bun (for markdownlint-cli2 backend — zero install)
 
-This skill ships a pre-built rumdl binary. Use it directly:
-
-```
-~/.hermes/skills/markdown-lint/references/rumdl
-```
-
-No install needed. No Node.js required.
-
-### Standalone install (if you prefer it on PATH)
-
-Download a pre-built binary for your platform:
-
-```bash
-# Linux x86_64 (this skill uses this build)
-curl -L https://github.com/rvben/rumdl/releases/latest/download/rumdl-x86_64-unknown-linux-musl.tar.gz \
-  | tar xz -C /usr/local/bin rumdl
-chmod +x /usr/local/bin/rumdl
-
-# macOS Intel
-curl -L https://github.com/rvben/rumdl/releases/latest/download/rumdl-x86_64-apple-darwin.tar.gz \
-  | tar xz -C /usr/local/bin rumdl
-
-# macOS Apple Silicon
-curl -L https://github.com/rvben/rumdl/releases/latest/download/rumdl-aarch64-apple-darwin.tar.gz \
-  | tar xz -C /usr/local/bin rumdl
-```
-
-All releases: https://github.com/rvben/rumdl/releases
+This skill uses `bunx markdownlint-cli2` to run the linter without any
+installation. If you have `bun`, nothing else is needed.
 
 Verify:
 
 ```bash
+bunx markdownlint-cli2 --version
+```
+
+### rumdl backend (optional — faster, needs one-time setup)
+
+rumdl is a 12MB static Rust binary. On first use, the skill downloads it:
+
+```bash
+~/.hermes/skills/markdown-lint/references/get-rumdl
 rumdl --version
 ```
 
+This installs to `~/.local/bin/rumdl` and caches the binary — subsequent runs
+skip the download. Supports Linux x86_64 and macOS (Intel + Apple Silicon).
+
 ## Quick Start
 
-### After every Markdown file create or edit
+### markdownlint-cli2 backend (recommended — zero install)
 
 ```bash
-# Bundled binary
-~/.hermes/skills/markdown-lint/references/rumdl check --fix <path>
+bunx markdownlint-cli2 <path> --fix
+```
 
-# Or with rumdl on PATH
+### rumdl backend (after setup)
+
+```bash
+~/.hermes/skills/markdown-lint/references/get-rumdl  # one-time
 rumdl check --fix <path>
-
-# Check without fixing
-rumdl check <path>
-
-# Batch: fix all Markdown files in current directory tree
-rumdl check --fix .
 ```
 
 ### Two-step pipeline (recommended for docs with tables)
 
 ```bash
-fix-tables.py <path> && rumdl check --fix <path>
+fix-tables.py <path> && bunx markdownlint-cli2 <path> --fix
 ```
 
 Step 1 normalizes table separators. Step 2 fixes everything else.
@@ -103,43 +89,50 @@ See [fix-tables.py](#fix-tablespy) below for details.
 
 ## Workflows
 
-### 1. After Creating a New File
+### 1. After Creating a New File (markdownlint-cli2)
 
 1.  Create the file using `write_file` or `patch`
 2.  Run the fix command:
 
 ```bash
-~/.hermes/skills/markdown-lint/references/rumdl check --fix <path>
+bunx markdownlint-cli2 <path> --fix
 ```
 
 3.  Done — the file is GFM-compliant
 
-### 2. After Editing an Existing File
+### 2. After Editing an Existing File (rumdl)
 
 1.  Edit the file using `patch` or `write_file`
-2.  Run the fix command:
+2.  First time: download rumdl
 
 ```bash
-~/.hermes/skills/markdown-lint/references/rumdl check --fix <path>
+~/.hermes/skills/markdown-lint/references/get-rumdl
 ```
 
-3.  Done — changes are applied and file is clean
+3.  Run the fix command:
+
+```bash
+rumdl check --fix <path>
+```
 
 ### 3. Batch Fix All Markdown in a Project
 
 ```bash
-# Fix all .md files recursively
-rumdl check --fix .
+# markdownlint-cli2 (no setup)
+find . -name "*.md" -exec bunx markdownlint-cli2 {} --fix \;
 
-# Dry-run: see what would change without modifying files
-rumdl check --fix --diff .
+# rumdl (after setup)
+rumdl check --fix .
 ```
 
 ### 4. CI / Pre-commit Check (read-only)
 
 ```bash
 # Exit non-zero if any violations exist
-rumdl check .
+bunx markdownlint-cli2 <path>
+
+# or with rumdl
+rumdl check <path>
 ```
 
 ### 5. With fix-tables.py (table-heavy documentation)
@@ -148,99 +141,48 @@ rumdl check .
 # Step 1: normalize table separators
 fix-tables.py <path>
 
-# Step 2: apply remaining rumdl fixes
-rumdl check --fix <path>
+# Step 2: apply remaining lint fixes (markdownlint-cli2)
+bunx markdownlint-cli2 <path> --fix
 ```
 
 ## Configuration
 
-### Using the bundled config
+### Bundled config files
 
-rumdl auto-discovers config from the current directory upward:
+This skill ships two configuration files in `references/`:
+
+-   `.markdownlint-cli2.jsonc` — CLI2 config (fix:true, gitignore:true, noBanner:true)
+-   `.rumdl.toml` — TOML config for the rumdl backend
+-   `.markdownlint.json` — GFM rule config for markdownlint compatibility
+
+### Using with markdownlint-cli2
+
+CLI2 auto-discovers config from the current directory upward. Copy the
+reference config to your project:
 
 ```bash
-# Copy the reference config to your project
+cp ~/.hermes/skills/markdown-lint/references/.markdownlint-cli2.jsonc ./.markdownlint-cli2.jsonc
+```
+
+Or pass explicitly:
+
+```bash
+bunx markdownlint-cli2 --config ~/.hermes/skills/markdown-lint/references/.markdownlint-cli2.jsonc <path> --fix
+```
+
+### Using with rumdl
+
+rumdl searches for `.rumdl.toml` upward from the current directory:
+
+```bash
 cp ~/.hermes/skills/markdown-lint/references/.rumdl.toml ./.rumdl.toml
-```
-
-rumdl will pick it up automatically:
-
-```bash
-rumdl check --fix .
-```
-
-### Bundled .rumdl.toml
-
-This skill ships a GFM-tuned config at
-`~/.hermes/skills/markdown-lint/references/.rumdl.toml`:
-
-```toml
-[global]
-disable = [
-    "MD013",  # line-length — too strict for prose docs
-    "MD024",  # multiple-headings — allow h2 reuse in sections
-    "MD033",  # inline-html — rarely needed in GFM docs
-    "MD034",  # bare-urls — disable; auto-links work without brackets
-    "MD036",  # no-bare-urls — alias of MD034
-    "MD040",  # fenced-code-language — ``` is fine without a language
-    "MD041",  # first-line-heading — frontmatter makes this noisy
-    "MD052",  # no-bare-reference-link — too strict for prose
-]
-
-[MD003]
-style = "atx"
-
-[MD004]
-style = "dash"
-
-[MD007]
-indent = 2
-
-[MD010]
-spaces-per-tab = 4
-
-[MD012]
-maximum = 1
-
-[MD026]
-punctuation = ".,;:!"
-
-[MD029]
-style = "ordered"
-
-[MD030]
-ol-multi = 2
-ol-single = 2
-ul-multi = 3
-ul-single = 3
-
-[MD035]
-style = "---"
-
-[MD046]
-style = "fenced"
-```
-
-### Switching to strict mode
-
-For strict code documentation, use rumdl's built-in presets:
-
-```bash
-rumdl check --config <(rumdl init --preset default --output -) .
-```
-
-### Importing an existing markdownlint config
-
-rumdl can import your existing `.markdownlint.json` directly:
-
-```bash
-rumdl import .markdownlint.json --output .rumdl.toml
+rumdl check --fix <path>
 ```
 
 ## GFM Rules Reference
 
-rumdl implements the standard MD001–MD045 rules with the same numbering as
-markdownlint. Key rules enforced by this skill's config:
+Both backends implement the standard MD001–MD045 rules with the same numbering.
+Key rules enforced by the bundled config:
 
 | Rule | Title | Description |
 | --- | --- | --- |
@@ -314,34 +256,46 @@ fix-tables.py ~/notes/file.md
 
 ## Troubleshooting
 
-### "rumdl: command not found"
+### markdownlint-cli2: command not found
 
-The bundled binary is not on PATH. Use the full path:
+Install `bun`:
 
 ```bash
-~/.hermes/skills/markdown-lint/references/rumdl check --fix <path>
+# macOS/Linux
+curl -fsSL https://bun.sh/install | bash
+
+# Or via npm
+npm install -g bun
 ```
 
-Or add it to PATH:
+### rumdl: command not found
+
+Run the setup script to download the binary:
 
 ```bash
-export PATH="$HOME/.hermes/skills/markdown-lint/references:$PATH"
+~/.hermes/skills/markdown-lint/references/get-rumdl
+```
+
+Then ensure `~/.local/bin` is on your PATH:
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"
 ```
 
 ### Config file not found
 
-rumdl searches for `.rumdl.toml` upward from the current directory.
+Both linters search for config upward from the current directory.
 Run from the project root:
 
 ```bash
 cd ~/my-project
-rumdl check --fix .
+bunx markdownlint-cli2 . --fix
 ```
 
 Or pass the config explicitly:
 
 ```bash
-rumdl check --config ~/.hermes/skills/markdown-lint/references/.rumdl.toml --fix <path>
+bunx markdownlint-cli2 --config ~/.hermes/skills/markdown-lint/references/.markdownlint-cli2.jsonc . --fix
 ```
 
 ### `--fix` does not fix everything in one pass
@@ -349,8 +303,8 @@ rumdl check --config ~/.hermes/skills/markdown-lint/references/.rumdl.toml --fix
 Known behavior. Run twice if needed:
 
 ```bash
-rumdl check --fix <path>
-rumdl check --fix <path>
+bunx markdownlint-cli2 <path> --fix
+bunx markdownlint-cli2 <path> --fix
 ```
 
 ### File corruption from `--fix`
@@ -361,11 +315,3 @@ rumdl check --fix <path>
 **Fix:** Use `write_file` or `patch` instead of terminal() with bash heredocs
 for writing Markdown content. These tools produce files with proper
 double-newline paragraph spacing.
-
-### Different behavior between rumdl and markdownlint-cli2
-
-Both use the same MD-numbered rules, but minor differences exist:
-
--   MD013 (line length): rumdl uses visual length by default; this config disables it
--   MD030 (list marker spaces): rumdl default is 1 space; this config sets ul-single=3
--   MD035 (HR style): rumdl default is `***`; this config enforces `---`
