@@ -84,7 +84,7 @@ rumdl check --fix <path>
 fix-tables.py <path> && bunx markdownlint-cli2 <path> --fix
 ```
 
-Step 1 normalizes table separators to `| :--- | :--- |` center-aligned style.
+Step 1 normalizes table separators to `| :--- | :--- |` left-aligned style.
 Step 2 fixes everything else.
 See [fix-tables.py](#fix-tablespy) below for details.
 
@@ -218,7 +218,7 @@ Rules that are intentionally **disabled** (too strict for prose documentation):
 ## fix-tables.py
 
 Normalizes Markdown table separators from old-style `|------|------|` to GFM-compliant
-`| :--- | :--- | :--- |` style with center-aligned cells (`:---:`).
+`| :--- | :--- | :--- |` style with left-aligned cells (`---`).
 
 rumdl has no built-in rule for table separator formatting, so this script handles it.
 
@@ -251,7 +251,7 @@ fix-tables.py ~/notes/file.md
 ### Key Behaviors
 
 -   **No data loss** — only replaces separator lines
--   **Center-aligned** — all cells become `:---:` for consistent GFM style
+-   **Left-aligned** — all cells become `---` for consistent GFM style
 -   **Correct column counts** — reads header row to determine column count
 -   **Idempotent** — running on clean files reports "0 fixed"
 

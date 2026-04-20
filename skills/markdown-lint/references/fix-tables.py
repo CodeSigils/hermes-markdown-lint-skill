@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Normalize markdown table separators to | :--- | :--- | :--- | style.
 
-Converts old-style separators like |------|------| to GFM-compliant center-aligned
+Converts old-style separators like |------|------| to GFM-compliant left-aligned
 | :--- | :--- | :--- |. markdownlint has no built-in rule for table separator
 style, so this handles it.
 
@@ -17,20 +17,20 @@ import glob
 
 
 def _normalize_cell(cell):
-    """Normalize a single separator cell to center-aligned GFM style.
+    """Normalize a single separator cell to left-aligned GFM style.
 
-    All separators become :--- (center-aligned, min 3 dashes).
-    e.g.  ":"   → ":---:"
-          ":--"  → ":---:"
-          "--:"  → ":---:"
-          ":-:"  → ":---:"
-          "--"   → ":---:"
+    All separators become "---" (left-aligned, min 3 dashes).
+    e.g.  ":"   → "---"
+          ":--"  → "---"
+          "--:"  → "---"
+          ":-:"  → "---"
+          "--"   → "---"
     """
     inner = cell.strip()
     # Count dashes in the middle, ignoring any existing colons
     dashes = inner.lstrip(":").rstrip(":")
     min_width = max(len(dashes), 3)
-    return ":" + ("-" * min_width) + ":"
+    return "-" * min_width
 
 
 def fix_file(path):
@@ -49,7 +49,7 @@ def fix_file(path):
             cells = [c.strip() for c in raw_cells]
             if cells and all(set(c).issubset({"", "-", ":", "."}) for c in cells):
                 if any(c for c in cells):
-                    # Normalize each cell to center-aligned :---: style
+                    # Normalize each cell to left-aligned --- style
                     norm_cells = [_normalize_cell(c) for c in cells]
                     new_sep = "| " + " | ".join(norm_cells) + " |"
                     new_lines.append(new_sep + "\n")
