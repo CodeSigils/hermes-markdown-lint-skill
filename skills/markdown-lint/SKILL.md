@@ -1,21 +1,20 @@
 ---
-name: Markdown-lint
+name: markdown-lint
 description: >
   Lint and auto-fix GitHub Flavored Markdown (GFM) files. Run after creating
   or editing any .md file to enforce consistent formatting. Supports two
   backends: markdownlint-cli2 (via bunx, zero-install) and rumdl (self-downloaded
   binary with fast performance).
 version: 1.2.0
-author: Hermes Agent Community
+author: Hermes Agent
 license: MIT
-prerequisites:
-  commands: [bun]
+required_environment_variables: []
+required_commands: ["bun"]
 metadata:
   hermes:
-    tags: [Markdown, lint, GFM, GitHub, formatting, quality, documentation]
+    tags: [markdown, lint, gfm, github, formatting, quality, documentation]
     homepage: https://github.com/rvben/rumdl
     related_skills: []
-
 ---
 
 # Markdown Lint
