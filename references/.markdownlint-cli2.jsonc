@@ -1,0 +1,24 @@
+{
+  // Auto-fix issues when possible
+  "fix": true,
+
+  // Use .gitignore for faster file enumeration
+  "gitignore": true,
+
+  // Suppress the banner for cleaner output
+  "noBanner": true,
+
+  // Disable the progress indicator
+  "noProgress": true,
+
+  // Files to lint
+  "globs": ["**/*.md", "**/*.markdown"],
+
+  // Directories to skip
+  "ignores": ["node_modules", "dist", ".git", "coverage"],
+
+  // Apply markdownlint rules
+  "config": {
+    "default": true
+  }
+}

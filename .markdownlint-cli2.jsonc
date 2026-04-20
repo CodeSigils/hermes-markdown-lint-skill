@@ -1,0 +1,74 @@
+{
+  // markdownlint-cli2 configuration
+  // https://github.com/DavidAnson/markdownlint-cli2
+
+  // Enable auto-fix for fixable issues
+  "fix": true,
+
+  // Respect .gitignore for faster file enumeration
+  "gitignore": true,
+
+  // Suppress the banner and version info
+  "noBanner": true,
+
+  // Disable progress indicator
+  "noProgress": true,
+
+  // Show found files in output
+  "showFound": true,
+
+  // Files to lint (globs pattern)
+  // Using GFM extensions: .md and .markdown
+  "globs": ["**/*.md", "**/*.markdown"],
+
+  // Files/directories to ignore
+  "ignores": [
+    "node_modules",
+    "dist",
+    "build",
+    ".git",
+    ".svn",
+    ".hg",
+    "coverage",
+    ".nyc_output",
+    ".parcel-cache",
+    ".next",
+    ".nuxt",
+    ".cache",
+    ".tmp",
+    "vendor",
+    "venv",
+    "env",
+    ".venv"
+  ],
+
+  // Disable inline HTML comment configuration
+  // Use this if you want to prevent inline disable/enable comments
+  "noInlineConfig": false,
+
+  // Front matter pattern (YAML/TOML front matter)
+  // Matches --- style front matter
+  "frontMatter": "(^---\\s*$[^]*?^---\\s*$)(\\r\\n|\\r|\\n|$)",
+
+  // Configuration for markdownlint rules
+  // These extend/override the default .markdownlint.json
+  "config": {
+    // GFM-specific overrides can go here
+    // Uncomment to disable line length for任性 formatting:
+    // "line-length": false
+
+    // Uncomment for stricter GFM:
+    // "first-line-heading": true,
+    // "single-title": true,
+    // "no-alt-text": true
+  },
+
+  // Custom rules (npm packages with keyword: markdownlint-rule)
+  // "customRules": [],
+
+  // markdown-it plugins for extended syntax
+  // "markdownItPlugins": [],
+
+  // Output formatters (for CI/CD integration)
+  // "outputFormatters": []
+}
