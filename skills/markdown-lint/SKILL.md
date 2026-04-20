@@ -7,14 +7,13 @@ description: >
 version: 1.0.0
 author: Hermes Agent Community
 license: MIT
+prerequisites:
+  commands: [markdownlint-cli2]
 metadata:
   hermes:
     tags: [Markdown, lint, GFM, GitHub, formatting, quality, documentation]
-    homepage: <https://github.com/DavidAnson/markdownlint>
+    homepage: https://github.com/DavidAnson/markdownlint
     related_skills: []
-required_commands:
-
--   markdownlint-cli2
 
 ---
 
@@ -40,14 +39,17 @@ Choose one method based on your package manager:
 # pnpm (recommended — fast, disk-efficient)
 pnpm add -g markdownlint-cli2
 
-# npm
-npm install -g markdownlint-cli2
+# npm (pin to a specific version)
+npm install -g markdownlint-cli2@0.22.0
 
 # yarn
 yarn global add markdownlint-cli2
 
 # bun
 bun add -g markdownlint-cli2
+
+# Zero-install (no install needed — uses npx)
+npx markdownlint-cli2 <path> --fix
 ```
 
 Verify the installation:
@@ -294,16 +296,6 @@ export PATH="$(npm root -g):$PATH"
 
 # Or use npx for zero-install
 npx markdownlint-cli2 <path> --fix
-```
-
-### "Command not found" in non-interactive shell
-
-If `~/.aliasrc` sets up the PATH for your package manager, non-interactive
-shells may need `BASH_ENV` set. Add this to your shell config (`~/.bashrc`,
-`~/.zshrc`, etc.):
-
-```bash
-export BASH_ENV="$HOME/.aliasrc"
 ```
 
 ### `--fix` does not fix everything in one pass

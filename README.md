@@ -13,7 +13,7 @@ Install `markdownlint-cli2`:
 
 ```bash
 pnpm add -g markdownlint-cli2
-# or npm install -g markdownlint-cli2
+# or npm install -g markdownlint-cli2@0.22.0
 # or yarn global add markdownlint-cli2
 # or bun add -g markdownlint-cli2
 ```
