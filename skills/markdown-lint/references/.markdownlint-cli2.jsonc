@@ -12,7 +12,7 @@
   "MD009": { "br_spaces": 2 },
   "MD010": true,
   "MD012": { "max": 1 },
-  "MD013": null,
+  "MD013": false,
   "MD024": false,
   "MD026": { "punctuation": ".,;:" },
   "MD029": { "style": "ordered" },
