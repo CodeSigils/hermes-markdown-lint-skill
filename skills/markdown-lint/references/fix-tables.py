@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Normalize markdown table separators to | --- | style.
+"""Normalize markdown table separators to | :--- | :--- | :--- | style.
 
-Converts old-style separators like |------|------| to GFM-compliant | --- | --- |.
-markdownlint has no built-in rule for table separator style, so this handles it.
+Converts old-style separators like |------|------| to GFM-compliant center-aligned
+| :--- | :--- | :--- |. markdownlint has no built-in rule for table separator
+style, so this handles it.
 
 Usage:
     python3 fix-tables.py <file.md>
@@ -13,51 +14,27 @@ Usage:
 import sys
 import os
 import glob
-import re
-from pathlib import Path
-
-
-def count_cols(header_line):
-    """Count table columns from a header or data row."""
-    cells = [c.strip() for c in header_line.split("|")]
-    return len([c for c in cells if c])
 
 
 def _normalize_cell(cell):
-    """Normalize a single separator cell, preserving alignment.
+    """Normalize a single separator cell to center-aligned GFM style.
 
-    Detects left (:---), right (---:), center (:---:), or default (---)
-    alignment from the original cell and normalizes it to a min-width
-    with consistent padding.
-
-    e.g.  |--|  → | --- |     (default, min-width)
-          |:--| → | :-- |    (left, preserves alignment)
-          |--:| → | --: |    (right, preserves alignment)
-          |:-:| → | :-: |    (center, preserves alignment)
+    All separators become :--- (center-aligned, min 3 dashes).
+    e.g.  ":"   → ":---:"
+          ":--"  → ":---:"
+          "--:"  → ":---:"
+          ":-:"  → ":---:"
+          "--"   → ":---:"
     """
-    raw = cell.strip()
-    # Detect alignment from the original cell
-    left_colon  = raw.startswith(":")
-    right_colon = raw.endswith(":")
-    # Strip colons and count dashes; use max(dash_count, 3)
-    inner = raw.strip(":")
-    dash_count = len(inner)
-    min_width = max(dash_count, 3)
-    # Build normalized inner (at least 3 dashes)
-    norm_inner = "-" * min_width
-    # Apply alignment markers back
-    if left_colon and right_colon:
-        return ":" + norm_inner + ":"
-    elif left_colon:
-        return ":" + norm_inner
-    elif right_colon:
-        return norm_inner + ":"
-    else:
-        return norm_inner
+    inner = cell.strip()
+    # Count dashes in the middle, ignoring any existing colons
+    dashes = inner.lstrip(":").rstrip(":")
+    min_width = max(len(dashes), 3)
+    return ":" + ("-" * min_width) + ":"
 
 
 def fix_file(path):
-    """Normalize all table separators in a file to | --- | style."""
+    """Normalize all table separators in a file to | :--- | :--- | :--- | style."""
     with open(path) as f:
         lines = f.readlines()
 
@@ -72,7 +49,7 @@ def fix_file(path):
             cells = [c.strip() for c in raw_cells]
             if cells and all(set(c).issubset({"", "-", ":", "."}) for c in cells):
                 if any(c for c in cells):
-                    # Normalize each cell, preserving alignment
+                    # Normalize each cell to center-aligned :---: style
                     norm_cells = [_normalize_cell(c) for c in cells]
                     new_sep = "| " + " | ".join(norm_cells) + " |"
                     new_lines.append(new_sep + "\n")
