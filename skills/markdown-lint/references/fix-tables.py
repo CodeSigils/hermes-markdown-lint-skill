@@ -47,7 +47,7 @@ def fix_file(path):
         if stripped.startswith("|") and stripped.endswith("|"):
             raw_cells = [c for c in stripped.split("|") if c != ""]
             cells = [c.strip() for c in raw_cells]
-            if cells and all(set(c).issubset({"", "-", ":", "."}) for c in cells):
+            if cells and all(set(c.strip()).issubset({"", "-", ":", "."}) for c in cells):
                 if any(c for c in cells):
                     # Normalize each cell to left-aligned --- style
                     norm_cells = [_normalize_cell(c) for c in cells]
