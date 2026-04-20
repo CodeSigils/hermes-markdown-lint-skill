@@ -45,7 +45,10 @@ npm install -g markdownlint-cli2@0.22.0
 # yarn
 yarn global add markdownlint-cli2
 
-# bun
+# bun (zero-install — no install needed)
+bunx markdownlint-cli2 <path> --fix
+
+# bun (global install)
 bun add -g markdownlint-cli2
 
 # Zero-install (no install needed — uses npx)
