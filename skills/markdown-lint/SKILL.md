@@ -258,14 +258,12 @@ fix-tables.py ~/notes/file.md
 
 ### markdownlint-cli2: command not found
 
-Install `bun`:
+Ensure `bun` is installed. See https://bun.sh for installation options.
+
+Verify:
 
 ```bash
-# macOS/Linux
-curl -fsSL https://bun.sh/install | bash
-
-# Or via npm
-npm install -g bun
+bun --version
 ```
 
 ### rumdl: command not found
