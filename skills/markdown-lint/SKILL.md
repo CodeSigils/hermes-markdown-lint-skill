@@ -98,7 +98,7 @@ See [fix-tables.py](#fix-tablespy) below for details.
 bunx markdownlint-cli2 <path> --fix
 ```
 
-3.  Done — the file is GFM-compliant
+1.  Done — the file is GFM-compliant
 
 ### 2. After Editing an Existing File (rumdl)
 
@@ -109,7 +109,7 @@ bunx markdownlint-cli2 <path> --fix
 ~/.hermes/skills/markdown-lint/references/get-rumdl
 ```
 
-3.  Run the fix command:
+1.  Run the fix command:
 
 ```bash
 rumdl check --fix <path>

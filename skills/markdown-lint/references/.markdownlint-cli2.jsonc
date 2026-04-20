@@ -1,24 +1,31 @@
 {
-  // Auto-fix issues when possible
-  "fix": true,
-
-  // Use .gitignore for faster file enumeration
+  // CLI2-specific options
   "gitignore": true,
-
-  // Suppress the banner for cleaner output
   "noBanner": true,
-
-  // Disable the progress indicator
   "noProgress": true,
+  "ignores": ["node_modules", "dist", ".git", "coverage", "mcli2_install"],
 
-  // Files to lint
-  "globs": ["**/*.md", "**/*.markdown"],
-
-  // Directories to skip
-  "ignores": ["node_modules", "dist", ".git", "coverage"],
-
-  // Apply markdownlint rules
-  "config": {
-    "default": true
-  }
+  // GFM markdownlint rules
+  "MD003": { "style": "atx" },
+  "MD004": { "style": "dash" },
+  "MD007": { "indent": 2 },
+  "MD009": { "br_spaces": 2 },
+  "MD010": true,
+  "MD012": { "max": 1 },
+  "MD013": null,
+  "MD024": false,
+  "MD026": { "punctuation": ".,;:" },
+  "MD029": { "style": "ordered" },
+  "MD030": { "ul_single": 3, "ol_single": 2, "ul_multi": 3, "ol_multi": 2 },
+  "MD033": false,
+  "MD034": false,
+  "MD035": { "style": "---" },
+  "MD036": false,
+  "MD040": false,
+  "MD041": false,
+  "MD045": true,
+  "MD046": { "style": "fenced" },
+  "MD047": true,
+  "MD048": { "style": "backtick" },
+  "MD052": false
 }
