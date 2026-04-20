@@ -16,24 +16,14 @@ pnpm add -g markdownlint-cli2
 # or npm install -g markdownlint-cli2@0.22.0
 # or yarn global add markdownlint-cli2
 # or bun add -g markdownlint-cli2
+# or bunx markdownlint-cli2 <path> --fix   # zero-install (no install needed)
 ```
 
 ### Install the Skill
 
-**Option 1 — From this tap (recommended):**
-
 ```bash
-# Add the skills registry tap
 hermes skills tap add CodeSigils/hermes-markdown-lint-skill
-
-# Install the skill
 hermes skills install CodeSigils/hermes-markdown-lint-skill/markdown-lint
-```
-
-**Option 2 — Manual copy:**
-
-```bash
-cp -r hermes-markdown-lint-skill/skills/markdown-lint ~/.hermes/skills/markdown-lint
 ```
 
 ### Quick Start
@@ -57,8 +47,8 @@ fix-tables.py <path> && markdownlint-cli2 <path> --fix
 Copy the reference config to your project:
 
 ```bash
-cp ~/.hermes/skills/markdown-lint/references/.markdownlint.json ./docs/
-cp ~/.hermes/skills/markdown-lint/references/.markdownlint-cli2.jsonc ./docs/
+cp ~/.hermes/skills/markdown-lint/references/.markdownlint.json <your-project>/
+cp ~/.hermes/skills/markdown-lint/references/.markdownlint-cli2.jsonc <your-project>/
 ```
 
 ---
@@ -99,6 +89,7 @@ hermes skills tap add your-username/your-skills-repo
 Preview a skill without installing:
 
 ```bash
+hermes skills tap add CodeSigils/hermes-markdown-lint-skill
 hermes skills inspect CodeSigils/hermes-markdown-lint-skill/markdown-lint
 ```
 
