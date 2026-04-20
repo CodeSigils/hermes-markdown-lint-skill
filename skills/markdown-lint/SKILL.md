@@ -1,18 +1,19 @@
 ---
 name: Markdown-lint
 description: >
-  Lint and auto-fix GitHub Flavored Markdown (GFM) files with markdownlint-cli2.
+  Lint and auto-fix GitHub Flavored Markdown (GFM) files with rumdl.
   Use after creating or editing any .md file to enforce GFM compliance and
-  consistent formatting. Supports fix-tables.py for table separator normalization.
-version: 1.0.0
+  consistent formatting. Ships a self-contained 12MB rumdl binary — zero
+  dependencies, 26x faster than Node.js alternatives.
+version: 1.1.0
 author: Hermes Agent Community
 license: MIT
 prerequisites:
-  commands: [markdownlint-cli2]
+  commands: [rumdl]
 metadata:
   hermes:
     tags: [Markdown, lint, GFM, GitHub, formatting, quality, documentation]
-    homepage: https://github.com/DavidAnson/markdownlint
+    homepage: https://github.com/rvben/rumdl
     related_skills: []
 
 ---
@@ -20,7 +21,12 @@ metadata:
 # Markdown Lint
 
 Auto-fix Markdown files to enforce GitHub Flavored Markdown (GFM) rules using
-`markdownlint-cli2`. Load this skill whenever you create or edit a Markdown file.
+`rumdl` — a self-contained Rust binary with no runtime dependencies.
+
+**Why rumdl:** 12MB static binary, 26x faster than Node.js linters, same MD-numbered
+rules as markdownlint, and it ships inside this skill so it works out of the box.
+
+Load this skill whenever you create or edit a Markdown file.
 
 ## When to Use
 
@@ -31,50 +37,41 @@ Auto-fix Markdown files to enforce GitHub Flavored Markdown (GFM) rules using
 
 ## Prerequisites
 
-### Install markdownlint-cli2
+### Bundled binary (recommended — zero install)
 
-Choose one method based on your package manager:
+This skill ships a pre-built rumdl binary. Use it directly:
 
-```bash
-# pnpm (recommended — fast, disk-efficient)
-pnpm add -g markdownlint-cli2
-
-# npm (pin to a specific version)
-npm install -g markdownlint-cli2@0.22.0
-
-# yarn
-yarn global add markdownlint-cli2
-
-# bun (zero-install — no install needed)
-bunx markdownlint-cli2 <path> --fix
-
-# bun (global install)
-bun add -g markdownlint-cli2
-
-# Zero-install (no install needed — uses npx)
-npx markdownlint-cli2 <path> --fix
+```
+~/.hermes/skills/markdown-lint/references/rumdl
 ```
 
-Verify the installation:
+No install needed. No Node.js required.
+
+### Standalone install (if you prefer it on PATH)
+
+Download a pre-built binary for your platform:
 
 ```bash
-markdownlint-cli2 --version
+# Linux x86_64 (this skill uses this build)
+curl -L https://github.com/rvben/rumdl/releases/latest/download/rumdl-x86_64-unknown-linux-musl.tar.gz \
+  | tar xz -C /usr/local/bin rumdl
+chmod +x /usr/local/bin/rumdl
+
+# macOS Intel
+curl -L https://github.com/rvben/rumdl/releases/latest/download/rumdl-x86_64-apple-darwin.tar.gz \
+  | tar xz -C /usr/local/bin rumdl
+
+# macOS Apple Silicon
+curl -L https://github.com/rvben/rumdl/releases/latest/download/rumdl-aarch64-apple-darwin.tar.gz \
+  | tar xz -C /usr/local/bin rumdl
 ```
 
-### Set up configuration
+All releases: https://github.com/rvben/rumdl/releases
 
-Copy the reference config to your project directory:
-
-```bash
-# In your project root
-cp ~/.hermes/skills/markdown-lint/references/.markdownlint-cli2.jsonc ./.markdownlint-cli2.jsonc
-cp ~/.hermes/skills/markdown-lint/references/.markdownlint.json ./.markdownlint.json
-```
-
-Or copy just the markdownlint rules:
+Verify:
 
 ```bash
-cp ~/.hermes/skills/markdown-lint/references/.markdownlint.json ./.markdownlint.json
+rumdl --version
 ```
 
 ## Quick Start
@@ -82,20 +79,23 @@ cp ~/.hermes/skills/markdown-lint/references/.markdownlint.json ./.markdownlint.
 ### After every Markdown file create or edit
 
 ```bash
-# Auto-fix a single file
-markdownlint-cli2 <path> --fix
+# Bundled binary
+~/.hermes/skills/markdown-lint/references/rumdl check --fix <path>
+
+# Or with rumdl on PATH
+rumdl check --fix <path>
 
 # Check without fixing
-markdownlint-cli2 <path>
+rumdl check <path>
 
-# Batch: fix all Markdown files in current directory
-markdownlint-cli2 "**/*.md" --fix
+# Batch: fix all Markdown files in current directory tree
+rumdl check --fix .
 ```
 
 ### Two-step pipeline (recommended for docs with tables)
 
 ```bash
-fix-tables.py <path> && markdownlint-cli2 <path> --fix
+fix-tables.py <path> && rumdl check --fix <path>
 ```
 
 Step 1 normalizes table separators. Step 2 fixes everything else.
@@ -109,10 +109,10 @@ See [fix-tables.py](#fix-tablespy) below for details.
 2.  Run the fix command:
 
 ```bash
-markdownlint-cli2 <path> --fix
+~/.hermes/skills/markdown-lint/references/rumdl check --fix <path>
 ```
 
-1.  Done — the file is GFM-compliant
+3.  Done — the file is GFM-compliant
 
 ### 2. After Editing an Existing File
 
@@ -120,117 +120,164 @@ markdownlint-cli2 <path> --fix
 2.  Run the fix command:
 
 ```bash
-markdownlint-cli2 <path> --fix
+~/.hermes/skills/markdown-lint/references/rumdl check --fix <path>
 ```
 
-1.  Done — changes are applied and file is clean
+3.  Done — changes are applied and file is clean
 
 ### 3. Batch Fix All Markdown in a Project
 
 ```bash
-# Fix all .md files in current directory and subdirectories
-markdownlint-cli2 "**/*.md" --fix
+# Fix all .md files recursively
+rumdl check --fix .
+
+# Dry-run: see what would change without modifying files
+rumdl check --fix --diff .
 ```
 
-### 4. CI / Pre-commit Check (Read-only)
+### 4. CI / Pre-commit Check (read-only)
 
 ```bash
 # Exit non-zero if any violations exist
-markdownlint-cli2 "**/*.md" || exit 1
+rumdl check .
 ```
 
-### 5. With fix-tables.py (Table-Heavy Documentation)
+### 5. With fix-tables.py (table-heavy documentation)
 
 ```bash
 # Step 1: normalize table separators
 fix-tables.py <path>
 
-# Step 2: apply remaining markdownlint fixes
-markdownlint-cli2 <path> --fix
+# Step 2: apply remaining rumdl fixes
+rumdl check --fix <path>
 ```
 
 ## Configuration
 
-### .markdownlint-cli2.jsonc
+### Using the bundled config
 
-Controls CLI2 behavior (auto-fix, glob patterns, ignores):
+rumdl auto-discovers config from the current directory upward:
 
-```jsonc
-{
-  // Auto-fix issues when possible
-  "fix": true,
-
-  // Use .gitignore for faster file enumeration
-  "gitignore": true,
-
-  // Suppress the banner for cleaner output
-  "noBanner": true,
-
-  // Disable the progress indicator
-  "noProgress": true,
-
-  // Files to lint
-  "globs": ["**/*.md", "**/*.markdown"],
-
-  // Directories to skip
-  "ignores": ["node_modules", "dist", ".git", "coverage"],
-
-  // Apply markdownlint rules
-  "config": {
-    "default": true
-  }
-}
+```bash
+# Copy the reference config to your project
+cp ~/.hermes/skills/markdown-lint/references/.rumdl.toml ./.rumdl.toml
 ```
 
-### .markdownlint.JSON
+rumdl will pick it up automatically:
 
-Controls individual GFM rule enforcement. Place in your project root:
-
-```json
-{
-  "default": true,
-  "MD003": { "style": "atx" },
-  "MD007": { "indent": 2 },
-  "MD009": { "br_spaces": 2 },
-  "MD010": true,
-  "MD012": { "max": 1 },
-  "MD013": false,
-  "MD024": false,
-  "MD026": { "punctuation": ".,;:" },
-  "MD029": { "style": "ordered" },
-  "MD030": { "ul_single": 3, "ol_single": 2 },
-  "MD033": false,
-  "MD034": false,
-  "MD035": { "style": "---" },
-  "MD036": false,
-  "MD040": false,
-  "MD041": false,
-  "MD045": true,
-  "MD046": { "style": "fenced" },
-  "MD047": true,
-  "MD048": { "style": "backtick" }
-}
+```bash
+rumdl check --fix .
 ```
 
-### Rule Overrides for Prose Documentation
+### Bundled .rumdl.toml
 
-These rules are relaxed for note-taking and prose, not strict code docs:
+This skill ships a GFM-tuned config at
+`~/.hermes/skills/markdown-lint/references/.rumdl.toml`:
 
-| Rule | Code Docs | Notes/Prose | This Config |
-| --- | --- | --- | --- |
-| MD013 line length | 80-120 | disabled | **false** |
-| MD034 bare URLs | true | false | **false** |
-| MD040 code language | true | false | **false** |
-| MD033 inline HTML | true | false | **false** |
-| MD036 emphasis headings | true | false | **false** |
-| MD024 multiple H1s | true | false | **false** |
+```toml
+[global]
+disable = [
+    "MD013",  # line-length — too strict for prose docs
+    "MD024",  # multiple-headings — allow h2 reuse in sections
+    "MD033",  # inline-html — rarely needed in GFM docs
+    "MD034",  # bare-urls — disable; auto-links work without brackets
+    "MD036",  # no-bare-urls — alias of MD034
+    "MD040",  # fenced-code-language — ``` is fine without a language
+    "MD041",  # first-line-heading — frontmatter makes this noisy
+    "MD052",  # no-bare-reference-link — too strict for prose
+]
+
+[MD003]
+style = "atx"
+
+[MD004]
+style = "dash"
+
+[MD007]
+indent = 2
+
+[MD010]
+spaces-per-tab = 4
+
+[MD012]
+maximum = 1
+
+[MD026]
+punctuation = ".,;:!"
+
+[MD029]
+style = "ordered"
+
+[MD030]
+ol-multi = 2
+ol-single = 2
+ul-multi = 3
+ul-single = 3
+
+[MD035]
+style = "---"
+
+[MD046]
+style = "fenced"
+```
+
+### Switching to strict mode
+
+For strict code documentation, use rumdl's built-in presets:
+
+```bash
+rumdl check --config <(rumdl init --preset default --output -) .
+```
+
+### Importing an existing markdownlint config
+
+rumdl can import your existing `.markdownlint.json` directly:
+
+```bash
+rumdl import .markdownlint.json --output .rumdl.toml
+```
+
+## GFM Rules Reference
+
+rumdl implements the standard MD001–MD045 rules with the same numbering as
+markdownlint. Key rules enforced by this skill's config:
+
+| Rule | Title | Description |
+| --- | --- | --- |
+| MD003 | heading-style | Use ATX headings (`#` style) |
+| MD004 | ul-style | Use dash (`-`) for unordered lists |
+| MD007 | ul-indent | Unordered list indent = 2 spaces |
+| MD009 | no-trailing-spaces | No trailing spaces |
+| MD010 | no-hard-tabs | No hard tabs |
+| MD012 | no-multiple-blanks | Max one blank line between paragraphs |
+| MD022 | blanks-around-headings | Blank line before and after headings |
+| MD029 | ol-prefix | Ordered list prefix style |
+| MD030 | list-marker-space | Spaces after list markers |
+| MD031 | blanks-around-fences | Blank line around fenced code blocks |
+| MD032 | blanks-around-lists | Blank line before and after lists |
+| MD035 | hr-style | Horizontal rule style `---` |
+| MD046 | code-block-style | Use fenced code blocks |
+| MD048 | code-fence-style | Use backticks for code fences |
+
+Rules that are intentionally **disabled** (too strict for prose documentation):
+
+| Rule | Title | Why Disabled |
+| --- | --- | --- |
+| MD013 | line-length | Prose lines are naturally longer |
+| MD024 | multiple-headings | Same h2 text in different sections is valid |
+| MD033 | no-inline-html | GFM supports basic inline HTML |
+| MD034 | no-bare-urls | Bare URLs auto-link in GFM |
+| MD036 | emphasis-instead-of-heading | Valid use case for emphasis |
+| MD040 | fenced-code-language | Empty code fences are acceptable |
+| MD041 | first-line-heading | Frontmatter makes this noisy |
+| MD052 | no-bare-reference-link | Common in prose |
 
 ## fix-tables.py
 
 Normalizes Markdown table separators from old-style `|------|------|` to GFM-compliant
 `| --- | --- |` style.
 
-markdownlint has no built-in rule for table separator formatting, so this script handles it.
+rumdl has no built-in rule for table separator formatting, so this script handles it.
 
 ### Location
 
@@ -265,40 +312,36 @@ fix-tables.py ~/notes/file.md
 -   **Handles alignment** — `:---`, `---:`, `:---:` all normalized
 -   **Idempotent** — running on clean files reports "0 fixed"
 
-## GFM Rules Reference
-
-| Rule | Title | Description |
-| --- | --- | --- |
-| MD009 | no-trailing-spaces | No trailing spaces |
-| MD010 | no-hard-tabs | No hard tabs in content |
-| MD012 | no-multiple-blanks | Max one blank line between paragraphs |
-| MD013 | line-length | Line length — disabled for prose |
-| MD022 | blanks-around-headings | Blank line before and after headings |
-| MD024 | no-multiple-headings | No duplicate heading text |
-| MD031 | blanks-around-fences | Blank line around fenced code blocks |
-| MD032 | blanks-around-lists | Blank line before and after lists |
-| MD033 | no-inline-HTML | No inline HTML |
-| MD034 | no-bare-urls | URLs must use angle brackets |
-| MD040 | fenced-code-language | Fenced code blocks need a language tag |
-| MD045 | no-alt-text | Images need alt text |
-| MD046 | code-block-style | Use fenced code blocks |
-| MD047 | single-trailing-newline | File must end with one newline |
-| MD048 | code-fence-style | Use backticks for code fences |
-| MD056 | table-column-count | Table column count matches header |
-
 ## Troubleshooting
 
-### "command not found: markdownlint-cli2"
+### "rumdl: command not found"
+
+The bundled binary is not on PATH. Use the full path:
 
 ```bash
-# Verify installation
-npm list -g markdownlint-cli2
+~/.hermes/skills/markdown-lint/references/rumdl check --fix <path>
+```
 
-# Check PATH includes global bin
-export PATH="$(npm root -g):$PATH"
+Or add it to PATH:
 
-# Or use npx for zero-install
-npx markdownlint-cli2 <path> --fix
+```bash
+export PATH="$HOME/.hermes/skills/markdown-lint/references:$PATH"
+```
+
+### Config file not found
+
+rumdl searches for `.rumdl.toml` upward from the current directory.
+Run from the project root:
+
+```bash
+cd ~/my-project
+rumdl check --fix .
+```
+
+Or pass the config explicitly:
+
+```bash
+rumdl check --config ~/.hermes/skills/markdown-lint/references/.rumdl.toml --fix <path>
 ```
 
 ### `--fix` does not fix everything in one pass
@@ -306,26 +349,23 @@ npx markdownlint-cli2 <path> --fix
 Known behavior. Run twice if needed:
 
 ```bash
-markdownlint-cli2 <path> --fix
-markdownlint-cli2 <path> --fix
-```
-
-### Config file not found
-
-Ensure `.markdownlint.json` or `.markdownlint-cli2.jsonc` is in the current
-working directory. markdownlint-cli2 searches upward from the file location:
-
-```bash
-# Run from the project root where the config lives
-cd ~/my-project
-markdownlint-cli2 README.md --fix
+rumdl check --fix <path>
+rumdl check --fix <path>
 ```
 
 ### File corruption from `--fix`
 
 **Cause:** Writing Markdown with single newlines between paragraphs
-(e.g., bash heredocs with `\n`). The `--fix` tool collapses paragraph spacing.
+(e.g., bash heredocs with `\n`). The fixer collapses paragraph spacing.
 
 **Fix:** Use `write_file` or `patch` instead of terminal() with bash heredocs
 for writing Markdown content. These tools produce files with proper
 double-newline paragraph spacing.
+
+### Different behavior between rumdl and markdownlint-cli2
+
+Both use the same MD-numbered rules, but minor differences exist:
+
+-   MD013 (line length): rumdl uses visual length by default; this config disables it
+-   MD030 (list marker spaces): rumdl default is 1 space; this config sets ul-single=3
+-   MD035 (HR style): rumdl default is `***`; this config enforces `---`

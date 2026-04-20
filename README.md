@@ -1,7 +1,10 @@
 # Markdown Lint Skill for Hermes
 
 Auto-fix Markdown files to enforce GitHub Flavored Markdown (GFM) rules using
-`markdownlint-cli2`. A skill for the [Hermes Agent](https://github.com/nousresearch/hermes-agent) ecosystem.
+`rumdl`. A skill for the [Hermes Agent](https://github.com/nousresearch/hermes-agent) ecosystem.
+
+**Why rumdl:** 12MB static binary, 26x faster than Node.js linters, same MD-numbered
+rules as markdownlint, and it ships inside this skill so it works out of the box.
 
 ---
 
@@ -9,14 +12,22 @@ Auto-fix Markdown files to enforce GitHub Flavored Markdown (GFM) rules using
 
 ### Prerequisites
 
-Install `markdownlint-cli2`:
+**Zero-install (recommended):** The skill ships a pre-built rumdl binary. No install needed.
+
+For standalone install on PATH:
 
 ```bash
-pnpm add -g markdownlint-cli2
-# or npm install -g markdownlint-cli2@0.22.0
-# or yarn global add markdownlint-cli2
-# or bun add -g markdownlint-cli2
-# or bunx markdownlint-cli2 <path> --fix   # zero-install (no install needed)
+# Linux x86_64
+curl -L https://github.com/rvben/rumdl/releases/latest/download/rumdl-x86_64-unknown-linux-musl.tar.gz \
+  | tar xz -C /usr/local/bin rumdl
+
+# macOS Intel
+curl -L https://github.com/rvben/rumdl/releases/latest/download/rumdl-x86_64-apple-darwin.tar.gz \
+  | tar xz -C /usr/local/bin rumdl
+
+# macOS Apple Silicon
+curl -L https://github.com/rvben/rumdl/releases/latest/download/rumdl-aarch64-apple-darwin.tar.gz \
+  | tar xz -C /usr/local/bin rumdl
 ```
 
 ### Install the Skill
@@ -29,17 +40,20 @@ hermes skills install CodeSigils/hermes-markdown-lint-skill/markdown-lint
 ### Quick Start
 
 ```bash
-# Auto-fix a single file (run after every create/edit)
-markdownlint-cli2 <path> --fix
+# Bundled binary (no install needed)
+~/.hermes/skills/markdown-lint/references/rumdl check --fix <path>
+
+# Or with rumdl on PATH
+rumdl check --fix <path>
 
 # Batch fix all .md files
-markdownlint-cli2 "**/*.md" --fix
+rumdl check --fix .
 ```
 
 For prose documentation with tables, use the two-step pipeline:
 
 ```bash
-fix-tables.py <path> && markdownlint-cli2 <path> --fix
+fix-tables.py <path> && rumdl check --fix <path>
 ```
 
 ### Configuration
@@ -47,8 +61,7 @@ fix-tables.py <path> && markdownlint-cli2 <path> --fix
 Copy the reference config to your project:
 
 ```bash
-cp ~/.hermes/skills/markdown-lint/references/.markdownlint.json <your-project>/
-cp ~/.hermes/skills/markdown-lint/references/.markdownlint-cli2.jsonc <your-project>/
+cp ~/.hermes/skills/markdown-lint/references/.rumdl.toml <your-project>/
 ```
 
 ---
@@ -67,8 +80,10 @@ hermes-markdown-lint-skill/
     └── markdown-lint/
         ├── SKILL.md                            # Skill document (loaded by Hermes)
         └── references/
-            ├── .markdownlint.json              # Distributable GFM rules
-            ├── .markdownlint-cli2.jsonc        # Distributable CLI2 config
+            ├── rumdl                           # Pre-built 12MB static binary
+            ├── .rumdl.toml                     # GFM rule config
+            ├── .markdownlint.json              # markdownlint compat config
+            ├── .markdownlint-cli2.jsonc        # CLI2 config
             └── fix-tables.py                   # Table separator normalizer
 ```
 
