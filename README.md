@@ -20,20 +20,20 @@ pnpm add -g markdownlint-cli2
 
 ### Install the Skill
 
-**Option 1 — From a tap (recommended):**
+**Option 1 — From this tap (recommended):**
 
 ```bash
-# Add the skill registry tap
-hermes skills tap add owner/repo
+# Add the skills registry tap
+hermes skills tap add CodeSigils/hermes-markdown-lint-skill
 
 # Install the skill
-hermes skills install owner/repo/markdown-lint
+hermes skills install CodeSigils/hermes-markdown-lint-skill/markdown-lint
 ```
 
 **Option 2 — Manual copy:**
 
 ```bash
-cp -r hermes-markdown-lint-skill ~/.hermes/skills/markdown-lint
+cp -r hermes-markdown-lint-skill/skills/markdown-lint ~/.hermes/skills/markdown-lint
 ```
 
 ### Quick Start
@@ -65,38 +65,33 @@ cp ~/.hermes/skills/markdown-lint/references/.markdownlint-cli2.jsonc ./docs/
 
 ## For Developers
 
-### Publishing to a GitHub Tap
-
-This repo is the skill directory. To publish it as a community skill:
-
-```bash
-# Publish to a GitHub repo acting as a skills registry
-hermes skills publish --to github --repo owner/repo ~/hermes-markdown-lint-skill
-```
-
-Replace `owner/repo` with your actual GitHub repository. After publishing, users
-can install with:
-
-```bash
-hermes skills tap add owner/repo
-hermes skills install markdown-lint
-```
-
-### Publishing to ClawHub
-
-```bash
-hermes skills publish --to clawhub ~/hermes-markdown-lint-skill
-```
-
 ### Skill Structure
 
 ```
 hermes-markdown-lint-skill/
-├── SKILL.md                              # Skill document (loaded by Hermes)
-├── references/
-│   ├── .markdownlint.json               # GFM rule configuration
-│   ├── .markdownlint-cli2.jsonc          # CLI2 auto-fix settings
-│   └── fix-tables.py                    # Table separator normalizer
+├── README.md
+├── LICENSE
+├── .markdownlint.json                          # Repo lint config
+├── .markdownlint-cli2.jsonc                    # Repo CLI2 config
+└── skills/
+    └── markdown-lint/
+        ├── SKILL.md                            # Skill document (loaded by Hermes)
+        └── references/
+            ├── .markdownlint.json              # Distributable GFM rules
+            ├── .markdownlint-cli2.jsonc        # Distributable CLI2 config
+            └── fix-tables.py                   # Table separator normalizer
+```
+
+### Adding to Your Own Tap
+
+To use this as a base for your own skills tap:
+
+```bash
+# Fork this repo or copy the skills/ directory into your repo
+# Your tap repo structure must be: <repo>/skills/<skill-name>/SKILL.md
+
+# Then add your tap
+hermes skills tap add your-username/your-skills-repo
 ```
 
 ### Inspect Before Installing
@@ -104,15 +99,15 @@ hermes-markdown-lint-skill/
 Preview a skill without installing:
 
 ```bash
-hermes skills inspect owner/repo/markdown-lint
+hermes skills inspect CodeSigils/hermes-markdown-lint-skill/markdown-lint
 ```
 
 ---
 
 ## Skill Documentation
 
-See [SKILL.md](SKILL.md) for the full skill document — workflows, configuration,
-troubleshooting, and GFM rules reference.
+See [skills/markdown-lint/SKILL.md](skills/markdown-lint/SKILL.md) for the full
+skill document — workflows, configuration, troubleshooting, and GFM rules reference.
 
 ## License
 
