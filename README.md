@@ -3,10 +3,7 @@
 Auto-fix Markdown files to enforce GitHub Flavored Markdown (GFM) rules.
 A skill for the [Hermes Agent](https://github.com/nousresearch/hermes-agent) ecosystem.
 
-Supports two backends:
-
--   **markdownlint-cli2** via `bunx` — zero install, works immediately
--   **rumdl** — self-downloaded static binary (faster, one-time setup)
+Uses **markdownlint** via `uvx` — zero install, works anywhere uv works.
 
 ---
 
@@ -14,17 +11,17 @@ Supports two backends:
 
 ### Prerequisites
 
-**bun** — required for the primary (zero-install) backend.
+**uv** — required for running the linter.
 
 ```bash
-# macOS/Linux
-curl -fsSL https://bun.sh/install | bash
+# Install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 Verify:
 
 ```bash
-bun --version
+uv --version
 ```
 
 ### Install the Skill
@@ -37,18 +34,14 @@ hermes skills install CodeSigils/hermes-markdown-lint-skill/markdown-lint
 ### Quick Start
 
 ```bash
-# Zero-install: lint and fix with markdownlint-cli2 (requires bun)
-bunx markdownlint-cli2 <path> --fix
-
-# After one-time setup: use rumdl (faster)
-~/.hermes/skills/markdown-lint/references/get-rumdl   # one-time
-rumdl check --fix <path>
+# Lint and fix with uvx
+uvx markdownlint-cli2 <path> --fix
 ```
 
 For prose documentation with tables, use the two-step pipeline:
 
 ```bash
-fix-tables.py <path> && bunx markdownlint-cli2 <path> --fix
+fix-tables.py <path> && uvx markdownlint-cli2 <path> --fix
 ```
 
 ### Configuration
@@ -56,7 +49,7 @@ fix-tables.py <path> && bunx markdownlint-cli2 <path> --fix
 Copy the reference config to your project:
 
 ```bash
-cp ~/.hermes/skills/markdown-lint/references/.markdownlint-cli2.jsonc ./
+cp ~/.hermes/skills/markdown-lint/references/.markdownlint.json ./.markdownlint.json
 ```
 
 ---
@@ -71,18 +64,20 @@ hermes-markdown-lint-skill/
 ├── LICENSE
 └── skills/
     └── markdown-lint/
-        ├── SKILL.md                            # Skill document (loaded by Hermes)
+        ├── SKILL.md                            # Skill document
         └── references/
-            ├── get-rumdl                       # One-time rumdl download script
             ├── fix-tables.py                   # Table separator normalizer
-            ├── .markdownlint-cli2.jsonc       # CLI2 config (fix:true, gitignore:true)
-            ├── .rumdl.toml                    # rumdl rule config
-            └── .markdownlint.json             # markdownlint compat config
+            └── .markdownlint.json              # lint rule config
 ```
 
-### Adding to Your Own Tap
+### Key Changes in v2.0
 
-To use this as a base for your own skills tap:
+- Removed rumdl backend (was too complex)
+- Switched to `uvx markdownlint-cli2` (simpler, more portable)
+- Removed duplicate config files at root level
+- Single config file: `.markdownlint.json`
+
+### Adding to Your Own Tap
 
 ```bash
 # Fork this repo or copy the skills/ directory into your repo
@@ -106,7 +101,7 @@ hermes skills inspect CodeSigils/hermes-markdown-lint-skill/markdown-lint
 ## Skill Documentation
 
 See [skills/markdown-lint/SKILL.md](skills/markdown-lint/SKILL.md) for the full
-skill document — workflows, configuration, troubleshooting, and GFM rules reference.
+skill document.
 
 ## License
 
