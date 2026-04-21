@@ -59,6 +59,17 @@ cp ~/.hermes/skills/markdown-lint/references/.markdownlint.json ./.markdownlint.
 
 ---
 
+## Official Hermes Skills Documentation
+
+Learn more about creating and managing Hermes skills:
+
+- [Creating Skills](https://hermes-agent.nousresearch.com/docs/developer-guide/creating-skills) - Official guide
+- [Skills System](https://hermes-agent.ai/blog/hermes-agent-skills-guide) - Skills guide
+- [Skills User Guide](https://hermes-agent.nousresearch.com/docs/user-guide/features/skills) - Using skills
+- [agentskills.io](https://agentskills.io) - Open standard (compatible with Claude, OpenAI, etc.)
+
+---
+
 ## For Developers
 
 ### Skill Structure
