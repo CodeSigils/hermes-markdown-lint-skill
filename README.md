@@ -31,7 +31,6 @@ node --version
 ### Install the Skill
 
 ```bash
-hermes skills tap add CodeSigils/hermes-markdown-lint-skill
 hermes skills install CodeSigils/hermes-markdown-lint-skill/markdown-lint
 ```
 
