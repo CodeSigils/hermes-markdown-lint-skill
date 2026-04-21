@@ -3,7 +3,7 @@
 Auto-fix Markdown files to enforce GitHub Flavored Markdown (GFM) rules.
 A skill for the [Hermes Agent](https://github.com/nousresearch/hermes-agent) ecosystem.
 
-Uses **markdownlint** via `npx` — zero install, works anywhere Node.js works.
+Uses **markdownlint** via `npx` and **fix-tables.js** for table formatting — zero install required.
 
 ---
 
@@ -11,17 +11,21 @@ Uses **markdownlint** via `npx` — zero install, works anywhere Node.js works.
 
 ### Prerequisites
 
-**uv** — required for running the linter.
+**Node.js** — required for running the linter.
 
 ```bash
-# Install uv
-curl -LsSf https://astral.sh/uv/install.sh | sh
+# Install Node.js
+# macOS
+brew install node
+
+# Ubuntu/Debian
+sudo apt install nodejs npm
 ```
 
 Verify:
 
 ```bash
-uv --version
+node --version
 ```
 
 ### Install the Skill
@@ -34,15 +38,12 @@ hermes skills install CodeSigils/hermes-markdown-lint-skill/markdown-lint
 ### Quick Start
 
 ```bash
-# Lint and fix with uvx
-npx markdownlint-cli2 <path> --fix
+# Two-step pipeline (recommended)
+node references/fix-tables.js <path> && npx markdownlint-cli2 <path> --fix
 ```
 
-For prose documentation with tables, use the two-step pipeline:
-
-```bash
-fix-tables.py <path> && npx markdownlint-cli2 <path> --fix
-```
+Step 1 normalizes table separators.
+Step 2 fixes everything else.
 
 ### Configuration
 
@@ -64,18 +65,19 @@ hermes-markdown-lint-skill/
 ├── LICENSE
 └── skills/
     └── markdown-lint/
-        ├── SKILL.md                            # Skill document
+        ├── SKILL.md                          # Skill document
         └── references/
-            ├── fix-tables.py                   # Table separator normalizer
-            └── .markdownlint.json              # lint rule config
+            ├── fix-tables.js                 # Table separator normalizer (Node.js)
+            └── .markdownlint.json            # Lint rule config
 ```
 
-### Key Changes in v2.0
+### Key Changes in v2.1
 
-- Removed rumdl backend (was too complex)
-- Switched to `npx markdownlint-cli2` (simpler, more portable)
-- Removed duplicate config files at root level
-- Single config file: `.markdownlint.json`
+- Migrated to Node.js stack (fix-tables.js instead of fix-tables.py)
+- Added auto-width column alignment for tables
+- Added MD060, MD025, MD032 disabled rules
+- Removed duplicate configuration
+- Updated frontmatter to Hermes 2.x format
 
 ### Adding to Your Own Tap
 
@@ -89,8 +91,6 @@ hermes skills tap add your-username/your-skills-repo
 
 ### Inspect Before Installing
 
-Preview a skill without installing:
-
 ```bash
 hermes skills tap add CodeSigils/hermes-markdown-lint-skill
 hermes skills inspect CodeSigils/hermes-markdown-lint-skill/markdown-lint
@@ -100,8 +100,7 @@ hermes skills inspect CodeSigils/hermes-markdown-lint-skill/markdown-lint
 
 ## Skill Documentation
 
-See [skills/markdown-lint/SKILL.md](skills/markdown-lint/SKILL.md) for the full
-skill document.
+See [skills/markdown-lint/SKILL.md](skills/markdown-lint/SKILL.md) for the full skill document.
 
 ## License
 

@@ -3,17 +3,16 @@ name: markdown-lint
 description: >
   Lint and auto-fix GitHub Flavored Markdown (GFM) files. Run after creating
   or editing any .md file to enforce consistent formatting. Uses markdownlint
-  via npx for zero-install, portable linting.
-version: 2.0.0
+  via npx for zero-install linting and fix-tables.js for table separators.
+version: 2.1.0
 author: Hermes Agent
 license: MIT
-required_environment_variables: []
-required_commands: ["node", "npx"]
 metadata:
   hermes:
     tags: [markdown, lint, gfm, github, formatting, quality, documentation]
-    homepage: https://github.com/DavidAnson/markdownlint-cli2
-    related_skills: []
+    category: devtools
+required_environment_variables: []
+required_commands: ["node", "npx"]
 ---
 
 # Markdown Lint
@@ -33,67 +32,54 @@ Load this skill whenever you create or edit a Markdown file.
 
 ## Prerequisites
 
-### uv (required)
-
-This skill uses `npx markdownlint-cli2` to run the linters without installation.
+**Node.js** — required for running the linter and fix-tables.js.
 
 Verify:
 
 ```bash
-uv --version
+node --version
 ```
 
 ## Quick Start
 
-### Lint and fix with uvx
+### Two-step pipeline (recommended for all docs)
 
 ```bash
-npx markdownlint-cli2 <path> --fix
-```
-
-### Two-step pipeline (recommended for docs with tables)
-
-```bash
-fix-tables.py <path> && npx markdownlint-cli2 <path> --fix
+node references/fix-tables.js <path> && npx markdownlint-cli2 <path> --fix
 ```
 
 Step 1 normalizes table separators to `| :--- | :--- |` left-aligned style.
 Step 2 fixes everything else.
 
+### Lint only (read-only check)
+
+```bash
+npx markdownlint-cli2 <path>
+```
+
 ## Workflows
 
 ### 1. After Creating a New File
 
-1. Create the file using `write_file` or `patch`
+1. Create the file
 2. Run the fix command:
 
 ```bash
-npx markdownlint-cli2 <path> --fix
+node references/fix-tables.js <path> && npx markdownlint-cli2 <path> --fix
 ```
 
-Done — the file is GFM-compliant
+Done — the file is GFM-compliant.
 
 ### 2. Batch Fix All Markdown in a Project
 
 ```bash
-find . -name "*.md" -exec npx markdownlint-cli2 {} --fix \;
+find . -name "*.md" -exec node references/fix-tables.js {} \; && npx markdownlint-cli2 . --fix
 ```
 
 ### 3. CI / Pre-commit Check (read-only)
 
 ```bash
-# Exit non-zero if any violations exist
 npx markdownlint-cli2 <path>
-```
-
-### 4. With fix-tables.py (table-heavy documentation)
-
-```bash
-# Step 1: normalize table separators
-fix-tables.py <path>
-
-# Step 2: apply remaining lint fixes
-npx markdownlint-cli2 <path> --fix
 ```
 
 ## Configuration
@@ -114,7 +100,7 @@ npx markdownlint-cli2 --config ~/.hermes/skills/markdown-lint/references/.markdo
 
 ## GFM Rules Reference
 
-markdownlint implements MD001–MD045 rules. Key rules enforced:
+markdownlint implements MD001–MD060 rules. Key rules enforced:
 
 | Rule | Title | Description |
 | --- | --- | --- |
@@ -139,65 +125,82 @@ Rules **disabled** (too strict for prose documentation):
 | --- | --- | --- |
 | MD013 | line-length | Prose lines are naturally longer |
 | MD024 | multiple-headings | Same h2 text in different sections is valid |
+| MD025 | multiple-h1 | Multiple top-level headings allowed |
+| MD032 | list-indent | Lists can vary by content |
 | MD033 | no-inline-html | GFM supports basic inline HTML |
 | MD034 | no-bare-urls | Bare URLs auto-link in GFM |
 | MD036 | emphasis-instead-of-heading | Valid use case for emphasis |
 | MD040 | fenced-code-language | Empty code fences are acceptable |
 | MD041 | first-line-heading | Frontmatter makes this noisy |
 | MD052 | no-bare-reference-link | Common in prose |
+| MD060 | table-column-style | fix-tables.js handles this separately |
 
-## fix-tables.py
+## fix-tables.js
 
 Normalizes Markdown table separators from old-style `|------|------|` to GFM-compliant
 `| :--- | :--- | :--- |` style with left-aligned cells (`---`).
 
-markdownlint has no built-in rule for table separator formatting, so this handles it.
+**Features:**
+- Auto-width column alignment (matches header column lengths)
+- Detects already-correct separators and skips them
+- Verbose output option
 
 ### Location
 
 ```
-~/.hermes/skills/markdown-lint/references/fix-tables.py
+~/.hermes/skills/markdown-lint/references/fix-tables.js
 ```
 
 ### Usage
 
 ```bash
-# Fix specific files
-fix-tables.py ~/notes/file.md
+# Fix specific file
+node references/fix-tables.js <path>
 
-# Fix all .md in a directory (recursive)
-fix-tables.py --all ~/notes/
+# Fix all .md in directory
+node references/fix-tables.js --all <directory>
 
-# Dry-run (shows what would be fixed, no changes)
-fix-tables.py --dry ~/notes/file.md
+# Verbose output
+node references/fix-tables.js -v <path>
+
+# Check only (exit non-zero if fixes needed)
+node references/fix-tables.js --check <path>
+
+# Dry-run (shows what would be fixed)
+node references/fix-tables.js --check <path>
 ```
 
 ### How It Works
 
 1. Scans for lines matching the table separator pattern
-2. Looks backward to the header row to count columns
-3. Replaces old-style separator with `| --- | --- |` matching the exact column count
-4. Leaves all data rows and already-correct separators untouched
+2. Detects column alignment from separator dashes
+3. Replaces old-style separator with `| :--- |` matching the exact column count
+4. Auto-width: calculates width based on header column lengths
+5. Leaves all data rows and already-correct separators untouched
 
 ## Troubleshooting
 
 ### markdownlint-cli2: command not found
 
-Ensure `uv` is installed:
+Ensure Node.js is installed:
 
 ```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
+# Install Node.js
+# macOS
+brew install node
+
+# Ubuntu/Debian
+sudo apt install nodejs npm
 ```
 
 Verify:
 
 ```bash
-uv --version
+node --version
+npx --version
 ```
 
 ### Config file not found
-
-markdownlint searches for config upward from the current directory.
 
 Run from the project root:
 
@@ -220,3 +223,22 @@ Known behavior. Run twice if needed:
 npx markdownlint-cli2 <path> --fix
 npx markdownlint-cli2 <path> --fix
 ```
+
+## Verification
+
+Run the lint check to verify GFM compliance:
+
+```bash
+npx markdownlint-cli2 <path>
+```
+
+Exit code 0 means no violations.
+
+## Quick Reference
+
+| Task | Command |
+| --- | --- |
+| Fix file | `node references/fix-tables.js <path> && npx markdownlint-cli2 <path> --fix` |
+| Fix all | `find . -name "*.md" -exec node references/fix-tables.js {} \; && npx markdownlint-cli2 . --fix` |
+| Check only | `npx markdownlint-cli2 <path>` |
+| With config | `npx markdownlint-cli2 --config ~/.hermes/skills/markdown-lint/references/.markdownlint.json <path> --fix` |
