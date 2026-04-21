@@ -3,12 +3,12 @@ name: markdown-lint
 description: >
   Lint and auto-fix GitHub Flavored Markdown (GFM) files. Run after creating
   or editing any .md file to enforce consistent formatting. Uses markdownlint
-  via uvx for zero-install, portable linting.
+  via npx for zero-install, portable linting.
 version: 2.0.0
 author: Hermes Agent
 license: MIT
 required_environment_variables: []
-required_commands: ["uv"]
+required_commands: ["node", "npx"]
 metadata:
   hermes:
     tags: [markdown, lint, gfm, github, formatting, quality, documentation]
@@ -20,7 +20,7 @@ metadata:
 
 Auto-fix Markdown files to enforce GitHub Flavored Markdown (GFM) rules.
 
-This skill uses **markdownlint** via `uvx` — zero install, works anywhere uv works.
+This skill uses **markdownlint** via `npx` — zero install, works anywhere Node.js works.
 
 Load this skill whenever you create or edit a Markdown file.
 
@@ -35,7 +35,7 @@ Load this skill whenever you create or edit a Markdown file.
 
 ### uv (required)
 
-This skill uses `uvx markdownlint-cli2` to run the linters without installation.
+This skill uses `npx markdownlint-cli2` to run the linters without installation.
 
 Verify:
 
@@ -48,13 +48,13 @@ uv --version
 ### Lint and fix with uvx
 
 ```bash
-uvx markdownlint-cli2 <path> --fix
+npx markdownlint-cli2 <path> --fix
 ```
 
 ### Two-step pipeline (recommended for docs with tables)
 
 ```bash
-fix-tables.py <path> && uvx markdownlint-cli2 <path> --fix
+fix-tables.py <path> && npx markdownlint-cli2 <path> --fix
 ```
 
 Step 1 normalizes table separators to `| :--- | :--- |` left-aligned style.
@@ -68,7 +68,7 @@ Step 2 fixes everything else.
 2. Run the fix command:
 
 ```bash
-uvx markdownlint-cli2 <path> --fix
+npx markdownlint-cli2 <path> --fix
 ```
 
 Done — the file is GFM-compliant
@@ -76,14 +76,14 @@ Done — the file is GFM-compliant
 ### 2. Batch Fix All Markdown in a Project
 
 ```bash
-find . -name "*.md" -exec uvx markdownlint-cli2 {} --fix \;
+find . -name "*.md" -exec npx markdownlint-cli2 {} --fix \;
 ```
 
 ### 3. CI / Pre-commit Check (read-only)
 
 ```bash
 # Exit non-zero if any violations exist
-uvx markdownlint-cli2 <path>
+npx markdownlint-cli2 <path>
 ```
 
 ### 4. With fix-tables.py (table-heavy documentation)
@@ -93,7 +93,7 @@ uvx markdownlint-cli2 <path>
 fix-tables.py <path>
 
 # Step 2: apply remaining lint fixes
-uvx markdownlint-cli2 <path> --fix
+npx markdownlint-cli2 <path> --fix
 ```
 
 ## Configuration
@@ -109,7 +109,7 @@ cp ~/.hermes/skills/markdown-lint/references/.markdownlint.json ./.markdownlint.
 Or pass explicitly:
 
 ```bash
-uvx markdownlint-cli2 --config ~/.hermes/skills/markdown-lint/references/.markdownlint.json <path> --fix
+npx markdownlint-cli2 --config ~/.hermes/skills/markdown-lint/references/.markdownlint.json <path> --fix
 ```
 
 ## GFM Rules Reference
@@ -203,13 +203,13 @@ Run from the project root:
 
 ```bash
 cd ~/my-project
-uvx markdownlint-cli2 . --fix
+npx markdownlint-cli2 . --fix
 ```
 
 Or pass the config explicitly:
 
 ```bash
-uvx markdownlint-cli2 --config ~/.hermes/skills/markdown-lint/references/.markdownlint.json . --fix
+npx markdownlint-cli2 --config ~/.hermes/skills/markdown-lint/references/.markdownlint.json . --fix
 ```
 
 ### `--fix` does not fix everything in one pass
@@ -217,6 +217,6 @@ uvx markdownlint-cli2 --config ~/.hermes/skills/markdown-lint/references/.markdo
 Known behavior. Run twice if needed:
 
 ```bash
-uvx markdownlint-cli2 <path> --fix
-uvx markdownlint-cli2 <path> --fix
+npx markdownlint-cli2 <path> --fix
+npx markdownlint-cli2 <path> --fix
 ```

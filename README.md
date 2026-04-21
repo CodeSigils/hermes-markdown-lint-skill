@@ -3,7 +3,7 @@
 Auto-fix Markdown files to enforce GitHub Flavored Markdown (GFM) rules.
 A skill for the [Hermes Agent](https://github.com/nousresearch/hermes-agent) ecosystem.
 
-Uses **markdownlint** via `uvx` — zero install, works anywhere uv works.
+Uses **markdownlint** via `npx` — zero install, works anywhere Node.js works.
 
 ---
 
@@ -35,13 +35,13 @@ hermes skills install CodeSigils/hermes-markdown-lint-skill/markdown-lint
 
 ```bash
 # Lint and fix with uvx
-uvx markdownlint-cli2 <path> --fix
+npx markdownlint-cli2 <path> --fix
 ```
 
 For prose documentation with tables, use the two-step pipeline:
 
 ```bash
-fix-tables.py <path> && uvx markdownlint-cli2 <path> --fix
+fix-tables.py <path> && npx markdownlint-cli2 <path> --fix
 ```
 
 ### Configuration
@@ -73,7 +73,7 @@ hermes-markdown-lint-skill/
 ### Key Changes in v2.0
 
 - Removed rumdl backend (was too complex)
-- Switched to `uvx markdownlint-cli2` (simpler, more portable)
+- Switched to `npx markdownlint-cli2` (simpler, more portable)
 - Removed duplicate config files at root level
 - Single config file: `.markdownlint.json`
 

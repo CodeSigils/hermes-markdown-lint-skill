@@ -10,7 +10,7 @@
   "MD026": { "punctuation": ".,;:" },
   "MD029": { "style": "ordered" },
   "MD030": { "ul_single": 3, "ol_single": 2, "ul_multi": 3, "ol_multi": 2 },
-  "MD033": false,
+  "MD033": true,
   "MD034": false,
   "MD035": { "style": "---" },
   "MD036": false,
