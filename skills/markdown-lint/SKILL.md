@@ -45,7 +45,7 @@ node --version
 ### Two-step pipeline (recommended for all docs)
 
 ```bash
-node references/fix-tables.js <path> && npx markdownlint-cli2 <path> --fix
+~/.hermes/skills/markdown-lint/references/fix-tables.js <path> && npx markdownlint-cli2 <path> --fix
 ```
 
 Step 1 normalizes table separators to `| :--- | :--- |` left-aligned style.
@@ -65,7 +65,7 @@ npx markdownlint-cli2 <path>
 2. Run the fix command:
 
 ```bash
-node references/fix-tables.js <path> && npx markdownlint-cli2 <path> --fix
+~/.hermes/skills/markdown-lint/references/fix-tables.js <path> && npx markdownlint-cli2 <path> --fix
 ```
 
 Done — the file is GFM-compliant.
@@ -73,7 +73,7 @@ Done — the file is GFM-compliant.
 ### 2. Batch Fix All Markdown in a Project
 
 ```bash
-find . -name "*.md" -exec node references/fix-tables.js {} \; && npx markdownlint-cli2 . --fix
+find . -name "*.md" -exec ~/.hermes/skills/markdown-lint/references/fix-tables.js {} \; && npx markdownlint-cli2 . --fix
 ```
 
 ### 3. CI / Pre-commit Check (read-only)
@@ -155,19 +155,16 @@ Normalizes Markdown table separators from old-style `|------|------|` to GFM-com
 
 ```bash
 # Fix specific file
-node references/fix-tables.js <path>
+~/.hermes/skills/markdown-lint/references/fix-tables.js <path>
 
 # Fix all .md in directory
-node references/fix-tables.js --all <directory>
+~/.hermes/skills/markdown-lint/references/fix-tables.js --all <directory>
 
 # Verbose output
-node references/fix-tables.js -v <path>
+~/.hermes/skills/markdown-lint/references/fix-tables.js -v <path>
 
 # Check only (exit non-zero if fixes needed)
-node references/fix-tables.js --check <path>
-
-# Dry-run (shows what would be fixed)
-node references/fix-tables.js --check <path>
+~/.hermes/skills/markdown-lint/references/fix-tables.js --check <path>
 ```
 
 ### How It Works
@@ -238,7 +235,7 @@ Exit code 0 means no violations.
 
 | Task | Command |
 | --- | --- |
-| Fix file | `node references/fix-tables.js <path> && npx markdownlint-cli2 <path> --fix` |
-| Fix all | `find . -name "*.md" -exec node references/fix-tables.js {} \; && npx markdownlint-cli2 . --fix` |
+| Fix file | `~/.hermes/skills/markdown-lint/references/fix-tables.js <path> && npx markdownlint-cli2 <path> --fix` |
+| Fix all | `find . -name "*.md" -exec ~/.hermes/skills/markdown-lint/references/fix-tables.js {} \; && npx markdownlint-cli2 . --fix` |
 | Check only | `npx markdownlint-cli2 <path>` |
 | With config | `npx markdownlint-cli2 --config ~/.hermes/skills/markdown-lint/references/.markdownlint.json <path> --fix` |

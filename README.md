@@ -39,7 +39,7 @@ hermes skills install CodeSigils/hermes-markdown-lint-skill/markdown-lint
 
 ```bash
 # Two-step pipeline (recommended)
-node references/fix-tables.js <path> && npx markdownlint-cli2 <path> --fix
+~/.hermes/skills/markdown-lint/references/fix-tables.js <path> && npx markdownlint-cli2 <path> --fix
 ```
 
 Step 1 normalizes table separators.
