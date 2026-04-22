@@ -1,6 +1,6 @@
 # Markdown Lint Skill for Hermes
 
-Auto-fix Markdown files to enforce GitHub Flavored Markdown (GFM) rules.
+Auto-fix Markdown files to enforce [GitHub Flavored Markdown (GFM)](https://github.github.com/gfm/) rules.
 A skill for the [Hermes Agent](https://github.com/nousresearch/hermes-agent) ecosystem.
 
 Uses **markdownlint** via `npx` and **fix-tables.js** for table formatting — zero install required.
@@ -107,20 +107,18 @@ Learn more about creating and managing Hermes skills:
 ### Skill Structure
 
 ```
-hermes-markdown-lint-skill/
-├── LICENSE
+markdown-lint/
 ├── README.md
-├── test/
-│   └── kitchensink.md
-└── skills/
-    └── markdown-lint/
-        ├── SKILL.md
-        ├── lint.sh
-        ├── scripts/
-        │   └── post-write.sh
-        └── references/
-            ├── fix-tables.js
-            └── .markdownlint.json
+├── SKILL.md
+├── lint.sh
+├── fix-tables.js
+├── scripts/
+│   └── post-write.sh
+├── references/
+│   ├── fix-tables.js
+│   └── .markdownlint.json
+└── test/
+    └── kitchensink.md
 ```
 
 ### Key Changes in v2.6
