@@ -56,10 +56,6 @@ The two-step pipeline fixes GFM violations that markdownlint detects — and the
 The skill includes a bundled config at `references/.markdownlint.json`. 
 `lint.sh` uses it automatically — no setup required.
 
-To customize, copy to your project root:
-
-    cp ~/.hermes/skills/markdown-lint/references/.markdownlint.json ./.markdownlint.json
-
 ### Testing
 
 Run against the test fixture:
