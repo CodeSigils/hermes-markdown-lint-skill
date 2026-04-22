@@ -11,7 +11,8 @@ Uses **markdownlint** via `npx` and **fix-tables.js** for table formatting — z
 
 ### Prerequisites
 
-**Node.js** — Hermes already includes Node.js via npx. No manual installation needed.
+- **Node.js** — Available via `npx` in Hermes environments
+- **jq** — Required for the shell hook (`post-write.sh`)
 
 ### Install the Skill
 
