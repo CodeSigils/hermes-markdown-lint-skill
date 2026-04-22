@@ -80,7 +80,7 @@ def hello():
 ### Aligned columns
 
 | Left | Center | Right |
-| :--- | :----: | ----: |
+| :--- | :-----: | ----: |
 | L    |   C    |     R |
 
 ## 6. Blockquotes

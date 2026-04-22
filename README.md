@@ -60,6 +60,12 @@ cp ~/.hermes/skills/markdown-lint/references/.markdownlint.json ./.markdownlint.
 
 Or let `lint.sh` use the bundled config automatically — no config needed to get started.
 
+### Testing
+
+Run against the test fixture:
+
+    npx markdownlint-cli2 test/kitchensink.md
+
 ### CI / Pre-commit
 
 GitHub Actions: `npx markdownlint-cli2 .`
