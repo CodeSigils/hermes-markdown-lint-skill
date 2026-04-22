@@ -4,7 +4,7 @@ description: >
   Lint and auto-fix GitHub Flavored Markdown (GFM) files. Run after creating
   or editing any .md file to enforce consistent formatting. Uses markdownlint
   via npx for zero-install linting and fix-tables.js for table separators.
-version: 2.4.0
+version: 2.5.0
 author: CodeSigils
 license: MIT
 metadata:
@@ -25,10 +25,10 @@ Load this skill whenever you create or edit a Markdown file.
 
 ## When to Use
 
--   After creating a new `.md` file
--   After editing an existing `.md` file
--   Before committing Markdown to a repository
--   When checking documentation quality
+- After creating a new `.md` file
+- After editing an existing `.md` file
+- Before committing Markdown to a repository
+- When checking documentation quality
 
 ## Prerequisites
 
@@ -73,8 +73,8 @@ npx markdownlint-cli2 <path>
 
 ### 1. After Creating a New File
 
-1.  Create the file
-2.  Run the fix command:
+1. Create the file
+2. Run the fix command:
 
 ```bash
 ${HERMES_SKILL_DIR}/lint.sh <path>
@@ -115,7 +115,7 @@ npx markdownlint-cli2 --config ~/.hermes/skills/markdown-lint/references/.markdo
 markdownlint implements MD001–MD060 rules. Key rules enforced:
 
 | Rule | Title | Description |
-| :---- | :----- | :----------- |
+| :--- | :---- | :---------- |
 | MD003 | heading-style | Use ATX headings (`#` style) |
 | MD004 | ul-style | Use dash (`-`) for unordered lists |
 | MD007 | ul-indent | Unordered list indent = 2 spaces |
@@ -127,14 +127,13 @@ markdownlint implements MD001–MD060 rules. Key rules enforced:
 | MD030 | list-marker-space | Spaces after list markers |
 | MD031 | blanks-around-fences | Blank line around fenced code blocks |
 | MD035 | hr-style | Horizontal rule style `---` |
-| MD040 | fenced-code-language | Fenced code blocks must have a language |
 | MD046 | code-block-style | Use fenced code blocks |
 | MD048 | code-fence-style | Use backticks for code fences |
 
 Rules **disabled** (too strict for prose documentation):
 
 | Rule | Title | Why Disabled
-| :---- | :----- | :------------ |
+| :--- | :---- | :----------- |
 | MD013 | line-length | Prose lines are naturally longer
 | MD024 | multiple-headings | Same h2 text in different sections is valid
 | MD025 | multiple-h1 | Multiple top-level headings allowed
@@ -142,8 +141,11 @@ Rules **disabled** (too strict for prose documentation):
 | MD033 | no-inline-html | GFM supports basic inline HTML
 | MD034 | no-bare-urls | Bare URLs auto-link in GFM
 | MD036 | emphasis-instead-of-heading | Valid use case for emphasis
-| MD041 | first-line-heading | Frontmatter makes this noisy
-| MD052 | no-bare-reference-link | Common in prose
+| MD040 | fenced-code-language | Code fences don't always need a language |
+| MD041 | first-line-heading | Frontmatter makes this noisy |
+| MD045 | no-image-size | Images need dimensions sometimes |
+| MD052 | no-bare-reference-link | Common in prose |
+| MD055 | table-pipe-style | Trailing pipes are optional |
 
 ## fix-tables.js
 
@@ -151,9 +153,9 @@ Normalizes Markdown table separators from old-style `|------|------|` to GFM-com
 `| :--- | :--- | :--- |` style with left-aligned cells (`---`).
 
 **Features:**
--   Auto-width column alignment (matches header column lengths)
--   Detects already-correct separators and skips them
--   Verbose output option
+- Auto-width column alignment (matches header column lengths)
+- Detects already-correct separators and skips them
+- Verbose output option
 
 ### Location
 
@@ -179,11 +181,11 @@ ${HERMES_SKILL_DIR}/references/fix-tables.js --check <path>
 
 ### How It Works
 
-1.  Scans for lines matching the table separator pattern
-2.  Detects column alignment from separator dashes
-3.  Replaces old-style separator with `| :--- |` matching the exact column count
-4.  Auto-width: calculates width based on header column lengths
-5.  Leaves all data rows and already-correct separators untouched
+1. Scans for lines matching the table separator pattern
+2. Detects column alignment from separator dashes
+3. Replaces old-style separator with `| :--- |` matching the exact column count
+4. Auto-width: calculates width based on header column lengths
+5. Leaves all data rows and already-correct separators untouched
 
 ## Troubleshooting
 
@@ -228,7 +230,7 @@ Exit code 0 means no violations.
 ## Quick Reference
 
 | Task | Command |
-| :---- | :------- |
+| :--- | :------ |
 | Fix file | `${HERMES_SKILL_DIR}/lint.sh <path>` |
 | Fix all | `${HERMES_SKILL_DIR}/lint.sh --all .` |
 | Check only | `${HERMES_SKILL_DIR}/lint.sh --check <path>` |

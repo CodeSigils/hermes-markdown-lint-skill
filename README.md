@@ -75,14 +75,14 @@ Or with the full pipeline:
 ```yaml
 - name: Lint Markdown
   run: |
-    node .github/lint/fix-tables.js . && npx markdownlint-cli2 . --fix
+    npx markdownlint-cli2 . --fix
 ```
 
 **Pre-commit hook:**
 
 ```yaml
 # .pre-commit-config.yaml
-- repo: https://github.com/ nousresearch/pre-commit-hooks
+- repo: https://github.com/nousresearch/pre-commit-hooks
   hooks:
     - id: markdownlint
 ```
@@ -116,10 +116,15 @@ hermes-markdown-lint-skill/
             └── .markdownlint.json
 ```
 
+### Key Changes in v2.5
+
+-   Disable MD040 (fenced-code-language) and MD055 (table-pipe-style) — too strict for prose
+-   Fix column alignment to match VSCode/marktext format (header.length - 1)
+-   Remove glob dependency, use recursive fs.walk instead
+
 ### Key Changes in v2.4
 
--   Enable MD030 (list-marker-space) and MD040 (fenced-code-language) — strict GFM compliance
--   Fix auto-width off-by-one in fix-tables.js
+-   Enable MD030 (list-marker-space) — strict GFM compliance
 
 ### Key Changes in v2.3
 
