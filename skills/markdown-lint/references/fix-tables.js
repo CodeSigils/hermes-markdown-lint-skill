@@ -73,11 +73,6 @@ function _buildAlignedSeparator(headerLine, separatorLine) {
     const separatorCells = _parseCellsRaw(separatorLine.trim());
     const alignments = separatorCells.map(c => _getSeparatorAlignment(c.trim()));
 
-    if (alignments.every(a => a === 'left')) {
-        alignments.length = headerCells.length;
-        alignments.fill('left');
-    }
-
     const parts = [];
     for (let i = 0; i < headerCells.length; i++) {
         const align = alignments[i] || 'left';
@@ -85,9 +80,7 @@ function _buildAlignedSeparator(headerLine, separatorLine) {
         const minDashes = Math.max(3, cellWidth - 1);
         let sep;
         if (align === 'center') {
-            const left = Math.floor((minDashes) / 2);
-            const right = minDashes - left;
-            sep = ':' + '-'.repeat(left) + '-'.repeat(right) + ':';
+            sep = ':' + '-'.repeat(minDashes) + ':';
         } else if (align === 'right') {
             sep = '-'.repeat(minDashes) + ':';
         } else {
@@ -100,6 +93,7 @@ function _buildAlignedSeparator(headerLine, separatorLine) {
 }
 
 function _fixFileInContent(content) {
+    const hasTrailingNewline = content.endsWith('\n');
     const lines = content.split('\n');
     const newLines = [...lines];
     let changed = 0;
@@ -114,7 +108,7 @@ function _fixFileInContent(content) {
         if (!_parseCellsRaw(headerLine).length) continue;
 
         const cells = _parseCellsRaw(line.trim());
-        if (cells.every(c => c.trim() === ':---')) {
+        if (_isSeparatorAlreadyCorrect(cells)) {
             continue;
         }
 
@@ -124,10 +118,22 @@ function _fixFileInContent(content) {
         fixedLines.push(i + 1);
     }
 
+    let newContent = newLines.join('\n');
+    if (hasTrailingNewline && !newContent.endsWith('\n')) {
+        newContent += '\n';
+    }
+
     if (changed === 0) {
         return { content, changed: 0, fixedLines: [] };
     }
-    return { content: newLines.join('\n'), changed, fixedLines };
+    return { content: newContent, changed, fixedLines };
+}
+
+function _isSeparatorAlreadyCorrect(cells) {
+    return cells.every(c => {
+        const t = c.trim();
+        return t === ':---' || t === '---:' || t === ':---:';
+    });
 }
 
 function fixFile(filePath, options = {}) {

@@ -108,7 +108,6 @@ markdownlint implements MD001–MD060 rules. Key rules enforced:
 | MD029 | ol-prefix | Ordered list prefix style |
 | MD030 | list-marker-space | Spaces after list markers |
 | MD031 | blanks-around-fences | Blank line around fenced code blocks |
-| MD032 | blanks-around-lists | Blank line before and after lists |
 | MD035 | hr-style | Horizontal rule style `---` |
 | MD046 | code-block-style | Use fenced code blocks |
 | MD048 | code-fence-style | Use backticks for code fences |
@@ -187,7 +186,7 @@ npx markdownlint-cli2 . --fix
 Or pass the config explicitly:
 
 ```bash
-npx markdownlint-cli2 --config ~/.hermes/skills/markdown-lint/references/.markdownlint.json . --fix
+npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json . --fix
 ```
 
 ### `--fix` does not fix everything in one pass
