@@ -66,6 +66,21 @@ Run against the test fixture:
 
     npx markdownlint-cli2 test/kitchensink.md
 
+### Auto-Lint on Write
+
+To auto-lint every markdown file Hermes writes, add a shell hook to your config.
+
+**Edit `~/.hermes/config.yaml`:**
+
+```yaml
+hooks:
+  post_tool_call:
+    - matcher: "write_file"
+      command: "~/.hermes/skills/markdown-lint/scripts/post-write.sh"
+```
+
+Restart Hermes (CLI or gateway) for the hook to activate.
+
 ### CI / Pre-commit
 
 GitHub Actions: `npx markdownlint-cli2 .`
