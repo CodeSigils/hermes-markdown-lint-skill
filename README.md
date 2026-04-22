@@ -22,13 +22,18 @@ hermes skills install CodeSigils/hermes-markdown-lint-skill/markdown-lint
 ### Quick Start
 
 ```bash
-# Two-step pipeline (recommended)
-${HERMES_SKILL_DIR}/references/fix-tables.js <path> && npx markdownlint-cli2 <path> --fix
+# One-liner (recommended — self-contained, finds npx automatically)
+${HERMES_SKILL_DIR}/lint.sh <path>
+
+# Options
+${HERMES_SKILL_DIR}/lint.sh --check <path>   # Read-only check
+${HERMES_SKILL_DIR}/lint.sh --all <dir>      # Fix all .md in directory
 ```
 
-Or after installation:
+Or use the two-step pipeline manually:
+
 ```bash
-hermes markdown-lint <path>
+${HERMES_SKILL_DIR}/references/fix-tables.js <path> && npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix
 ```
 
 Step 1 normalizes table separators.
@@ -66,14 +71,16 @@ hermes-markdown-lint-skill/
 └── skills/
     └── markdown-lint/
         ├── SKILL.md                          # Skill document
+        ├── lint.sh                           # One-liner wrapper (recommended)
         └── references/
-            ├── fix-tables.js                 # Table separator normalizer (Node.js)
+            ├── fix-tables.js                # Table separator normalizer (Node.js)
             └── .markdownlint.json            # Lint rule config
 ```
 
-### Key Changes in v2.1
+### Key Changes in v2.3
 
-- Migrated to Node.js stack (fix-tables.js instead of fix-tables.py)
+- Add `lint.sh`: self-contained bash wrapper that resolves npx across environments
+  (PATH, corepack, zed/node) — no PATH dependency for end users
 - Added auto-width column alignment for tables
 - Added MD060, MD025, MD032 disabled rules
 - Removed duplicate configuration
