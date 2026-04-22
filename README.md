@@ -39,6 +39,17 @@ ${HERMES_SKILL_DIR}/references/fix-tables.js <path> && npx markdownlint-cli2 --c
 Step 1 normalizes table separators.
 Step 2 fixes everything else.
 
+### What It Does
+
+The two-step pipeline fixes GFM violations that markdownlint detects — and the one thing it can't handle alone:
+
+| Problem | Fix |
+| :------ | :--- |
+| Raw dashes in table separators (`&#124;------&#124;`) | GFM-compliant separators (`&#124; :--- &#124;`) |
+| Heading without surrounding blank lines | Blank lines added before and after headings |
+| Tabs instead of spaces in indentation | Converted to spaces |
+| Multiple consecutive blank lines | Collapsed to single blank line |
+
 ### Configuration
 
 Copy the reference config to your project:
@@ -47,16 +58,44 @@ Copy the reference config to your project:
 cp ~/.hermes/skills/markdown-lint/references/.markdownlint.json ./.markdownlint.json
 ```
 
+Or let `lint.sh` use the bundled config automatically — no config needed to get started.
+
+### CI / Pre-commit
+
+**GitHub Actions:**
+
+```yaml
+- name: Lint Markdown
+  run: |
+    npx markdownlint-cli2 .
+```
+
+Or with the full pipeline:
+
+```yaml
+- name: Lint Markdown
+  run: |
+    node .github/lint/fix-tables.js . && npx markdownlint-cli2 . --fix
+```
+
+**Pre-commit hook:**
+
+```yaml
+# .pre-commit-config.yaml
+- repo: https://github.com/ nousresearch/pre-commit-hooks
+  hooks:
+    - id: markdownlint
+```
+
 ---
 
 ## Official Hermes Skills Documentation
 
 Learn more about creating and managing Hermes skills:
 
-- [Creating Skills](https://hermes-agent.nousresearch.com/docs/developer-guide/creating-skills) - Official guide
-- [Skills System](https://hermes-agent.ai/blog/hermes-agent-skills-guide) - Skills guide
-- [Skills User Guide](https://hermes-agent.nousresearch.com/docs/user-guide/features/skills) - Using skills
-- [agentskills.io](https://agentskills.io) - Open standard (compatible with Claude, OpenAI, etc.)
+-   [Creating Skills](https://hermes-agent.nousresearch.com/docs/developer-guide/creating-skills) - Official guide
+-   [Skills User Guide](https://hermes-agent.nousresearch.com/docs/user-guide/features/skills) - Using skills
+-   [agentskills.io](https://agentskills.io) - Open standard (compatible with Claude, OpenAI, etc.)
 
 ---
 
@@ -70,21 +109,25 @@ hermes-markdown-lint-skill/
 ├── LICENSE
 └── skills/
     └── markdown-lint/
-        ├── SKILL.md                          # Skill document
-        ├── lint.sh                           # One-liner wrapper (recommended)
+        ├── SKILL.md
+        ├── lint.sh
         └── references/
-            ├── fix-tables.js                # Table separator normalizer (Node.js)
-            └── .markdownlint.json            # Lint rule config
+            ├── fix-tables.js
+            └── .markdownlint.json
 ```
 
 ### Key Changes in v2.3
 
-- Add `lint.sh`: self-contained bash wrapper that resolves npx across environments
-  (PATH, corepack, zed/node) — no PATH dependency for end users
-- Added auto-width column alignment for tables
-- Added MD060, MD025, MD032 disabled rules
-- Removed duplicate configuration
-- Updated frontmatter to Hermes 2.x format
+-   Add `lint.sh`: self-contained bash wrapper that resolves npx across environments
+    (PATH, corepack, zed/node) — no PATH dependency for end users
+
+### Key Changes in v2.1
+
+-   Migrated to Node.js stack (fix-tables.js instead of fix-tables.py)
+-   Added auto-width column alignment for tables
+-   Added MD060, MD025, MD032 disabled rules
+-   Removed duplicate configuration
+-   Updated frontmatter to Hermes 2.x format
 
 ### Adding to Your Own Tap
 
