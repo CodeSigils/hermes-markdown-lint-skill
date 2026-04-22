@@ -4,15 +4,15 @@ description: >
   Lint and auto-fix GitHub Flavored Markdown (GFM) files. Run after creating
   or editing any .md file to enforce consistent formatting. Uses markdownlint
   via npx for zero-install linting and fix-tables.js for table separators.
-version: 2.1.0
-author: Hermes Agent
+version: 2.2.0
+author: CodeSigils
 license: MIT
 metadata:
   hermes:
     tags: [markdown, lint, gfm, github, formatting, quality, documentation]
     category: devtools
 required_environment_variables: []
-required_commands: ["node", "npx"]
+required_commands: ["npx"]
 ---
 
 # Markdown Lint
