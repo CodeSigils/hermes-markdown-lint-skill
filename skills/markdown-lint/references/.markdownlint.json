@@ -8,7 +8,7 @@
   "MD013": false,
   "MD024": false,
   "MD025": false,
-  "MD026": { "punctuation": ".,;:" },
+  "MD026": { "punctuation": ".,;:!" },
   "MD029": { "style": "ordered" },
   "MD030": true,
   "MD032": false,
@@ -16,12 +16,13 @@
   "MD034": false,
   "MD035": { "style": "---" },
   "MD036": false,
-  "MD040": true,
+  "MD040": false,
   "MD041": false,
   "MD045": true,
   "MD046": { "style": "fenced" },
   "MD047": true,
   "MD048": { "style": "backtick" },
   "MD052": false,
+  "MD055": false,
   "MD060": false
 }
