@@ -88,15 +88,20 @@ Use the included `watch.sh` script with [entr](https://entrz.org) to auto-lint w
 apt install entr        # Debian/Ubuntu
 brew install entr      # macOS
 
-# Watch ~/notes (or any directory)
+# Watch recursively (default: $HOME)
+./watch.sh
+
+# Or watch a specific directory
 ./watch.sh ~/notes
 ```
 
 Run in background:
 
 ```bash
-./watch.sh ~/notes &
+./watch.sh &
 ```
+
+**Note:** Watches recursively — any .md file created anywhere in the target directory will be linted.
 
 ---
 
