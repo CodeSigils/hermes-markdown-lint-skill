@@ -115,7 +115,7 @@ npx markdownlint-cli2 --config ~/.hermes/skills/markdown-lint/references/.markdo
 markdownlint implements MD001–MD060 rules. Key rules enforced:
 
 | Rule | Title | Description |
-| :--- | :---- | :---------- |
+| :---- | :----- | :----------- |
 | MD003 | heading-style | Use ATX headings (`#` style) |
 | MD004 | ul-style | Use dash (`-`) for unordered lists |
 | MD007 | ul-indent | Unordered list indent = 2 spaces |
@@ -134,7 +134,7 @@ markdownlint implements MD001–MD060 rules. Key rules enforced:
 Rules **disabled** (too strict for prose documentation):
 
 | Rule | Title | Why Disabled
-| :--- | :---- | :-----------
+| :---- | :----- | :------------ |
 | MD013 | line-length | Prose lines are naturally longer
 | MD024 | multiple-headings | Same h2 text in different sections is valid
 | MD025 | multiple-h1 | Multiple top-level headings allowed
@@ -228,7 +228,7 @@ Exit code 0 means no violations.
 ## Quick Reference
 
 | Task | Command |
-| :--- | :------ |
+| :---- | :------- |
 | Fix file | `${HERMES_SKILL_DIR}/lint.sh <path>` |
 | Fix all | `${HERMES_SKILL_DIR}/lint.sh --all .` |
 | Check only | `${HERMES_SKILL_DIR}/lint.sh --check <path>` |

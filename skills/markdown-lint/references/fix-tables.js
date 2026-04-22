@@ -17,7 +17,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const glob = require('glob');
 
 function _parseCellsRaw(line) {
     const cells = [];
@@ -76,15 +75,15 @@ function _buildAlignedSeparator(headerLine, separatorLine) {
     const parts = [];
     for (let i = 0; i < headerCells.length; i++) {
         const align = alignments[i] || 'left';
-        const cellWidth = Math.max(headerCells[i].length, 3);
-        const minDashes = Math.max(3, cellWidth);
+        // VSCode/marktext format: header length - 1, min 3 dashes
+        const cellWidth = Math.max(3, headerCells[i].length - 1);
         let sep;
         if (align === 'center') {
-            sep = ':' + '-'.repeat(minDashes) + ':';
+            sep = ':' + '-'.repeat(cellWidth) + ':';
         } else if (align === 'right') {
-            sep = '-'.repeat(minDashes) + ':';
+            sep = '-'.repeat(cellWidth) + ':';
         } else {
-            sep = ':' + '-'.repeat(minDashes);
+            sep = ':' + '-'.repeat(cellWidth);
         }
         parts.push(' ' + sep + ' ');
     }
@@ -172,6 +171,26 @@ function fixStdin() {
     });
 }
 
+// Find all .md files recursively (replaces glob)
+function findMdFiles(dir) {
+    const files = [];
+    if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
+        return files;
+    }
+    function walk(subdir) {
+        for (const entry of fs.readdirSync(subdir, { withFileTypes: true })) {
+            const full = path.join(subdir, entry.name);
+            if (entry.isDirectory() && !entry.name.startsWith('.') && entry.name !== 'node_modules') {
+                walk(full);
+            } else if (entry.isFile() && entry.name.endsWith('.md')) {
+                files.push(full);
+            }
+        }
+    }
+    walk(dir);
+    return files;
+}
+
 function main() {
     const args = process.argv.slice(2);
 
@@ -205,8 +224,7 @@ function main() {
     }
 
     if (directory) {
-        const pattern = path.join(directory, '**/*.md');
-        const matches = glob.sync(pattern);
+        const matches = findMdFiles(directory);
         files.push(...matches);
     }
 

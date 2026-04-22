@@ -44,7 +44,7 @@ Step 2 fixes everything else.
 The two-step pipeline fixes GFM violations that markdownlint detects — and the one thing it can't handle alone:
 
 | Problem | Fix |
-| :------ | :--- |
+| :------- | :--- |
 | Raw dashes in table separators (`&#124;------&#124;`) | GFM-compliant separators (`&#124; :--- &#124;`) |
 | Heading without surrounding blank lines | Blank lines added before and after headings |
 | Tabs instead of spaces in indentation | Converted to spaces |
