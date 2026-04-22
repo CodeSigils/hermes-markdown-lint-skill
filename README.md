@@ -11,22 +11,7 @@ Uses **markdownlint** via `npx` and **fix-tables.js** for table formatting — z
 
 ### Prerequisites
 
-**Node.js** — required for running the linter.
-
-```bash
-# Install Node.js
-# macOS
-brew install node
-
-# Ubuntu/Debian
-apt install nodejs npm
-```
-
-Verify:
-
-```bash
-node --version
-```
+**Node.js** — Hermes already includes Node.js via npx. No manual installation needed.
 
 ### Install the Skill
 

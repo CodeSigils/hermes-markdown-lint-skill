@@ -32,13 +32,7 @@ Load this skill whenever you create or edit a Markdown file.
 
 ## Prerequisites
 
-**Node.js** — required for running the linter and fix-tables.js.
-
-Verify:
-
-```bash
-node --version
-```
+This skill uses **npx** which comes with Node.js. Hermes already has Node.js available.
 
 ## Quick Start
 
@@ -179,23 +173,7 @@ ${HERMES_SKILL_DIR}/references/fix-tables.js --check <path>
 
 ### markdownlint-cli2: command not found
 
-Ensure Node.js is installed:
-
-```bash
-# Install Node.js
-# macOS
-brew install node
-
-# Ubuntu/Debian
-apt install nodejs npm
-```
-
-Verify:
-
-```bash
-node --version
-npx --version
-```
+Hermes includes Node.js via npx. No manual installation needed.
 
 ### Config file not found
 
