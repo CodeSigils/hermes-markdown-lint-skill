@@ -79,30 +79,6 @@ Pre-commit:
     - id: markdownlint
 ```
 
-### Auto-run on File Changes
-
-Use the included `watch.sh` script with [entr](https://entrz.org) to auto-lint when files change:
-
-```bash
-# Install entr first
-apt install entr        # Debian/Ubuntu
-brew install entr      # macOS
-
-# Watch recursively (default: $HOME)
-./watch.sh
-
-# Or watch a specific directory
-./watch.sh ~/notes
-```
-
-Run in background:
-
-```bash
-./watch.sh &
-```
-
-**Note:** Watches recursively — any .md file created anywhere in the target directory will be linted.
-
 ---
 
 ## Official Hermes Skills Documentation
