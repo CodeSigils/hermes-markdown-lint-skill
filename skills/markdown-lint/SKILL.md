@@ -167,16 +167,35 @@ ${HERMES_SKILL_DIR}/references/fix-tables.js
 
 ```bash
 # Fix specific file
-${HERMES_SKILL_DIR}/references/fix-tables.js <path>
+${HERMES_SKILL_DIR}/lint.sh <path>
+
+# Check only (read-only, exit 0 if clean)
+${HERMES_SKILL_DIR}/lint.sh --check <path>
 
 # Fix all .md in directory
-${HERMES_SKILL_DIR}/references/fix-tables.js --all <directory>
+${HERMES_SKILL_DIR}/lint.sh --all <directory>
+```
 
-# Verbose output
-${HERMES_SKILL_DIR}/references/fix-tables.js -v <path>
+### Post-File-Write
 
-# Check only (exit non-zero if fixes needed)
-${HERMES_SKILL_DIR}/references/fix-tables.js --check <path>
+To auto-lint after Hermes creates a markdown file, add a post-write hook.
+
+Hermes will invoke: `${HERMES_SKILL_DIR}/scripts/post-write.sh <file>`
+
+Create a post-write script:
+
+```bash
+#!/bin/bash
+# Post-write hook — runs afterHermes writes a file
+# Usage: post-write.sh 
+set -euo pipefail
+
+FILE="$1"
+[ -f "$FILE" ] || exit 0
+
+case "$FILE" in
+    *.md) "${HERMES_SKILL_DIR}/lint.sh" "$FILE" ;;
+esac
 ```
 
 ### How It Works
