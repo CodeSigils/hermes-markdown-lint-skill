@@ -31,9 +31,10 @@ hooks:
   post_tool_call:
     - matcher: "write_file"
       command: "~/.hermes/skills/markdown-lint/scripts/post-write.sh"
+hooks_auto_accept: true
 ```
 
-Restart Hermes (CLI or gateway) for the hook to activate.
+Restart Hermes (CLI or gateway) for the hook to activate. Set `hooks_auto_accept: true` to lint silently without prompts.
 
 ### Quick Start
 
