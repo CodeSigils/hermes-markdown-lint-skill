@@ -11,7 +11,7 @@
   "MD026": { "punctuation": ".,;:!" },
   "MD029": { "style": "ordered" },
   "MD030": true,
-  "MD032": false,
+  "MD032": true,
   "MD033": true,
   "MD034": false,
   "MD035": { "style": "---" },
