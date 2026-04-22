@@ -19,7 +19,7 @@ Uses **markdownlint** via `npx` and **fix-tables.js** for table formatting — z
 brew install node
 
 # Ubuntu/Debian
-sudo apt install nodejs npm
+apt install nodejs npm
 ```
 
 Verify:

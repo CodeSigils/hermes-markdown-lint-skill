@@ -187,7 +187,7 @@ Ensure Node.js is installed:
 brew install node
 
 # Ubuntu/Debian
-sudo apt install nodejs npm
+apt install nodejs npm
 ```
 
 Verify:
