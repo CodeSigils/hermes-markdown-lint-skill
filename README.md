@@ -131,6 +131,7 @@ markdown-lint/
 
 - Re-enable MD040 (fenced-code-language) and MD055 (table-pipe-style) — skill now enforces both strictly
 - Enable MD032 (blanks-around-lists) — lists must be surrounded by blank lines
+- Enable MD060 (table-column-style) — table pipes must align with header content
 - Add `hooks_auto_accept: true` for silent auto-lint on write
 
 ### Key Changes in v2.5
