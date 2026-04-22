@@ -108,6 +108,11 @@ hermes-markdown-lint-skill/
             └── .markdownlint.json
 ```
 
+### Key Changes in v2.6
+
+- Add shell hook `scripts/post-write.sh` for auto-lint on write_file
+- Add to `~/.hermes/config.yaml` to enable auto-lint
+
 ### Key Changes in v2.5
 
 - Disable MD040 (fenced-code-language) and MD055 (table-pipe-style) — too strict for prose

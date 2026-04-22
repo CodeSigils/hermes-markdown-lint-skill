@@ -4,7 +4,7 @@ description: >
   Lint and auto-fix GitHub Flavored Markdown (GFM) files. Run after creating
   or editing any .md file to enforce consistent formatting. Uses markdownlint
   via npx for zero-install linting and fix-tables.js for table separators.
-version: 2.5.0
+version: 2.6.0
 author: CodeSigils
 license: MIT
 metadata:
@@ -176,27 +176,20 @@ ${HERMES_SKILL_DIR}/lint.sh --check <path>
 ${HERMES_SKILL_DIR}/lint.sh --all <directory>
 ```
 
-### Post-File-Write
+### Auto-Lint on Write (Shell Hook)
 
-To auto-lint after Hermes creates a markdown file, add a post-write hook.
+To auto-lint after Hermes writes a markdown file, use a shell hook.
 
-Hermes will invoke: `${HERMES_SKILL_DIR}/scripts/post-write.sh <file>`
+**Add to `~/.hermes/config.yaml`:**
 
-Create a post-write script:
-
-```bash
-#!/bin/bash
-# Post-write hook — runs afterHermes writes a file
-# Usage: post-write.sh 
-set -euo pipefail
-
-FILE="$1"
-[ -f "$FILE" ] || exit 0
-
-case "$FILE" in
-    *.md) "${HERMES_SKILL_DIR}/lint.sh" "$FILE" ;;
-esac
+```yaml
+hooks:
+  post_tool_call:
+    - matcher: "write_file"
+      command: "~/.hermes/skills/markdown-lint/scripts/post-write.sh"
 ```
+
+The script receives JSON payload via stdin (Hermes shell hook protocol) and lints the file automatically.
 
 ### How It Works
 
