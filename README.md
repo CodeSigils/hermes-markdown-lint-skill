@@ -53,13 +53,12 @@ The two-step pipeline fixes GFM violations that markdownlint detects — and the
 
 ### Configuration
 
-Copy the reference config to your project:
+The skill includes a bundled config at `references/.markdownlint.json`. 
+`lint.sh` uses it automatically — no setup required.
 
-```bash
-cp ~/.hermes/skills/markdown-lint/references/.markdownlint.json ./.markdownlint.json
-```
+To customize, copy to your project root:
 
-Or let `lint.sh` use the bundled config automatically — no config needed to get started.
+    cp ~/.hermes/skills/markdown-lint/references/.markdownlint.json ./.markdownlint.json
 
 ### Testing
 
