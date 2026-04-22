@@ -20,6 +20,21 @@ Uses **markdownlint** via `npx` and **fix-tables.js** for table formatting — z
 hermes skills install CodeSigils/hermes-markdown-lint-skill/markdown-lint
 ```
 
+### Post installation: Auto-Lint on Write
+
+To auto-lint every markdown file Hermes writes, add a shell hook to your config.
+
+**Edit `~/.hermes/config.yaml`:**
+
+```yaml
+hooks:
+  post_tool_call:
+    - matcher: "write_file"
+      command: "~/.hermes/skills/markdown-lint/scripts/post-write.sh"
+```
+
+Restart Hermes (CLI or gateway) for the hook to activate.
+
 ### Quick Start
 
 ```bash
@@ -62,21 +77,6 @@ Run against the test fixture:
 
     npx markdownlint-cli2 test/kitchensink.md
 
-### Auto-Lint on Write
-
-To auto-lint every markdown file Hermes writes, add a shell hook to your config.
-
-**Edit `~/.hermes/config.yaml`:**
-
-```yaml
-hooks:
-  post_tool_call:
-    - matcher: "write_file"
-      command: "~/.hermes/skills/markdown-lint/scripts/post-write.sh"
-```
-
-Restart Hermes (CLI or gateway) for the hook to activate.
-
 ### CI / Pre-commit
 
 GitHub Actions: `npx markdownlint-cli2 .`
@@ -108,12 +108,16 @@ Learn more about creating and managing Hermes skills:
 
 ```
 hermes-markdown-lint-skill/
-├── README.md
 ├── LICENSE
+├── README.md
+├── test/
+│   └── kitchensink.md
 └── skills/
     └── markdown-lint/
         ├── SKILL.md
         ├── lint.sh
+        ├── scripts/
+        │   └── post-write.sh
         └── references/
             ├── fix-tables.js
             └── .markdownlint.json
