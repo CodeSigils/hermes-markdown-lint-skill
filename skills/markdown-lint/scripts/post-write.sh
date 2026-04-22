@@ -1,6 +1,8 @@
 #!/bin/bash
 # Shell hook for post_tool_call — lints markdown files after write_file
 # Receives JSON payload via stdin from Hermes
+#
+# IMPORTANT: Requires jq to be installed. See README > Prerequisites.
 set -eo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
