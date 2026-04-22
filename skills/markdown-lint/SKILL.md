@@ -4,7 +4,7 @@ description: >
   Lint and auto-fix GitHub Flavored Markdown (GFM) files. Run after creating
   or editing any .md file to enforce consistent formatting. Uses markdownlint
   via npx for zero-install linting and fix-tables.js for table separators.
-version: 2.3.0
+version: 2.4.0
 author: CodeSigils
 license: MIT
 metadata:
@@ -127,24 +127,23 @@ markdownlint implements MD001–MD060 rules. Key rules enforced:
 | MD030 | list-marker-space | Spaces after list markers |
 | MD031 | blanks-around-fences | Blank line around fenced code blocks |
 | MD035 | hr-style | Horizontal rule style `---` |
+| MD040 | fenced-code-language | Fenced code blocks must have a language |
 | MD046 | code-block-style | Use fenced code blocks |
 | MD048 | code-fence-style | Use backticks for code fences |
 
 Rules **disabled** (too strict for prose documentation):
 
-| Rule | Title | Why Disabled |
-| :--- | :---- | :----------- |
-| MD013 | line-length | Prose lines are naturally longer |
-| MD024 | multiple-headings | Same h2 text in different sections is valid |
-| MD025 | multiple-h1 | Multiple top-level headings allowed |
-| MD032 | list-indent | Lists can vary by content |
-| MD033 | no-inline-html | GFM supports basic inline HTML |
-| MD034 | no-bare-urls | Bare URLs auto-link in GFM |
-| MD036 | emphasis-instead-of-heading | Valid use case for emphasis |
-| MD040 | fenced-code-language | Empty code fences are acceptable |
-| MD041 | first-line-heading | Frontmatter makes this noisy |
-| MD052 | no-bare-reference-link | Common in prose |
-| MD060 | table-column-style | fix-tables.js handles this separately |
+| Rule | Title | Why Disabled
+| :--- | :---- | :-----------
+| MD013 | line-length | Prose lines are naturally longer
+| MD024 | multiple-headings | Same h2 text in different sections is valid
+| MD025 | multiple-h1 | Multiple top-level headings allowed
+| MD032 | list-indent | Lists can vary by content
+| MD033 | no-inline-html | GFM supports basic inline HTML
+| MD034 | no-bare-urls | Bare URLs auto-link in GFM
+| MD036 | emphasis-instead-of-heading | Valid use case for emphasis
+| MD041 | first-line-heading | Frontmatter makes this noisy
+| MD052 | no-bare-reference-link | Common in prose
 
 ## fix-tables.js
 

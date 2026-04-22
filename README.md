@@ -116,6 +116,11 @@ hermes-markdown-lint-skill/
             └── .markdownlint.json
 ```
 
+### Key Changes in v2.4
+
+-   Enable MD030 (list-marker-space) and MD040 (fenced-code-language) — strict GFM compliance
+-   Fix auto-width off-by-one in fix-tables.js
+
 ### Key Changes in v2.3
 
 -   Add `lint.sh`: self-contained bash wrapper that resolves npx across environments

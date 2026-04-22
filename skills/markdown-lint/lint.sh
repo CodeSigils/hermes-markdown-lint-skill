@@ -62,11 +62,13 @@ if [[ -z "$TARGET" ]]; then
     usage
 fi
 
-# Step 1: Normalize table separators
-if [[ -d "$TARGET" ]]; then
-    find "$TARGET" -name "*.md" -exec node "$FIX_TABLES" {} \;
-else
-    node "$FIX_TABLES" "$TARGET"
+# Step 1: Normalize table separators (skip if --check mode)
+if [[ "$CHECK" != true ]]; then
+    if [[ -d "$TARGET" ]]; then
+        find "$TARGET" -name "*.md" -exec node "$FIX_TABLES" {} \;
+    else
+        node "$FIX_TABLES" "$TARGET"
+    fi
 fi
 
 # Step 2: markdownlint with skill config

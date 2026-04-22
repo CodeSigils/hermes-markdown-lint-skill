@@ -77,7 +77,7 @@ function _buildAlignedSeparator(headerLine, separatorLine) {
     for (let i = 0; i < headerCells.length; i++) {
         const align = alignments[i] || 'left';
         const cellWidth = Math.max(headerCells[i].length, 3);
-        const minDashes = Math.max(3, cellWidth - 1);
+        const minDashes = Math.max(3, cellWidth);
         let sep;
         if (align === 'center') {
             sep = ':' + '-'.repeat(minDashes) + ':';
