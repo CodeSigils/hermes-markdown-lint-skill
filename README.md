@@ -69,14 +69,16 @@ The two-step pipeline fixes GFM violations that markdownlint detects — and the
 
 ### Configuration
 
-The skill includes a bundled config at `references/.markdownlint.json`. 
+The skill includes a bundled config at `references/.markdownlint.json`.
 `lint.sh` uses it automatically — no setup required.
 
 ### Testing
 
 Run against the test fixture:
 
-    npx markdownlint-cli2 test/kitchensink.md
+```
+npx markdownlint-cli2 test/kitchensink.md
+```
 
 ### CI / Pre-commit
 

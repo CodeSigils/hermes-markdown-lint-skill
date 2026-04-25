@@ -153,6 +153,7 @@ Normalizes Markdown table separators from old-style `|------|------|` to GFM-com
 `| :--- | :--- | :--- |` style with left-aligned cells (`---`).
 
 **Features:**
+
 - Auto-width column alignment (matches header column lengths)
 - Detects already-correct separators and skips them
 - Verbose output option
