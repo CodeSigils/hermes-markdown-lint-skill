@@ -60,12 +60,12 @@ Step 2 fixes everything else.
 
 The two-step pipeline fixes GFM violations that markdownlint detects — and the one thing it can't handle alone:
 
-| Problem                           | Fix                                                   |
-| :------------------------------ | :--------------------------------------------------- |
-| Raw dashes in table separators    | GFM-compliant separators                      |
+| Problem                                | Fix                                        |
+| :-------------------------------------- | :------------------------------------------ |
+| Raw dashes in table separators          | GFM-compliant separators                    |
 | Heading without surrounding blank lines | Blank lines added before and after headings |
-| Tabs instead of spaces in indentation | Converted to spaces                     |
-| Multiple consecutive blank lines | Collapsed to single blank line           |
+| Tabs instead of spaces in indentation   | Converted to spaces                         |
+| Multiple consecutive blank lines        | Collapsed to single blank line              |
 
 ### Configuration
 
@@ -145,7 +145,7 @@ markdown-lint/
 ### Key Changes in v2.3
 
 - Add `lint.sh`: self-contained bash wrapper that resolves npx across environments
-    (PATH, corepack, zed/node) — no PATH dependency for end users
+  (PATH, corepack, zed/node) — no PATH dependency for end users
 
 ### Key Changes in v2.1
 
