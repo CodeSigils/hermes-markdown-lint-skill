@@ -177,11 +177,9 @@ ${HERMES_SKILL_DIR}/lint.sh --check <path>
 ${HERMES_SKILL_DIR}/lint.sh --all <directory>
 ```
 
-### Auto-Lint on Write (Shell Hook)
+### Auto-Lint on Write (Hermes Shell Hook)
 
-To auto-lint after Hermes writes a markdown file, use a shell hook.
-
-**Add to `~/.hermes/config.yaml`:**
+Hermes supports `post_tool_call` hooks via `~/.hermes/config.yaml`:
 
 ```yaml
 hooks:
@@ -189,6 +187,8 @@ hooks:
     - matcher: "write_file"
       command: "~/.hermes/skills/markdown-lint/scripts/post-write.sh"
 ```
+
+> **Note:** OpenCode does NOT support hooks in `opencode.jsonc`. Do not document OpenCode hook configs — use git pre-commit hooks or shell aliases instead.
 
 The script receives JSON payload via stdin (Hermes shell hook protocol) and lints the file automatically.
 
