@@ -1,5 +1,14 @@
 # Hermes Agent Instructions
 
+## Official Standards
+
+When working in Hermes skill repos, follow these conventions:
+
+- **Skill structure**: Use `skills/<skill-name>/SKILL.md` as the entry point
+- **Entry commands**: Use `skills/<skill-name>/lint.sh` or documented CLI tools
+- **Hermes hooks**: Use `skills/<skill-name>/scripts/post-write.sh` via hooks config
+- **Verification**: Cross-reference config against SKILL.md rules tables
+
 ## Agent Best Practices
 
 Follow these principles in all work:
