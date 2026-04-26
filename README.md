@@ -76,8 +76,8 @@ The skill includes a bundled config at `references/.markdownlint.json`.
 
 Run against the test fixture:
 
-```
-npx markdownlint-cli2 test/kitchensink.md
+```bash
+npx markdownlint-cli2 --config skills/markdown-lint/references/.markdownlint.json test/kitchensink.md
 ```
 
 ### CI / Pre-commit
@@ -88,7 +88,7 @@ Pre-commit:
 
 ```yaml
 # .pre-commit-config.yaml
-- repo: https://github.com/nousresearch/pre-commit-hooks
+- repo: https://github.com/pre-commit/pre-commit-hooks
   hooks:
     - id: markdownlint
 ```
@@ -114,7 +114,6 @@ markdown-lint/
 ├── README.md
 ├── SKILL.md
 ├── lint.sh
-├── fix-tables.js
 ├── scripts/
 │   └── post-write.sh
 ├── references/
@@ -128,10 +127,7 @@ markdown-lint/
 
 - Add shell hook `scripts/post-write.sh` for auto-lint on write_file
 - Add to `~/.hermes/config.yaml` to enable auto-lint
-
-### Key Changes in v2.6
-
-- Re-enable MD040 (fenced-code-language) and MD055 (table-pipe-style) — skill now enforces both strictly
+- Enable MD055 (table-pipe-style) — enforces trailing pipes on all tables
 - Enable MD032 (blanks-around-lists) — lists must be surrounded by blank lines
 - Enable MD060 (table-column-style) — table pipes must align with header content
 - Add `hooks_auto_accept: true` for silent auto-lint on write

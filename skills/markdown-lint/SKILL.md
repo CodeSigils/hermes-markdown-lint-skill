@@ -4,15 +4,13 @@ description: >
   Lint and auto-fix GitHub Flavored Markdown (GFM) files. Run after creating
   or editing any .md file to enforce consistent formatting. Uses markdownlint
   via npx for zero-install linting and fix-tables.js for table separators.
-version: 2.6.0
-author: CodeSigils
 license: MIT
 metadata:
+  version: 2.6.0
+  author: CodeSigils
   hermes:
     tags: [markdown, lint, gfm, github, formatting, quality, documentation]
     category: devtools
-required_environment_variables: []
-required_commands: ["npx"]
 ---
 
 # Markdown Lint
@@ -112,40 +110,42 @@ npx markdownlint-cli2 --config ~/.hermes/skills/markdown-lint/references/.markdo
 
 ## GFM Rules Reference
 
-markdownlint implements MD001–MD060 rules. Key rules enforced:
+markdownlint implements MD001-MD060 rules. Key rules enforced:
 
 | Rule | Title | Description |
 | :--- | :---- | :---------- |
 | MD003 | heading-style | Use ATX headings (`#` style) |
-| MD004 | ul-style | Use dash (`-`) for unordered lists |
 | MD007 | ul-indent | Unordered list indent = 2 spaces |
 | MD009 | no-trailing-spaces | No trailing spaces |
 | MD010 | no-hard-tabs | No hard tabs |
 | MD012 | no-multiple-blanks | Max one blank line between paragraphs |
 | MD022 | blanks-around-headings | Blank line before and after headings |
+| MD026 | no-duplicate-heading | No duplicate headings in the same document |
 | MD029 | ol-prefix | Ordered list prefix style |
 | MD030 | list-marker-space | Spaces after list markers |
 | MD031 | blanks-around-fences | Blank line around fenced code blocks |
+| MD032 | blanks-around-lists | Lists should be surrounded by blank lines |
 | MD035 | hr-style | Horizontal rule style `---` |
 | MD046 | code-block-style | Use fenced code blocks |
+| MD047 | single-h1 | File should start with a single h1 heading |
 | MD048 | code-fence-style | Use backticks for code fences |
+| MD055 | table-pipe-style | Tables should have trailing pipes |
+| MD060 | no-inline-html | No HTML in markdown |
 
 Rules **disabled** (too strict for prose documentation):
 
-| Rule | Title | Why Disabled
+| Rule | Title | Why Disabled |
 | :--- | :---- | :----------- |
-| MD013 | line-length | Prose lines are naturally longer
-| MD024 | multiple-headings | Same h2 text in different sections is valid
-| MD025 | multiple-h1 | Multiple top-level headings allowed
-| MD032 | list-indent | Lists can vary by content
-| MD033 | no-inline-html | GFM supports basic inline HTML
-| MD034 | no-bare-urls | Bare URLs auto-link in GFM
-| MD036 | emphasis-instead-of-heading | Valid use case for emphasis
+| MD013 | line-length | Prose lines are naturally longer |
+| MD024 | multiple-headings | Same h2 text in different sections is valid |
+| MD025 | multiple-h1 | Multiple top-level headings allowed |
+| MD033 | no-inline-html | GFM supports basic inline HTML |
+| MD034 | no-bare-urls | Bare URLs auto-link in GFM |
+| MD036 | emphasis-instead-of-heading | Valid use case for emphasis |
 | MD040 | fenced-code-language | Code fences don't always need a language |
 | MD041 | first-line-heading | Frontmatter makes this noisy |
 | MD045 | no-image-size | Images need dimensions sometimes |
 | MD052 | no-bare-reference-link | Common in prose |
-| MD055 | table-pipe-style | Trailing pipes are optional |
 
 ## fix-tables.js
 
@@ -204,21 +204,26 @@ The script receives JSON payload via stdin (Hermes shell hook protocol) and lint
 
 ### markdownlint-cli2: command not found
 
-Hermes includes Node.js via npx. No manual installation needed.
+In some Hermes environments, npx may not be in PATH. Use the full path explicitly:
+
+```bash
+/usr/share/nodejs/corepack/shims/npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix
+```
+
+The bundled `lint.sh` handles this automatically — prefer it over running npx directly.
 
 ### Config file not found
 
-Run from the project root:
+The bundled `lint.sh` auto-locates the config — use it:
 
 ```bash
-cd ~/my-project
-npx markdownlint-cli2 . --fix
+${HERMES_SKILL_DIR}/lint.sh <path>
 ```
 
-Or pass the config explicitly:
+Or pass the config explicitly with a full npx path:
 
 ```bash
-npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json . --fix
+/usr/share/nodejs/corepack/shims/npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix
 ```
 
 ### `--fix` does not fix everything in one pass
@@ -226,8 +231,8 @@ npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json
 Known behavior. Run twice if needed:
 
 ```bash
-npx markdownlint-cli2 <path> --fix
-npx markdownlint-cli2 <path> --fix
+${HERMES_SKILL_DIR}/lint.sh <path>
+${HERMES_SKILL_DIR}/lint.sh <path>
 ```
 
 ## Verification
@@ -235,7 +240,7 @@ npx markdownlint-cli2 <path> --fix
 Run the lint check to verify GFM compliance:
 
 ```bash
-npx markdownlint-cli2 <path>
+${HERMES_SKILL_DIR}/lint.sh --check <path>
 ```
 
 Exit code 0 means no violations.
@@ -247,4 +252,4 @@ Exit code 0 means no violations.
 | Fix file | `${HERMES_SKILL_DIR}/lint.sh <path>` |
 | Fix all | `${HERMES_SKILL_DIR}/lint.sh --all .` |
 | Check only | `${HERMES_SKILL_DIR}/lint.sh --check <path>` |
-| Manual steps | `node ${HERMES_SKILL_DIR}/references/fix-tables.js <path> && npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix` |
+| Manual steps | `node ${HERMES_SKILL_DIR}/references/fix-tables.js <path> && /usr/share/nodejs/corepack/shims/npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix` |
