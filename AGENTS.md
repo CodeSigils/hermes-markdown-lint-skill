@@ -1,8 +1,8 @@
 # Hermes Agent Instructions
 
-## Official Standards
+When working in Hermes skill repos, follow these conventions.
 
-When working in Hermes skill repos, follow these conventions:
+## Official Standards
 
 - **Skill structure**: Use `skills/<skill-name>/SKILL.md` as the entry point
 - **Entry commands**: Use `skills/<skill-name>/lint.sh` or documented CLI tools
@@ -21,6 +21,26 @@ Follow these principles in all work:
 6. **Preserve working behavior** — don't break what's already correct. The formatter is idempotent.
 7. **Learn from mistakes** — if something fails, understand why before retrying.
 8. **Use best practices proactively** — add input validation, security checks, proper error handling without being asked.
+
+## Quick Start
+
+### Lint a file (read-only check)
+
+```bash
+${HERMES_SKILL_DIR}/lint.sh --check <file>
+```
+
+### Fix a file
+
+```bash
+${HERMES_SKILL_DIR}/lint.sh <file>
+```
+
+### Fix all markdown files in directory
+
+```bash
+${HERMES_SKILL_DIR}/lint.sh --all <dir>
+```
 
 ## Workflow
 
@@ -54,10 +74,32 @@ Run against kitchensink.md to verify the skill works end-to-end:
 /usr/share/nodejs/corepack/shims/npx --yes markdownlint-cli2@latest --config skills/markdown-lint/references/.markdownlint.json test/kitchensink.md
 ```
 
-## Version Policy
+## Testing
 
-- Update `metadata.version` in SKILL.md frontmatter on each meaningful change
-- Document changes in README.md changelog (v2.6, v2.5, etc.)
+### Run Test Suite
+
+```bash
+node test/fix-tables.test.js
+```
+
+All 28 tests must pass. Tests validate:
+
+- Separator detection (valid/invalid separators)
+- Width calculation (string-width for emoji/CJK)
+- Alignment preservation (left/center/right)
+- Fix behavior (fixes old-style, skips correct)
+
+### Manual Testing
+
+Create a test file with various table styles, then run:
+
+```bash
+# Step 1: normalize table separators
+node skills/markdown-lint/references/fix-tables.js test-file.md
+
+# Step 2: lint and auto-fix remaining issues
+npx markdownlint-cli2 --config skills/markdown-lint/references/.markdownlint.json test-file.md --fix
+```
 
 ## Key Conventions
 
@@ -65,6 +107,62 @@ Run against kitchensink.md to verify the skill works end-to-end:
 - npx path in Hermes environments: `/usr/share/nodejs/corepack/shims/npx`
 - MD055 (trailing pipes) is enabled — tables must have trailing pipes
 - MD040 (code fence language) is disabled — blank fences are allowed for output examples and placeholders
+- Always use `${HERMES_SKILL_DIR}` or absolute paths in scripts
+
+## Troubleshooting
+
+### Common Errors
+
+| Error | Cause | Fix |
+| :--- | :---- | :--- |
+| MD018: No space after hash | Missing space after `#` | Add space: `## Heading` |
+| MD047: Single trailing newline | File doesn't end with newline | Add blank line at end |
+| MD055: No trailing pipe | Table row missing trailing pipe | Add trailing pipe |
+| MD056: Table column width | Separator width mismatch | Run the fix-tables tool |
+| MD060: Table pipe position | Pipes not aligned | Run the fix-tables tool |
+
+### fix-tables.js Issues
+
+**Problem**: Tables with emoji/CJK don't align visually.
+
+**Cause**: Using code-unit length instead of visual width.
+
+**Fix**: Install `string-width` package for proper double-width handling:
+
+```bash
+cd skills/markdown-lint/references
+npm install string-width
+```
+
+Without it, falls back to `.length` count — works for ASCII but not emoji/CJK.
+
+## Version Policy
+
+- Update `metadata.version` in SKILL.md frontmatter on each meaningful change
+- Document changes in README.md changelog (v2.7, v2.6, etc.)
+
+Changelog format:
+
+```markdown
+### Key Changes in v2.7
+
+- Brief description of change
+- Another change
+```
+
+## Post-Install: Auto-Lint on Write
+
+To auto-lint every markdown file Hermes writes, add hook to `~/.hermes/config.yaml`:
+
+```yaml
+hooks:
+  post_tool_call:
+    - matcher: write_file
+      command: "~/.hermes/skills/markdown-lint/scripts/post-write.sh"
+hooks_auto_accept: true
+```
+
+Restart Hermes for hook to activate.
 
 ## Files to Know
 
@@ -76,3 +174,4 @@ Run against kitchensink.md to verify the skill works end-to-end:
 | `skills/markdown-lint/scripts/post-write.sh` | Auto-lint hook |
 | `skills/markdown-lint/references/fix-tables.js` | Table separator normalizer |
 | `test/kitchensink.md` | Comprehensive test fixture |
+| `test/fix-tables.test.js` | Test suite (28 tests) |
