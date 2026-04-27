@@ -25,19 +25,19 @@ This file contains various markdown constructs to test the linting pipeline.
 ### Emoji Columns (tests string-width)
 
 | Emoji | Description | Code Point |
-| :---- | :---------- | :-------- |
-| 🚀    | Rocket      | U+1F680   |
-| ✅    | Check mark  | U+2705    |
-| ⚠️    | Warning     | U+26A0    |
-| 🔧    | Wrench      | U+1F527   |
+| :---- | :--------- | :-------- |
+| 🚀    | Rocket     | U+1F680   |
+| ✅    | Check mark | U+2705   |
+| ⚠️    | Warning    | U+26A0    |
+| 🔧    | Wrench    | U+1F527   |
 
 ### CJK Characters (tests double-width)
 
-| 言語   | 状態  | バージョン |
-| :----- | :---- | :--------- |
-| 日本語 | Active | 2.6       |
-| 中文   | Active | 2.6       |
-| 한국어 | Active | 2.6       |
+| 言語 | 状態 | バージョン |
+| :--- | :--- | :---------- |
+| 日本語 | Active | 2.6        |
+| 中文   | Active | 2.6        |
+| 한국어 | Active | 2.6        |
 
 ### Mixed Content
 
