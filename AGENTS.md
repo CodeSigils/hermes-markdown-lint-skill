@@ -2,6 +2,8 @@
 
 This skill lints and auto-fixes Markdown files to enforce GitHub Flavored Markdown (GFM) rules.
 
+> **Note:** This file is compatible with any LLM agent that reads markdown (Claude Code, OpenAI, OpenCode, etc.). Hermes-specific conventions are noted where applicable.
+
 ## Official Standards
 
 - **Skill structure**: Use `skills/<skill-name>/SKILL.md` as the entry point
