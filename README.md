@@ -17,8 +17,10 @@ Uses **markdownlint** via `npx` and **fix-tables.js** for table formatting — z
 ### Install the Skill
 
 ```bash
-hermes skills install CodeSigils/hermes-markdown-lint-skill/markdown-lint
+hermes skills install CodeSigils/hermes-markdown-lint-skill/markdown-lint --force
 ```
+
+The `--force` flag is required because the security scanner flags post-write hooks as dangerous (expected for a linting skill).
 
 ### Post installation: Auto-Lint on Write
 
