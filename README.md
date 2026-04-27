@@ -60,7 +60,7 @@ Step 2 fixes everything else.
 
 The two-step pipeline fixes GFM violations that markdownlint detects — and the one thing it can't handle alone:
 
-| Problem                                | Fix                                        |
+| Problem                                 | Fix                                         |
 | :-------------------------------------- | :------------------------------------------ |
 | Raw dashes in table separators          | GFM-compliant separators                    |
 | Heading without surrounding blank lines | Blank lines added before and after headings |

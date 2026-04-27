@@ -17,6 +17,14 @@
 
 const fs = require('fs');
 const path = require('path');
+// Uses string-width for visual width (emoji/CJK are double-width)
+let stringWidth;
+try {
+    stringWidth = require('string-width');
+} catch {
+    // Fallback if not installed - counts code units instead of visual width
+    stringWidth = s => [...s].length;
+}
 
 function _parseCellsRaw(line) {
     const cells = [];
@@ -75,8 +83,9 @@ function _buildAlignedSeparator(headerLine, separatorLine) {
     const parts = [];
     for (let i = 0; i < headerCells.length; i++) {
         const align = alignments[i] || 'left';
-        // VSCode/marktext format: header length - 1, min 3 dashes
-        const cellWidth = Math.max(3, headerCells[i].length - 1);
+        // VSCode/marktext format: stringWidth (visual width) - 1, min 3 dashes
+        // Uses string-width to correctly handle emoji/CJK (double-width chars)
+        const cellWidth = Math.max(3, stringWidth(headerCells[i]) - 1);
         let sep;
         if (align === 'center') {
             sep = ':' + '-'.repeat(cellWidth) + ':';
@@ -131,7 +140,18 @@ function _fixFileInContent(content) {
 function _isSeparatorAlreadyCorrect(cells) {
     return cells.every(c => {
         const t = c.trim();
-        return t === ':---' || t === '---:' || t === ':---:';
+        // Check for valid alignment: at least 3 dashes with optional leading/trailing colons
+        if (t.length < 3) return false;
+        const cleaned = t.replace(/:/g, '');
+        if (!/^-{3,}$/.test(cleaned)) return false;
+        // Verify alignment markers are correct (not mixed)
+        const hasLeading = t.startsWith(':');
+        const hasTrailing = t.endsWith(':');
+        // Center must have both, right must have trailing, left must have only leading
+        if (hasLeading && hasTrailing) return true; // center
+        if (hasTrailing && !hasLeading) return true; // right
+        if (hasLeading && !hasTrailing) return true; // left
+        return false;
     });
 }
 
@@ -252,4 +272,4 @@ if (require.main === module) {
     main();
 }
 
-module.exports = { fixFile, fixStdin, _fixFileInContent, _isSeparatorLine };
+module.exports = { fixFile, fixStdin, _fixFileInContent, _isSeparatorLine, _buildAlignedSeparator, _isSeparatorAlreadyCorrect };

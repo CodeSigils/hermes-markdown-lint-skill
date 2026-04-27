@@ -1,168 +1,158 @@
-# kitchensink — The Ultimate Markdown Test
+# Markdown Lint Test Kitchen Sink
 
-A comprehensive test file for markdown linting. Contains every GFM element.
+This file contains various markdown constructs to test the linting pipeline.
 
 ---
 
-## 1. Headings
+## Tables
 
-### Level 3
+### Basic Table
 
-#### Level 4
+| Name     | Age | Role      |
+| :------- | --: | :-------- |
+| Alice    | 25  | Developer |
+| Bob      | 30  | Designer  |
+| Charlie  | 28  | Manager   |
 
-##### Level 5
+### Table with Trailing Pipe
 
-###### Level 6
+| Feature    | Status | Notes         |
+| :--------- | :----- | :------------ |
+| MD055      | ✅     | Trailing pipe |
+| MD060      | ✅     | Alignment     |
+| MD040      | ✅     | Blank fence   |
 
-## 2. Paragraphs
+### Emoji Columns (tests string-width)
 
-This is a paragraph with some text.
-This should be on a new line but isn't.
+| Emoji | Description | Code Point |
+| :---- | :---------- | :-------- |
+| 🚀    | Rocket      | U+1F680   |
+| ✅    | Check mark  | U+2705    |
+| ⚠️    | Warning     | U+26A0    |
+| 🔧    | Wrench      | U+1F527   |
 
-Another paragraph here with multiple sentences. It has plenty of content to test line wrapping behavior.
+### CJK Characters (tests double-width)
 
-## 3. Lists
+| 言語   | 状態  | バージョン |
+| :----- | :---- | :--------- |
+| 日本語 | Active | 2.6       |
+| 中文   | Active | 2.6       |
+| 한국어 | Active | 2.6       |
 
-### Unordered
+### Mixed Content
+
+| Type   | Sample    | Width |
+| :----- | :-------- | :---- |
+| Emoji  | 🌍🌎🌏   | 6     |
+| CJK    | 日本語   | 6     |
+| Mixed  | Hello世界 | 8     |
+
+### Alignment Variations
+
+| Left | Center | Right |
+| :--- | :----: | ----: |
+| ←    | ◆     | →     |
+| left | center | right |
+
+---
+
+## Code Blocks
+
+### Fenced Code
+
+```javascript
+function hello() {
+  console.log("Hello, World!");
+}
+```
+
+### Blank Fence (allowed)
+
+```
+No language specified
+This is output or placeholder
+```
+
+### With Language
+
+```python
+def fib(n):
+    if n <= 1:
+        return n
+    return fib(n-1) + fib(n-2)
+```
+
+---
+
+## Lists
+
+### Unordered List
 
 - Item one
 - Item two
-- Item three
   - Nested item
   - Another nested
-- Back to root
+- Item three
 
-### Ordered
+### Ordered List
 
 1. First step
 2. Second step
 3. Third step
-   1. Nested step
-   2. Another nested
-4. Back to root
 
-### Task Lists
+### Task List
 
-- [x] Done task
+- [x] Completed task
 - [ ] Pending task
-- [x] Another done
+- [ ] Another pending
 
-## 4. Code Blocks
+---
 
-### Fenced with language
-
-```python
-def hello():
-    print("Hello, World!")
-```
-
-### Fenced without language
-
-```javascript
-function hello()
-  console.log("Hello")
-```
-
-### Indented code
-
-```python
-def hello():
-    print("Hello")
-```
-
-## 5. Tables
-
-| Header A | Header B | Header C |
-| :------- | :------- | :------- |
-| Cell A1  | Cell B1  | Cell C1  |
-| Cell A2  | Cell B2  | Cell C2  |
-
-### Aligned columns
-
-| Left | Center | Right |
-| :--- | :----: | ----: |
-| L    |   C    |     R |
-
-## 6. Blockquotes
+## Blockquotes
 
 > This is a blockquote
-> Multiple lines
-> With a blank line in the middle
+> Across multiple lines
 >
-> ## Blockquote with heading
->
-> And some text
-
-## 7. Horizontal Rules
+> With a blank line in between
 
 ---
 
----
+## Emphasis
+
+### Bold and Italic
+
+**Bold text** and *italic text* and ***bold italic***.
+
+### Inline Code
+
+Run `npm install` to install dependencies.
 
 ---
 
-## 8. Links
+## Horizontal Rules
 
-[Inline link](https://example.com)
+---
 
-[Reference link][ref]
+## Links
 
-[ref]: https://example.org
+[GitHub](https://github.com)
 
-### Auto-links
+[Link with title](https://example.com "Title")
 
-<https://example.net>
-<test@example.com>
+---
 
-## 9. Emphasis
+## Raw Table (before fix)
 
-_italic_ and _italic_
+| Header |
+| ------ |
+| data   |
 
-**bold** and **bold**
+---
 
-**_bold italic_**
+## Summary
 
-~~strikethrough~~
-
-## 10. Images
-
-![Alt text](https://example.com/image.png)
-
-## 11. Inline Code
-
-Use `code` in text.
-
-Use backticks: `code with backticks`
-
-## 12. HTML
-
-```html
-<details>
-  <summary>Click to expand</summary>
-  Hidden content here.
-</details>
-
-<br />
-```
-
-## 13. Definition Lists
-
-Term 1
-: Definition 1
-
-Term 2
-: Definition 2
-
-## 14. Footnotes
-
-Here is a footnote[^1].
-
-[^1]: This is the footnote.
-
-## 15. Abbreviations
-
-\*[HTML]: HyperText Markup Language
-
-The HTML standard defines this.
-
-## THE END
+| Rule  | Purpose            |
+| :---- | :----------------- |
+| MD055 | Trailing pipes    |
+| MD060 | Column alignment |
+| MD040 | Code fence lang  |

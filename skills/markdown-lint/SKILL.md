@@ -154,7 +154,7 @@ Normalizes Markdown table separators from old-style `|------|------|` to GFM-com
 
 **Features:**
 
-- Auto-width column alignment (matches header column lengths)
+- Uses `string-width` for column alignment (handles emoji/CJK correctly)
 - Detects already-correct separators and skips them
 - Verbose output option
 
