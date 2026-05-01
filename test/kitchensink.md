@@ -144,7 +144,7 @@ Run `npm install` to install dependencies.
 ## Raw Table (before fix)
 
 | Header |
-| ------ |
+| :----- |
 | data   |
 
 ---
