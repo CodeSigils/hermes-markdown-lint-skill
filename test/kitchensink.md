@@ -8,50 +8,50 @@ This file contains various markdown constructs to test the linting pipeline.
 
 ### Basic Table
 
-| Name     | Age | Role      |
-| :------- | --: | :-------- |
-| Alice    | 25  | Developer |
-| Bob      | 30  | Designer  |
-| Charlie  | 28  | Manager   |
+| Name    | Age | Role      |
+| :------ | --: | :-------- |
+| Alice   |  25 | Developer |
+| Bob     |  30 | Designer  |
+| Charlie |  28 | Manager   |
 
 ### Table with Trailing Pipe
 
-| Feature    | Status | Notes         |
-| :--------- | :----- | :------------ |
-| MD055      | ✅     | Trailing pipe |
-| MD060      | ✅     | Alignment     |
-| MD040      | ✅     | Blank fence   |
+| Feature | Status | Notes         |
+| :------ | :----- | :------------ |
+| MD055   | ✅     | Trailing pipe |
+| MD060   | ✅     | Alignment     |
+| MD040   | ✅     | Blank fence   |
 
 ### Emoji Columns (tests string-width)
 
 | Emoji | Description | Code Point |
-| :---- | :--------- | :-------- |
-| 🚀    | Rocket     | U+1F680   |
-| ✅    | Check mark | U+2705   |
-| ⚠️    | Warning    | U+26A0    |
-| 🔧    | Wrench    | U+1F527   |
+| :---- | :---------- | :--------- |
+| 🚀    | Rocket      | U+1F680    |
+| ✅    | Check mark  | U+2705     |
+| ⚠️    | Warning     | U+26A0     |
+| 🔧    | Wrench      | U+1F527    |
 
 ### CJK Characters (tests double-width)
 
-| 言語 | 状態 | バージョン |
-| :--- | :--- | :---------- |
+| 言語   | 状態   | バージョン |
+| :----- | :----- | :--------- |
 | 日本語 | Active | 2.6        |
 | 中文   | Active | 2.6        |
 | 한국어 | Active | 2.6        |
 
 ### Mixed Content
 
-| Type   | Sample    | Width |
-| :----- | :-------- | :---- |
-| Emoji  | 🌍🌎🌏   | 6     |
-| CJK    | 日本語   | 6     |
-| Mixed  | Hello世界 | 8     |
+| Type  | Sample    | Width |
+| :---- | :-------- | :---- |
+| Emoji | 🌍🌎🌏    | 6     |
+| CJK   | 日本語    | 6     |
+| Mixed | Hello世界 | 8     |
 
 ### Alignment Variations
 
 | Left | Center | Right |
 | :--- | :----: | ----: |
-| ←    | ◆     | →     |
+| ←    |   ◆    |     → |
 | left | center | right |
 
 ---
@@ -121,7 +121,7 @@ def fib(n):
 
 ### Bold and Italic
 
-**Bold text** and *italic text* and ***bold italic***.
+**Bold text** and _italic text_ and **_bold italic_**.
 
 ### Inline Code
 
@@ -151,8 +151,8 @@ Run `npm install` to install dependencies.
 
 ## Summary
 
-| Rule  | Purpose            |
-| :---- | :----------------- |
-| MD055 | Trailing pipes    |
+| Rule  | Purpose          |
+| :---- | :--------------- |
+| MD055 | Trailing pipes   |
 | MD060 | Column alignment |
 | MD040 | Code fence lang  |

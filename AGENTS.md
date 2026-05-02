@@ -34,7 +34,7 @@ This skill lints and auto-fixes Markdown files to enforce GitHub Flavored Markdo
 | MD030 | List marker space | Yes |
 | MD031 | Blank lines around lists | Yes |
 | MD032 | Blanks around lists | Yes |
-| MD033 | No inline HTML | Yes |
+| MD033 | No inline HTML | No |
 | MD034 | No bare URLs | Yes |
 | MD035 | Horizontal rule style | Yes |
 | MD036 | No space after emphasis | Yes |

@@ -118,7 +118,17 @@ fi
 
 # Step 2: markdownlint with skill config
 if [[ "$CHECK" == true ]]; then
-    run_npx markdownlint-cli2 --config "$CONFIG" "$TARGET"
+    if [[ -d "$TARGET" ]]; then
+        TARGET_DIR="${TARGET%/}"
+        run_npx markdownlint-cli2 --config "$CONFIG" "$TARGET_DIR"/**/*.md
+    else
+        run_npx markdownlint-cli2 --config "$CONFIG" "$TARGET"
+    fi
 else
-    run_npx markdownlint-cli2 --config "$CONFIG" "$TARGET" --fix
+    if [[ -d "$TARGET" ]]; then
+        TARGET_DIR="${TARGET%/}"
+        run_npx markdownlint-cli2 --config "$CONFIG" "$TARGET_DIR"/**/*.md --fix
+    else
+        run_npx markdownlint-cli2 --config "$CONFIG" "$TARGET" --fix
+    fi
 fi
