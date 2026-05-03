@@ -137,6 +137,29 @@ Run against kitchensink.md to verify the skill works end-to-end:
 /usr/share/nodejs/corepack/shims/npx --yes markdownlint-cli2@latest --config skills/markdown-lint/references/.markdownlint.json test/kitchensink.md
 ```
 
+### Table Validation (Critical)
+
+Before committing any markdown changes, validate table column consistency:
+
+```bash
+# Validate column counts in all tables
+node skills/markdown-lint/references/fix-tables.js --validate filename.md
+
+# Validate all .md in directory
+node skills/markdown-lint/references/fix-tables.js --validate --all docs/
+```
+
+This catches:
+- Header columns ≠ separator columns
+- Data rows with wrong column count
+- Pipes inside cells (unescaped)
+
+**Always run `--validate` before pushing to catch broken tables.**
+
+```bash
+/usr/share/nodejs/corepack/shims/npx --yes markdownlint-cli2@latest --config skills/markdown-lint/references/.markdownlint.json test/kitchensink.md
+```
+
 ## Testing
 
 ### Run Test Suite

@@ -191,6 +191,80 @@ function fixStdin() {
     });
 }
 
+function validateTableColumnCounts(content) {
+    const lines = content.split('\n');
+    const issues = [];
+    
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!_isSeparatorLine(line)) continue;
+        
+        let headerLine = null;
+        for (let j = i - 1; j >= 0; j--) {
+            const prev = lines[j].trim();
+            if (prev && !prev.startsWith('!') && !prev.startsWith('>')) {
+                headerLine = prev;
+                break;
+            }
+        }
+        if (!headerLine) continue;
+        
+        const headerCells = _parseCells(headerLine);
+        const separatorCells = _parseCellsRaw(line);
+        
+        if (headerCells.length !== separatorCells.length) {
+            issues.push({
+                line: i + 1,
+                type: 'column_mismatch',
+                headerCols: headerCells.length,
+                separatorCols: separatorCells.length,
+                message: `Header has ${headerCells.length} columns but separator has ${separatorCells.length} columns`
+            });
+        }
+        
+        for (let k = i + 1; k < Math.min(i + 10, lines.length); k++) {
+            const dataLine = lines[k].trim();
+            if (!dataLine.startsWith('|')) break;
+            if (_isSeparatorLine(dataLine)) break;
+            
+            const dataCells = _parseCellsRaw(dataLine);
+            if (dataCells.length !== separatorCells.length) {
+                issues.push({
+                    line: k + 1,
+                    type: 'data_column_mismatch',
+                    expectedCols: separatorCells.length,
+                    actualCols: dataCells.length,
+                    message: `Row has ${dataCells.length} columns but separator expects ${separatorCells.length}`
+                });
+            }
+        }
+    }
+    
+    return issues;
+}
+
+function validateFiles(files) {
+    let totalIssues = 0;
+    
+    for (const f of files) {
+        if (!fs.existsSync(f)) continue;
+        if (fs.statSync(f).isDirectory()) continue;
+        
+        const content = fs.readFileSync(f, 'utf8');
+        const issues = validateTableColumnCounts(content);
+        
+        if (issues.length > 0) {
+            console.log(`\n${f}:`);
+            for (const issue of issues) {
+                console.log(`  Line ${issue.line}: ${issue.message}`);
+                totalIssues++;
+            }
+        }
+    }
+    
+    return totalIssues;
+}
+
 // Find all .md files recursively (replaces glob)
 function findMdFiles(dir) {
     const files = [];
@@ -222,6 +296,7 @@ function main() {
     let dryRun = false;
     let verbose = false;
     let directory = null;
+    let validate = false;
 
     for (let i = 0; i < args.length; i++) {
         if (args[i] === '--check') {
@@ -230,6 +305,8 @@ function main() {
             verbose = true;
         } else if (args[i] === '--all') {
             directory = args[++i];
+        } else if (args[i] === '--validate') {
+            validate = true;
         } else if (!args[i].startsWith('-')) {
             files.push(args[i]);
         }
@@ -239,8 +316,20 @@ function main() {
         console.error('Usage: node fix-tables.js <file.md>...');
         console.error('       node fix-tables.js --all <directory>');
         console.error('       node fix-tables.js --check <file.md>');
+        console.error('       node fix-tables.js --validate <file.md>...');
         console.error('       node fix-tables.js --stdout <file.md');
         process.exit(1);
+    }
+
+    if (validate) {
+        const total = validateFiles(files);
+        if (total > 0) {
+            console.log(`\nFound ${total} table column mismatch(es)`);
+            process.exit(1);
+        } else {
+            console.log('All tables have consistent column counts.');
+            process.exit(0);
+        }
     }
 
     if (directory) {

@@ -84,27 +84,39 @@ run_npx() {
 }
 
 usage() {
-    echo "Usage: $0 [--check] [--all] <path>"
-    echo "  --check    Read-only check (exit 0 if clean)"
-    echo "  --all      Treat <path> as a directory, fix all .md files"
+    echo "Usage: $0 [--check] [--all] [--validate] <path>"
+    echo "  --check      Read-only check (exit 0 if clean)"
+    echo "  --all        Treat <path> as a directory, fix all .md files"
+    echo "  --validate   Validate table column consistency (exit 1 if mismatches)"
     exit 1
 }
 
 CHECK=false
 ALL=false
+VALIDATE=false
 TARGET=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --check) CHECK=true; shift ;;
-        --all)   ALL=true;  shift ;;
-        -*)      usage ;;
-        *)       TARGET="$1"; shift ;;
+        --check)     CHECK=true;    shift ;;
+        --all)       ALL=true;      shift ;;
+        --validate)  VALIDATE=true; shift ;;
+        -*)          usage ;;
+        *)           TARGET="$1";    shift ;;
     esac
 done
 
 if [[ -z "$TARGET" ]]; then
     usage
+fi
+
+if [[ "$VALIDATE" == true ]]; then
+    if [[ -d "$TARGET" ]]; then
+        find "$TARGET" -name "*.md" -exec node "$FIX_TABLES" --validate {} \;
+    else
+        node "$FIX_TABLES" --validate "$TARGET"
+    fi
+    exit $?
 fi
 
 # Step 1: Normalize table separators (skip if --check mode)
