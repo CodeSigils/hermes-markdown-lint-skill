@@ -47,6 +47,7 @@ ${HERMES_SKILL_DIR}/lint.sh <path>
 # Options
 ${HERMES_SKILL_DIR}/lint.sh --check <path>   # Read-only check
 ${HERMES_SKILL_DIR}/lint.sh --all <dir>      # Fix all .md in directory
+${HERMES_SKILL_DIR}/lint.sh --validate <path>  # Validate table column consistency
 ```
 
 Or use the two-step pipeline manually:
@@ -57,6 +58,33 @@ ${HERMES_SKILL_DIR}/references/fix-tables.js <path> && npx markdownlint-cli2 --c
 
 Step 1 normalizes table separators.
 Step 2 fixes everything else.
+
+### Preventing Broken Tables
+
+The most common table error is **column count mismatch** between the header, separator, and data rows. This often happens with:
+- Extra `|` characters in type definitions (e.g., `"tab" | "space"`)
+- Copy-paste errors in separator rows
+
+#### Validate Before You Push
+
+```bash
+# Add to CI or pre-commit to catch broken tables
+${HERMES_SKILL_DIR}/lint.sh --validate docs/
+```
+
+This validates:
+- Header columns match separator columns
+- All data rows have the correct number of columns
+- Pipes inside cells are properly escaped with `&#124;`
+
+#### How to Escape Pipes in Tables
+
+If a table cell contains a pipe character, escape it to prevent column misparsing:
+
+| Before (broken)              | After (fixed)                      |
+| :--------------------------- | :--------------------------------- |
+| `"tab" \| "space"`           | `"tab" &#124; "space"`             |
+| `"lf" \| "crlf" \| "cr"`     | `"lf" &#124; "crlf" &#124; "cr"`   |
 
 ### What It Does
 
@@ -124,6 +152,11 @@ markdown-lint/
 └── test/
     └── kitchensink.md
 ```
+
+### Key Changes in v2.7
+
+- Add `--validate` mode to `fix-tables.js` and `lint.sh` to catch table column mismatches
+- Add "Preventing Broken Tables" section with escaped pipe guidance
 
 ### Key Changes in v2.6
 
