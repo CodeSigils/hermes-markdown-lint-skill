@@ -6,6 +6,7 @@
   "MD010": true,
   "MD012": { "max": 1 },
   "MD013": false,
+  "MD014": { "style": "---" },
   "MD024": false,
   "MD025": false,
   "MD026": { "punctuation": ".,;:!" },
@@ -19,11 +20,10 @@
   "MD040": false,
   "MD041": { "style": "dashed" },
   "MD045": true,
-  "MD014": { "style": "---" },
   "MD046": { "style": "fenced" },
   "MD047": true,
   "MD048": { "style": "backtick" },
   "MD052": false,
-  "MD055": true,
+  "MD055": false,
   "MD060": false
 }

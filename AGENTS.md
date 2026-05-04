@@ -113,6 +113,14 @@ ${HERMES_SKILL_DIR}/lint.sh --fences <path>
 
 Exit 0 = all fences clean. Checks: no empty openers, no bare-lang closers, matched counts.
 
+### Validate table columns
+
+```bash
+${HERMES_SKILL_DIR}/lint.sh --validate <path>
+```
+
+Exit 1 if column mismatches. Always run before pushing.
+
 ## Workflow
 
 ### Before Editing Any File
@@ -158,6 +166,7 @@ node skills/markdown-lint/references/fix-tables.js --validate --all docs/
 ```
 
 This catches:
+
 - Header columns ≠ separator columns
 - Data rows with wrong column count
 - Pipes inside cells (unescaped)
@@ -179,10 +188,6 @@ ${HERMES_SKILL_DIR}/lint.sh --fences <path>
 ```
 
 This catches empty openers, bare-lang closers, and count mismatches — the exact issues that today's bulk edit would have caught mid-flight.
-
-```bash
-/usr/share/nodejs/corepack/shims/npx --yes markdownlint-cli2@latest --config skills/markdown-lint/references/.markdownlint.json test/kitchensink.md
-```
 
 ## Testing
 
@@ -213,17 +218,17 @@ npx markdownlint-cli2 --config skills/markdown-lint/references/.markdownlint.jso
 
 ## Before / After Examples
 
-### Tables (MD055 + MD060)
+### Tables (MD055 disabled)
 
 Before (not compliant):
 
 ```markdown
-|Name|Age|Role|
-|----|---|----|
-|Alice|25|Developer|
+| Name | Age | Role |
+| --- | -- | --- |
+| Alice | 25 | Developer |
 ```
 
-After (GFM compliant with trailing pipes):
+After (GFM compliant, no trailing pipes):
 
 ```markdown
 | Name     | Age | Role      |
@@ -249,25 +254,22 @@ After:
 
 Both are valid — blank fences allowed for output:
 
-```markdown
-```
+```text
 
 Output result here
 
-```text
 ```
 
 ```markdown
-```
+
 def hello():
     print("Hello")
-```text
 
 ```
 
-### Lists (MD032)
+Use `text` language for intentional blank-fence examples (no code content). Use `markdown` for the opener if showing example output in markdown format.
 
-Before:
+### Lists (MD032)
 
 ```markdown
 - Item one
@@ -303,7 +305,7 @@ After:
 
 - `lint.sh` is the canonical interface — use it instead of running npx directly
 - npx path in Hermes environments: `/usr/share/nodejs/corepack/shims/npx`
-- MD055 (trailing pipes) is enabled — tables must have trailing pipes
+- MD055 (table-pipe-style) is disabled — leading/trailing `|` on tables is optional
 - MD040 (code fence language) is disabled — blank fences are allowed for output examples and placeholders
 - Always use `${HERMES_SKILL_DIR}` or absolute paths in scripts
 
@@ -337,16 +339,24 @@ Without it, falls back to `.length` count — works for ASCII but not emoji/CJK.
 ## Version Policy
 
 - Update `metadata.version` in SKILL.md frontmatter on each meaningful change
-- Document changes in README.md changelog (v2.7, v2.6, etc.)
+- Document changes in README.md changelog (v2.8, v2.7, etc.)
+- Add changelog entry in AGENTS.md Version Policy section
 
 Changelog format:
 
 ```markdown
-### Key Changes in v2.7
+### Key Changes in v2.8
 
 - Brief description of change
 - Another change
 ```
+
+### Key Changes in v2.8
+
+- Add `--fences` mode to `lint.sh` for fenced code block validation
+- Add `scripts/check-fences.sh` — validates code fences across .md files
+- Disable MD055 (table-pipe-style) — no longer enforces leading/trailing `|` on tables
+- Sync `skills/markdown-lint/lint.sh` with root `lint.sh` (all flags available)
 
 ## Post-Install: Auto-Lint on Write
 
@@ -366,10 +376,10 @@ Restart Hermes for hook to activate.
 
 | File | Purpose |
 | :--- | :------ |
+| `lint.sh` | Pipeline wrapper — canonical entry point with all flags |
 | `skills/markdown-lint/SKILL.md` | Skill instructions for Hermes |
 | `skills/markdown-lint/references/.markdownlint.json` | Lint rules config |
-| `skills/markdown-lint/lint.sh` | Pipeline wrapper |
+| `skills/markdown-lint/scripts/check-fences.sh` | Fenced code block checker |
 | `skills/markdown-lint/scripts/post-write.sh` | Auto-lint hook |
 | `skills/markdown-lint/references/fix-tables.js` | Table separator normalizer |
 | `test/kitchensink.md` | Comprehensive test fixture |
-| `test/fix-tables.test.js` | Test suite (28 tests) |

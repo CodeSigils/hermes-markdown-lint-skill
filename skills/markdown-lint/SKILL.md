@@ -6,7 +6,7 @@ description: >
   via npx for zero-install linting and fix-tables.js for table separators.
 license: MIT
 metadata:
-  version: 2.6.0
+  version: 2.8.0
   author: CodeSigils
   hermes:
     tags: [markdown, lint, gfm, github, formatting, quality, documentation]
@@ -45,9 +45,11 @@ This runs the full two-step pipeline in one command: fix tables, then lint and a
 ### Options
 
 ```bash
-${HERMES_SKILL_DIR}/lint.sh <path>         # Fix file or directory
-${HERMES_SKILL_DIR}/lint.sh --check <path>  # Read-only check (exit 0 if clean)
-${HERMES_SKILL_DIR}/lint.sh --all <dir>     # Fix all .md in directory
+${HERMES_SKILL_DIR}/lint.sh <path>           # Fix file or directory
+${HERMES_SKILL_DIR}/lint.sh --check <path>   # Read-only check (exit 0 if clean)
+${HERMES_SKILL_DIR}/lint.sh --all <dir>      # Fix all .md in directory
+${HERMES_SKILL_DIR}/lint.sh --validate <path> # Validate table column consistency
+${HERMES_SKILL_DIR}/lint.sh --fences <path>  # Check fenced code blocks
 ```
 
 ### Two-step pipeline (manual)
@@ -129,7 +131,6 @@ markdownlint implements MD001-MD060 rules. Key rules enforced:
 | MD046 | code-block-style | Use fenced code blocks |
 | MD047 | single-h1 | File should start with a single h1 heading |
 | MD048 | code-fence-style | Use backticks for code fences |
-| MD055 | table-pipe-style | Tables should have trailing pipes |
 | MD060 | no-inline-html | No HTML in markdown |
 
 Rules **disabled** (too strict for prose documentation):
@@ -146,6 +147,7 @@ Rules **disabled** (too strict for prose documentation):
 | MD041 | first-line-heading | Frontmatter makes this noisy |
 | MD045 | no-image-size | Images need dimensions sometimes |
 | MD052 | no-bare-reference-link | Common in prose |
+| MD055 | table-pipe-style | No leading/trailing pipes enforced |
 
 ## fix-tables.js
 
@@ -175,6 +177,9 @@ ${HERMES_SKILL_DIR}/lint.sh --check <path>
 
 # Fix all .md in directory
 ${HERMES_SKILL_DIR}/lint.sh --all <directory>
+
+# Check fenced code blocks
+${HERMES_SKILL_DIR}/lint.sh --fences <path>
 ```
 
 ### Auto-Lint on Write (Hermes Shell Hook)
@@ -277,4 +282,5 @@ Exit code 0 = all fences clean. The checker verifies:
 | Fix all | `${HERMES_SKILL_DIR}/lint.sh --all .` |
 | Check only | `${HERMES_SKILL_DIR}/lint.sh --check <path>` |
 | Check fences | `${HERMES_SKILL_DIR}/lint.sh --fences <path>` |
+| Validate tables | `${HERMES_SKILL_DIR}/lint.sh --validate <path>` |
 | Manual steps | `node ${HERMES_SKILL_DIR}/references/fix-tables.js <path> && /usr/share/nodejs/corepack/shims/npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix` |

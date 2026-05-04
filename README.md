@@ -63,6 +63,7 @@ Step 2 fixes everything else.
 ### Preventing Broken Tables
 
 The most common table error is **column count mismatch** between the header, separator, and data rows. This often happens with:
+
 - Extra `|` characters in type definitions (e.g., `"tab" | "space"`)
 - Copy-paste errors in separator rows
 
@@ -74,6 +75,7 @@ ${HERMES_SKILL_DIR}/lint.sh --validate docs/
 ```
 
 This validates:
+
 - Header columns match separator columns
 - All data rows have the correct number of columns
 - Pipes inside cells are properly escaped with `&#124;`
@@ -82,10 +84,10 @@ This validates:
 
 If a table cell contains a pipe character, escape it to prevent column misparsing:
 
-| Before (broken)              | After (fixed)                      |
-| :--------------------------- | :--------------------------------- |
-| `"tab" \| "space"`           | `"tab" &#124; "space"`             |
-| `"lf" \| "crlf" \| "cr"`     | `"lf" &#124; "crlf" &#124; "cr"`   |
+| Before (broken) | After (fixed) |
+| :------------- | :------------ |
+| `"tab" &#124; "space"` | `"tab" &#124; "space"` |
+| `"lf" &#124; "crlf" &#124; "cr"` | `"lf" &#124; "crlf" &#124; "cr"` |
 
 ### What It Does
 
@@ -159,6 +161,8 @@ markdown-lint/
 
 - Add `--fences` mode to `lint.sh` for fenced code block validation (EMPTY_LANG, BAD_CLOSER, COUNT_MISMATCH, DOUBLE_FENCE)
 - Add `scripts/check-fences.sh` — validates code fences across .md files
+- Disable MD055 (table-pipe-style) — no longer enforces leading/trailing `|` on tables
+- Sync `skills/markdown-lint/lint.sh` with root `lint.sh` (all flags now available)
 
 ### Key Changes in v2.7
 
@@ -169,7 +173,6 @@ markdown-lint/
 
 - Add shell hook `scripts/post-write.sh` for auto-lint on write_file
 - Add to `~/.hermes/config.yaml` to enable auto-lint
-- Enable MD055 (table-pipe-style) — enforces trailing pipes on all tables
 - Enable MD032 (blanks-around-lists) — lists must be surrounded by blank lines
 - Enable MD060 (table-column-style) — table pipes must align with header content
 - Add `hooks_auto_accept: true` for silent auto-lint on write

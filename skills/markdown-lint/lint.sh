@@ -3,9 +3,12 @@
 # Zero-install: uses Node.js from the system, finds npx automatically.
 #
 # Usage:
-#   lint.sh <path>          Fix a single file or directory
-#   lint.sh --check <path>  Read-only check (exit 0 if clean)
-#   lint.sh --all <dir>     Fix all .md in directory
+#   lint.sh <path>            Fix a single file or directory
+#   lint.sh --check <path>   Read-only check (exit 0 if clean)
+#   lint.sh --all <dir>      Fix all .md in directory
+#   lint.sh --fences <path>  Check fenced code blocks
+#   lint.sh --validate <path>  Validate table columns
+#   lint.sh --dry-run <path>   Preview fixes without applying
 #
 # Requires: node, npx (npm ships with node)
 
@@ -14,6 +17,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FIX_TABLES="$SCRIPT_DIR/references/fix-tables.js"
 CONFIG="$SCRIPT_DIR/references/.markdownlint.json"
+CHECK_FENCES="$SCRIPT_DIR/scripts/check-fences.sh"
 
 # Resolve npx — cross-platform (macOS, Linux, WSL, Debian, Ubuntu, Fedora)
 resolve_npx() {
@@ -84,23 +88,29 @@ run_npx() {
 }
 
 usage() {
-    echo "Usage: $0 [--check] [--all] [--validate] <path>"
+    echo "Usage: $0 [--check] [--all] [--fences] [--validate] [--dry-run] <path>"
     echo "  --check      Read-only check (exit 0 if clean)"
     echo "  --all        Treat <path> as a directory, fix all .md files"
+    echo "  --fences     Check fenced code blocks (empty openers, bad closers)"
     echo "  --validate   Validate table column consistency (exit 1 if mismatches)"
+    echo "  --dry-run    Show what would be fixed without applying changes"
     exit 1
 }
 
 CHECK=false
 ALL=false
+FENCES=false
 VALIDATE=false
+DRY_RUN=false
 TARGET=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --check)     CHECK=true;    shift ;;
         --all)       ALL=true;      shift ;;
+        --fences)    FENCES=true;   shift ;;
         --validate)  VALIDATE=true; shift ;;
+        --dry-run|-n)   DRY_RUN=true;  shift ;;
         -*)          usage ;;
         *)           TARGET="$1";    shift ;;
     esac
@@ -108,6 +118,11 @@ done
 
 if [[ -z "$TARGET" ]]; then
     usage
+fi
+
+if [[ "$FENCES" == true ]]; then
+    "$CHECK_FENCES" "$TARGET"
+    exit $?
 fi
 
 if [[ "$VALIDATE" == true ]]; then
@@ -119,13 +134,19 @@ if [[ "$VALIDATE" == true ]]; then
     exit $?
 fi
 
-# Step 1: Normalize table separators (skip if --check mode)
-if [[ "$CHECK" != true ]]; then
+# Step 1: Normalize table separators (skip if --check mode or --dry-run)
+if [[ "$CHECK" != true && "$DRY_RUN" != true ]]; then
     if [[ -d "$TARGET" ]]; then
         find "$TARGET" -name "*.md" -exec node "$FIX_TABLES" {} \;
     else
         node "$FIX_TABLES" "$TARGET"
     fi
+elif [[ "$DRY_RUN" == true ]]; then
+    echo "=== Dry Run Mode ==="
+    echo "Would fix tables with: node $FIX_TABLES"
+    node "$FIX_TABLES" --check "$TARGET" 2>/dev/null || true
+    echo "Would run markdownlint with --fix"
+    exit 0
 fi
 
 # Step 2: markdownlint with skill config
