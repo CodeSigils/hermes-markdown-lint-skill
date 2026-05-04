@@ -34,7 +34,7 @@ This skill lints and auto-fixes Markdown files to enforce GitHub Flavored Markdo
 | MD030 | List marker space | Yes |
 | MD031 | Blank lines around lists | Yes |
 | MD032 | Blanks around lists | Yes |
-| MD033 | No inline HTML | Yes |
+| MD033 | No inline HTML | No |
 | MD034 | No bare URLs | Yes |
 | MD035 | Horizontal rule style | Yes |
 | MD036 | No space after emphasis | Yes |
@@ -306,7 +306,7 @@ After:
 - `lint.sh` is the canonical interface — use it instead of running npx directly
 - npx path in Hermes environments: `/usr/share/nodejs/corepack/shims/npx`
 - MD055 (table-pipe-style) is disabled — leading/trailing `|` on tables is optional
-- MD033 (no-inline-html) is enabled — no raw HTML in markdown
+- MD033 (no-inline-html) is disabled — inline HTML is allowed in GFM
 - MD040 (code fence language) is disabled — blank fences are allowed for output examples and placeholders
 - Always use `${HERMES_SKILL_DIR}` or absolute paths in scripts
 
@@ -357,7 +357,7 @@ Changelog format:
 - Add `--fences` mode to `lint.sh` for fenced code block validation
 - Add `scripts/check-fences.sh` — validates code fences across .md files
 - Disable MD055 (table-pipe-style) — no longer enforces leading/trailing `|` on tables
-- Enable MD033 (no-inline-html) — no raw HTML in markdown
+- Disable MD033 (no-inline-html) — inline HTML is allowed in GFM
 - Sync `skills/markdown-lint/lint.sh` with root `lint.sh` (all flags available)
 
 ## Post-Install: Auto-Lint on Write
