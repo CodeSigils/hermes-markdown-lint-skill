@@ -127,6 +127,7 @@ markdownlint implements MD001-MD060 rules. Key rules enforced:
 | MD030 | list-marker-space | Spaces after list markers |
 | MD031 | blanks-around-fences | Blank line around fenced code blocks |
 | MD032 | blanks-around-lists | Lists should be surrounded by blank lines |
+| MD033 | no-inline-html | No raw HTML in markdown |
 | MD035 | hr-style | Horizontal rule style `---` |
 | MD046 | code-block-style | Use fenced code blocks |
 | MD047 | single-h1 | File should start with a single h1 heading |
@@ -140,7 +141,6 @@ Rules **disabled** (too strict for prose documentation):
 | MD013 | line-length | Prose lines are naturally longer |
 | MD024 | multiple-headings | Same h2 text in different sections is valid |
 | MD025 | multiple-h1 | Multiple top-level headings allowed |
-| MD033 | no-inline-html | GFM supports basic inline HTML |
 | MD034 | no-bare-urls | Bare URLs auto-link in GFM |
 | MD036 | emphasis-instead-of-heading | Valid use case for emphasis |
 | MD040 | fenced-code-language | Code fences don't always need a language |

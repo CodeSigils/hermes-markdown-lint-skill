@@ -162,6 +162,7 @@ markdown-lint/
 - Add `--fences` mode to `lint.sh` for fenced code block validation (EMPTY_LANG, BAD_CLOSER, COUNT_MISMATCH, DOUBLE_FENCE)
 - Add `scripts/check-fences.sh` — validates code fences across .md files
 - Disable MD055 (table-pipe-style) — no longer enforces leading/trailing `|` on tables
+- Enable MD033 (no-inline-html) — no raw HTML in markdown
 - Sync `skills/markdown-lint/lint.sh` with root `lint.sh` (all flags now available)
 
 ### Key Changes in v2.7
