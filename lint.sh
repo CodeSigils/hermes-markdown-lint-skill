@@ -103,7 +103,7 @@ while [[ $# -gt 0 ]]; do
         --check)     CHECK=true;    shift ;;
         --all)       ALL=true;      shift ;;
         --validate)  VALIDATE=true; shift ;;
-        --dry-run)   DRY_RUN=true;  shift ;;
+        --dry-run|-n)   DRY_RUN=true;  shift ;;
         -*)          usage ;;
         *)           TARGET="$1";    shift ;;
     esac
