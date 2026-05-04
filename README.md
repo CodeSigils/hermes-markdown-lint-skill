@@ -45,9 +45,10 @@ Restart Hermes (CLI or gateway) for the hook to activate. Set `hooks_auto_accept
 ${HERMES_SKILL_DIR}/lint.sh <path>
 
 # Options
-${HERMES_SKILL_DIR}/lint.sh --check <path>   # Read-only check
-${HERMES_SKILL_DIR}/lint.sh --all <dir>      # Fix all .md in directory
+${HERMES_SKILL_DIR}/lint.sh --check <path>     # Read-only check
+${HERMES_SKILL_DIR}/lint.sh --all <dir>       # Fix all .md in directory
 ${HERMES_SKILL_DIR}/lint.sh --validate <path>  # Validate table column consistency
+${HERMES_SKILL_DIR}/lint.sh --fences <path>   # Check fenced code blocks
 ```
 
 Or use the two-step pipeline manually:
@@ -145,6 +146,7 @@ markdown-lint/
 ├── SKILL.md
 ├── lint.sh
 ├── scripts/
+│   ├── check-fences.sh          # Fenced code block checker
 │   └── post-write.sh
 ├── references/
 │   ├── fix-tables.js
@@ -152,6 +154,11 @@ markdown-lint/
 └── test/
     └── kitchensink.md
 ```
+
+### Key Changes in v2.8
+
+- Add `--fences` mode to `lint.sh` for fenced code block validation (EMPTY_LANG, BAD_CLOSER, COUNT_MISMATCH, DOUBLE_FENCE)
+- Add `scripts/check-fences.sh` — validates code fences across .md files
 
 ### Key Changes in v2.7
 
