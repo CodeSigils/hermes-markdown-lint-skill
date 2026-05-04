@@ -89,13 +89,13 @@ Follow these principles in all work:
 
 ### Lint a file (read-only check)
 
-```bash
+```text
 ${HERMES_SKILL_DIR}/lint.sh --check <file>
 ```
 
 ### Fix a file
 
-```bash
+```markdown
 ${HERMES_SKILL_DIR}/lint.sh <file>
 ```
 
@@ -104,6 +104,14 @@ ${HERMES_SKILL_DIR}/lint.sh <file>
 ```bash
 ${HERMES_SKILL_DIR}/lint.sh --all <dir>
 ```
+
+### Check code fences
+
+```bash
+${HERMES_SKILL_DIR}/lint.sh --fences <path>
+```
+
+Exit 0 = all fences clean. Checks: no empty openers, no bare-lang closers, matched counts.
 
 ## Workflow
 
@@ -155,6 +163,22 @@ This catches:
 - Pipes inside cells (unescaped)
 
 **Always run `--validate` before pushing to catch broken tables.**
+
+### Code Fence Check
+
+Fenced code blocks are easily corrupted by shell tools (backtick content interpreted as command substitution). Before committing, always run:
+
+```bash
+skills/markdown-lint/scripts/check-fences.sh <file-or-dir>
+```
+
+Or via lint.sh:
+
+```bash
+${HERMES_SKILL_DIR}/lint.sh --fences <path>
+```
+
+This catches empty openers, bare-lang closers, and count mismatches — the exact issues that today's bulk edit would have caught mid-flight.
 
 ```bash
 /usr/share/nodejs/corepack/shims/npx --yes markdownlint-cli2@latest --config skills/markdown-lint/references/.markdownlint.json test/kitchensink.md
@@ -230,14 +254,14 @@ Both are valid — blank fences allowed for output:
 
 Output result here
 
-```
+```text
 ```
 
 ```markdown
-```python
+```
 def hello():
     print("Hello")
-```
+```text
 
 ```
 

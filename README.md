@@ -16,7 +16,7 @@ Uses **markdownlint** via `npx` and **fix-tables.js** for table formatting — z
 
 ### Install the Skill
 
-```bash
+```text
 hermes skills install CodeSigils/hermes-markdown-lint-skill/markdown-lint --force
 ```
 
@@ -139,7 +139,7 @@ Learn more about creating and managing Hermes skills:
 
 ### Skill Structure
 
-```
+```text
 markdown-lint/
 ├── README.md
 ├── SKILL.md

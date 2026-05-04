@@ -36,7 +36,7 @@ This skill uses **npx** which comes with Node.js. Hermes already has Node.js ava
 
 ### One-liner (recommended)
 
-```bash
+```text
 ${HERMES_SKILL_DIR}/lint.sh <path>
 ```
 
@@ -160,7 +160,7 @@ Normalizes Markdown table separators from old-style `|------|------|` to GFM-com
 
 ### Location
 
-```
+```text
 ${HERMES_SKILL_DIR}/references/fix-tables.js
 ```
 
@@ -245,6 +245,30 @@ ${HERMES_SKILL_DIR}/lint.sh --check <path>
 
 Exit code 0 means no violations.
 
+### Code Fence Check
+
+Fenced code blocks are a common source of subtle corruption (e.g. backtick content interpreted as shell, broken opener/closer pairs). Run the dedicated fence checker:
+
+```bash
+${HERMES_SKILL_DIR}/lint.sh --fences <path>
+```
+
+Or directly:
+
+```bash
+${HERMES_SKILL_DIR}/scripts/check-fences.sh <path>
+```
+
+Exit code 0 = all fences clean. The checker verifies:
+
+- Every opener has a language tag (no empty ` ``` ` openers)
+
+- Every closer is bare (` ``` ` with nothing after)
+
+- Backtick/tilde count matches between opener and closer
+
+- No double-fence bug (adjacent fence lines merged as one block)
+
 ## Quick Reference
 
 | Task | Command |
@@ -252,4 +276,5 @@ Exit code 0 means no violations.
 | Fix file | `${HERMES_SKILL_DIR}/lint.sh <path>` |
 | Fix all | `${HERMES_SKILL_DIR}/lint.sh --all .` |
 | Check only | `${HERMES_SKILL_DIR}/lint.sh --check <path>` |
+| Check fences | `${HERMES_SKILL_DIR}/lint.sh --fences <path>` |
 | Manual steps | `node ${HERMES_SKILL_DIR}/references/fix-tables.js <path> && /usr/share/nodejs/corepack/shims/npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix` |

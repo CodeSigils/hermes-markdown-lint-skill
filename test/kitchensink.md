@@ -60,7 +60,7 @@ This file contains various markdown constructs to test the linting pipeline.
 
 ### Fenced Code
 
-```javascript
+```text
 function hello() {
   console.log("Hello, World!");
 }
@@ -68,7 +68,7 @@ function hello() {
 
 ### Blank Fence (allowed)
 
-```
+```text
 No language specified
 This is output or placeholder
 ```

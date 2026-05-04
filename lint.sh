@@ -14,6 +14,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FIX_TABLES="$SCRIPT_DIR/skills/markdown-lint/references/fix-tables.js"
 CONFIG="$SCRIPT_DIR/skills/markdown-lint/references/.markdownlint.json"
+CHECK_FENCES="$SCRIPT_DIR/skills/markdown-lint/scripts/check-fences.sh"
 
 # Resolve npx — cross-platform (macOS, Linux, WSL, Debian, Ubuntu, Fedora)
 resolve_npx() {
@@ -84,16 +85,18 @@ run_npx() {
 }
 
 usage() {
-    echo "Usage: $0 [--check] [--all] [--validate] [--dry-run] <path>"
+    echo "Usage: $0 [--check] [--all] [--fences] [--validate] [--dry-run] <path>"
     echo "  --check      Read-only check (exit 0 if clean)"
-    echo "  --all       Treat <path> as a directory, fix all .md files"
-    echo "  --validate  Validate table column consistency (exit 1 if mismatches)"
-    echo "  --dry-run   Show what would be fixed without applying changes"
+    echo "  --all        Treat <path> as a directory, fix all .md files"
+    echo "  --fences     Check fenced code blocks (empty openers, bad closers)"
+    echo "  --validate   Validate table column consistency (exit 1 if mismatches)"
+    echo "  --dry-run    Show what would be fixed without applying changes"
     exit 1
 }
 
 CHECK=false
 ALL=false
+FENCES=false
 VALIDATE=false
 DRY_RUN=false
 TARGET=""
@@ -102,6 +105,7 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         --check)     CHECK=true;    shift ;;
         --all)       ALL=true;      shift ;;
+        --fences)    FENCES=true;   shift ;;
         --validate)  VALIDATE=true; shift ;;
         --dry-run|-n)   DRY_RUN=true;  shift ;;
         -*)          usage ;;
@@ -111,6 +115,11 @@ done
 
 if [[ -z "$TARGET" ]]; then
     usage
+fi
+
+if [[ "$FENCES" == true ]]; then
+    "$CHECK_FENCES" "$TARGET"
+    exit $?
 fi
 
 if [[ "$VALIDATE" == true ]]; then
