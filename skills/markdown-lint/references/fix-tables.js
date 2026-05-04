@@ -57,17 +57,6 @@ function _isSeparatorLine(line) {
     });
 }
 
-function _normalizeCell(cell) {
-    const inner = cell.trim();
-    const leading = inner.startsWith(':');
-    const trailing = inner.endsWith(':');
-    const center = leading && trailing;
-
-    if (center) return ':---:';
-    if (trailing) return '---:';
-    return ':---';
-}
-
 function _getSeparatorAlignment(cell) {
     const inner = cell.trim();
     if (inner.startsWith(':') && inner.endsWith(':')) return 'center';
@@ -155,6 +144,11 @@ function _isSeparatorAlreadyCorrect(cells) {
     });
 }
 
+/**
+ * @param {string} filePath - Path to markdown file
+ * @param {{dryRun?: boolean, verbose?: boolean}} options
+ * @returns {number} Number of separators fixed
+ */
 function fixFile(filePath, options = {}) {
     const { dryRun = false, verbose = false } = options;
 

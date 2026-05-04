@@ -53,7 +53,7 @@ ${HERMES_SKILL_DIR}/lint.sh --validate <path>  # Validate table column consisten
 Or use the two-step pipeline manually:
 
 ```bash
-${HERMES_SKILL_DIR}/references/fix-tables.js <path> && npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix
+skills/markdown-lint/references/fix-tables.js <path> && npx markdownlint-cli2 --config skills/markdown-lint/references/.markdownlint.json <path> --fix
 ```
 
 Step 1 normalizes table separators.
