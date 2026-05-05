@@ -13,6 +13,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FIX_TABLES="$SCRIPT_DIR/skills/markdown-lint/references/fix-tables.js"
+PAD_TABLES="$SCRIPT_DIR/skills/markdown-lint/references/pad-tables.js"
 CONFIG="$SCRIPT_DIR/skills/markdown-lint/references/.markdownlint.json"
 CHECK_FENCES="$SCRIPT_DIR/skills/markdown-lint/scripts/check-fences.sh"
 
@@ -131,17 +132,21 @@ if [[ "$VALIDATE" == true ]]; then
     exit $?
 fi
 
-# Step 1: Normalize table separators (skip if --check mode or --dry-run)
+# Step 1: Normalize table separators and pad cell content (skip if --check or --dry-run)
 if [[ "$CHECK" != true && "$DRY_RUN" != true ]]; then
     if [[ -d "$TARGET" ]]; then
         find "$TARGET" -name "*.md" -exec node "$FIX_TABLES" {} \;
+        find "$TARGET" -name "*.md" -exec node "$PAD_TABLES" {} \;
     else
         node "$FIX_TABLES" "$TARGET"
+        node "$PAD_TABLES" "$TARGET"
     fi
 elif [[ "$DRY_RUN" == true ]]; then
     echo "=== Dry Run Mode ==="
     echo "Would fix tables with: node $FIX_TABLES"
     node "$FIX_TABLES" --check "$TARGET" 2>/dev/null || true
+    echo "Would pad table cells with: node $PAD_TABLES"
+    node "$PAD_TABLES" --check "$TARGET" 2>/dev/null || true
     echo "Would run markdownlint with --fix"
     exit 0
 fi

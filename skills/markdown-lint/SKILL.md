@@ -149,6 +149,26 @@ Rules **disabled** (too strict for prose documentation):
 | MD052 | no-bare-reference-link | Common in prose |
 | MD055 | table-pipe-style | No leading/trailing pipes enforced |
 
+## pad-tables.js
+
+Pads table data rows so every `|` aligns with the column boundaries set by the
+header. Required by **MD060** — compact tables like `| A | Long desc |` have
+misaligned pipes and fail MD060.
+
+**Pipeline:** fix-tables.js normalizes the separator format (`:---`), then
+pad-tables.js widens all rows to match actual column widths.
+
+**Features:**
+
+- Computes max column width from header + all data rows (string-width aware)
+- Rebuilds header, separator, and every data row with consistent pipe positions
+- Idempotent — skips files that are already aligned
+
+```bash
+# Check if padding is needed (read-only)
+node ${HERMES_SKILL_DIR}/references/pad-tables.js --check <path>
+```
+
 ## fix-tables.js
 
 Normalizes Markdown table separators from old-style `|------|------|` to GFM-compliant
