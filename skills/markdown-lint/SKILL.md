@@ -131,7 +131,7 @@ markdownlint implements MD001-MD060 rules. Key rules enforced:
 | MD046 | code-block-style | Use fenced code blocks |
 | MD047 | single-h1 | File should start with a single h1 heading |
 | MD048 | code-fence-style | Use backticks for code fences |
-| MD060 | no-inline-html | No HTML in markdown |
+| MD060 | table-column-style | Table pipes must align with header columns |
 
 Rules **disabled** (too strict for prose documentation):
 
