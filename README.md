@@ -201,6 +201,23 @@ markdown-lint/
 - Removed duplicate configuration
 - Updated frontmatter to Hermes 2.x format
 
+### GitHub PR Workflow
+
+This skill supports the full GitHub PR lifecycle via the `github-pr-workflow` skill:
+
+```bash
+# 1. Create a feature branch
+git checkout -b feat/your-feature-name
+
+# 2. Make changes and commit
+git add <files>
+git commit -m "feat: description of changes"
+
+# 3. Push and create PR
+git push -u origin HEAD
+gh pr create --title "feat: your feature" --body "## Summary..."
+```
+
 ### Adding to Your Own Tap
 
 ```bash
