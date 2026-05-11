@@ -15,7 +15,6 @@ Powered by **markdownlint** via `npx` and a custom AST-like **fix-tables.js** pi
 ### Prerequisites
 
 - **Node.js / npx** — Available in Hermes environments (needed to run markdownlint-cli2)
-- **jq** — Required for the shell hook (`post-write.sh`)
 
 ### Install the Skill
 
