@@ -204,10 +204,9 @@ Learn more about creating and managing Hermes skills:
 │       ├── lint.js              # Canonical entry point
 │       ├── scripts/
 │       │   ├── check-fences.js  # Fenced code block checker
-│       │   └── post-write.js    # Auto-lint hook
+│       │   └── post-write.js    # Auto-lint hook (optional)
 │       └── references/
-│           ├── fix-tables.js
-│           ├── pad-tables.js
+│           ├── format-tables.js # Single-pass table formatter
 │           └── .markdownlint.json
 └── test/
     └── kitchensink.md
@@ -218,7 +217,8 @@ Learn more about creating and managing Hermes skills:
 - Replaced `jq` dependency with zero-dependency Node.js extraction in `post-write.js`.
 - Replaced brittle bash regex `check-fences.sh` with a native `check-fences.js` script.
 - Significantly improved `lint.js` bulk execution performance (node processes run once instead of per-file).
-- **Refactored entirely to pure Node.js**: Replaced the `lint.sh` and `post-write.sh` bash wrappers with native `.js` scripts. The pipeline is now 100% cross-platform (Windows native) and immune to `chmod +x` permission denied errors.
+- **Refactored entirely to pure Node.js**: Replaced `lint.sh` and `post-write.sh` bash wrappers with native `.js` scripts. The pipeline is now 100% cross-platform (Windows native) and immune to `chmod +x` permission denied errors.
+- **Single-pass table formatting**: Merged `fix-tables.js` + `pad-tables.js` into `format-tables.js` — halves I/O per file.
 
 ### Key Changes in v2.8
 
