@@ -32,7 +32,7 @@ Load this skill whenever you create or edit a Markdown file.
 
 Before installing, ensure your environment meets the following requirements:
 
-- **Hermes CLI** — Required to install the skill and configure the `post-write` shell hooks.
+- **Hermes CLI** — Required to install the skill. The `post-write.js` hook is an optional safety net.
 - **Node.js (v18+)** — The linting pipeline relies on native Node.js scripts and `npx` to dynamically fetch `markdownlint-cli2` without requiring global installations.
 - **Cross-Platform** — The pipeline runs natively on Linux, macOS, and Windows. No WSL or Git Bash required!
 
