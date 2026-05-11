@@ -30,7 +30,11 @@ Load this skill whenever you create or edit a Markdown file.
 
 ## Prerequisites
 
-This skill uses **npx** which comes with Node.js. Hermes already has Node.js available.
+Before installing, ensure your environment meets the following requirements:
+
+- **Hermes CLI** — Required to install the skill and configure the `post-write` shell hooks.
+- **Node.js (v18+)** — The linting pipeline relies on native Node.js scripts and `npx` to dynamically fetch `markdownlint-cli2` without requiring global installations.
+- **Bash Environment** — The entry point and hooks are written in Bash. Windows users will need WSL, Git Bash, or a similar Unix-like compatibility layer.
 
 ## Skill Structure
 
