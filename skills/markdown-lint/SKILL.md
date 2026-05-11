@@ -127,7 +127,7 @@ node ${HERMES_SKILL_DIR}/lint.js --all .
 ### 3. CI / Pre-commit Check (read-only)
 
 ```bash
-npx markdownlint-cli2 <path>
+node ${HERMES_SKILL_DIR}/lint.js --check .
 ```
 
 ## Configuration
@@ -164,8 +164,10 @@ markdownlint implements MD001-MD060 rules. Key rules enforced:
 | MD031 | blanks-around-fences   | Blank line around fenced code blocks       |
 | MD032 | blanks-around-lists    | Lists should be surrounded by blank lines  |
 | MD035 | hr-style               | Horizontal rule style `---`                |
-| MD046 | code-block-style       | Use fenced code blocks                     |
-| MD047 | single-h1              | File should start with a single h1 heading |
+| MD041 | first-line-h1         | First line should be a top-level heading   |
+| MD045 | no-alt-text           | Images must have alternate text (alt)      |
+| MD046 | code-block-style      | Use fenced code blocks                     |
+| MD047 | single-trailing-newline | File should end with a single newline    |
 | MD048 | code-fence-style       | Use backticks for code fences              |
 | MD060 | table-column-style     | Table pipes must align with header columns |
 
@@ -180,8 +182,6 @@ Rules **disabled** (too strict for prose documentation):
 | MD034 | no-bare-urls                | Bare URLs auto-link in GFM                  |
 | MD036 | emphasis-instead-of-heading | Valid use case for emphasis                 |
 | MD040 | fenced-code-language        | Code fences don't always need a language    |
-| MD041 | first-line-heading          | Frontmatter makes this noisy                |
-| MD045 | no-image-size               | Images need dimensions sometimes            |
 | MD052 | no-bare-reference-link      | Common in prose                             |
 | MD055 | table-pipe-style            | No leading/trailing pipes enforced          |
 

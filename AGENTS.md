@@ -67,7 +67,7 @@ This skill lints and auto-fixes Markdown files to enforce GitHub Flavored Markdo
 | MD042 | No empty links                      | Yes                |
 | MD043 | Valid heading structure             | Yes                |
 | MD044 | Proper names                        | Yes                |
-| MD045 | Emphasis used correctly             | Yes                |
+| MD045 | No alt text (images)                | Yes                |
 | MD046 | Code block style                    | Yes                |
 | MD047 | Single trailing newline             | Yes                |
 | MD049 | No empty link text                  | Yes                |
