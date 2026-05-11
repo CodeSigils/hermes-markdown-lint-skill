@@ -32,7 +32,7 @@ To auto-lint every markdown file Hermes writes, add a shell hook to your config.
 hooks:
   post_tool_call:
     - matcher: "write_file"
-      command: "~/.hermes/skills/markdown-lint/scripts/post-write.sh"
+      command: "~/.hermes/skills/CodeSigils/hermes-markdown-lint-skill/markdown-lint/scripts/post-write.sh"
 hooks_auto_accept: true
 ```
 
@@ -54,11 +54,12 @@ ${HERMES_SKILL_DIR}/lint.sh --fences <path>   # Check fenced code blocks
 Or use the two-step pipeline manually:
 
 ```bash
-skills/markdown-lint/references/fix-tables.js <path> && npx markdownlint-cli2 --config skills/markdown-lint/references/.markdownlint.json <path> --fix
+node skills/markdown-lint/references/fix-tables.js <path> && node skills/markdown-lint/references/pad-tables.js <path> && npx markdownlint-cli2 --config skills/markdown-lint/references/.markdownlint.json <path> --fix
 ```
 
 Step 1 normalizes table separators.
-Step 2 fixes everything else.
+Step 2 pads table cells for MD060 alignment.
+Step 3 fixes everything else.
 
 ### Preventing Broken Tables
 

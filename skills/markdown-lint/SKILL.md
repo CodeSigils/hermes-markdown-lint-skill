@@ -57,11 +57,12 @@ ${HERMES_SKILL_DIR}/lint.sh --fences <path>  # Check fenced code blocks
 If you prefer running steps separately:
 
 ```bash
-node ${HERMES_SKILL_DIR}/references/fix-tables.js <path> && npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix
+node ${HERMES_SKILL_DIR}/references/fix-tables.js <path> && node ${HERMES_SKILL_DIR}/references/pad-tables.js <path> && npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix
 ```
 
 Step 1 normalizes table separators to `| :--- | :--- |` left-aligned style.
-Step 2 fixes everything else.
+Step 2 pads table cells to match header widths.
+Step 3 fixes everything else.
 
 ### Lint only (read-only check)
 
@@ -210,7 +211,7 @@ Hermes supports `post_tool_call` hooks via `~/.hermes/config.yaml`:
 hooks:
   post_tool_call:
     - matcher: "write_file"
-      command: "~/.hermes/skills/markdown-lint/scripts/post-write.sh"
+      command: "~/.hermes/skills/CodeSigils/hermes-markdown-lint-skill/markdown-lint/scripts/post-write.sh"
 ```
 
 > **Note:** OpenCode does NOT support hooks in `opencode.jsonc`. Do not document OpenCode hook configs — use git pre-commit hooks or shell aliases instead.
@@ -296,11 +297,11 @@ Exit code 0 = all fences clean. The checker verifies:
 
 ## Quick Reference
 
-| Task            | Command                                                                                                                                                                                      |
-| : ------------- | : ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Fix file        | `${HERMES_SKILL_DIR}/lint.sh <path>`                                                                                                                                                         |
-| Fix all         | `${HERMES_SKILL_DIR}/lint.sh --all .`                                                                                                                                                        |
-| Check only      | `${HERMES_SKILL_DIR}/lint.sh --check <path>`                                                                                                                                                 |
-| Check fences    | `${HERMES_SKILL_DIR}/lint.sh --fences <path>`                                                                                                                                                |
-| Validate tables | `${HERMES_SKILL_DIR}/lint.sh --validate <path>`                                                                                                                                              |
-| Manual steps    | `node ${HERMES_SKILL_DIR}/references/fix-tables.js <path> && /usr/share/nodejs/corepack/shims/npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix` |
+| Task            | Command                                                                                                                                                                                                                                                  |
+| : ------------- | : ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Fix file        | `${HERMES_SKILL_DIR}/lint.sh <path>`                                                                                                                                                                                                                     |
+| Fix all         | `${HERMES_SKILL_DIR}/lint.sh --all .`                                                                                                                                                                                                                    |
+| Check only      | `${HERMES_SKILL_DIR}/lint.sh --check <path>`                                                                                                                                                                                                             |
+| Check fences    | `${HERMES_SKILL_DIR}/lint.sh --fences <path>`                                                                                                                                                                                                            |
+| Validate tables | `${HERMES_SKILL_DIR}/lint.sh --validate <path>`                                                                                                                                                                                                          |
+| Manual steps    | `node ${HERMES_SKILL_DIR}/references/fix-tables.js <path> && node ${HERMES_SKILL_DIR}/references/pad-tables.js <path> && /usr/share/nodejs/corepack/shims/npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix` |
