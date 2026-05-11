@@ -36,7 +36,7 @@ This skill lints and auto-fixes Markdown files to enforce GitHub Flavored Markdo
 ## MD Rules Enforced
 
 | Rule  | Description                         | Enabled              |
-| : --- | : --------------------------------- | : ------------------ |
+| :---- | :---------------------------------- | :------------------- |
 | MD001 | Heading increments                  | Yes                  |
 | MD002 | First heading should be h1          | Yes                  |
 | MD003 | Atx style headings                  | Yes                  |
@@ -345,7 +345,7 @@ After:
 ### Common Errors
 
 | Error                          | Cause                           | Fix                     |
-| : ---------------------------- | : ----------------------------- | : --------------------- |
+| :----------------------------- | :------------------------------ | :---------------------- |
 | MD018: No space after hash     | Missing space after `#`         | Add space: `## Heading` |
 | MD047: Single trailing newline | File doesn't end with newline   | Add blank line at end   |
 | MD055: No trailing pipe        | Table row missing trailing pipe | Add trailing pipe       |
@@ -413,7 +413,7 @@ Restart Hermes for hook to activate.
 ## Files to Know
 
 | File                                                 | Purpose                                                 |
-| : -------------------------------------------------- | : ----------------------------------------------------- |
+| :--------------------------------------------------- | :------------------------------------------------------ |
 | `lint.js`                                            | Pipeline wrapper — canonical entry point with all flags |
 | `skills/markdown-lint/SKILL.md`                      | Skill instructions for Hermes                           |
 | `skills/markdown-lint/references/.markdownlint.json` | Lint rules config                                       |

@@ -9,7 +9,7 @@ This file contains various markdown constructs to test the linting pipeline.
 ### Basic Table
 
 | Name    | Age | Role      |
-| : ----- | ---: | : ------- |
+| :------ | ---: | :-------- |
 | Alice   | 25  | Developer |
 | Bob     | 30  | Designer  |
 | Charlie | 28  | Manager   |
@@ -17,7 +17,7 @@ This file contains various markdown constructs to test the linting pipeline.
 ### Table with Trailing Pipe
 
 | Feature | Status | Notes         |
-| : ----- | : ---- | : ----------- |
+| :------ | :----- | :------------ |
 | MD055   | ✅     | Trailing pipe |
 | MD060   | ✅     | Alignment     |
 | MD040   | ✅     | Blank fence   |
@@ -25,7 +25,7 @@ This file contains various markdown constructs to test the linting pipeline.
 ### Emoji Columns (tests string-width)
 
 | Emoji | Description | Code Point |
-| : --- | : --------- | : -------- |
+| :---- | :---------- | :--------- |
 | 🚀    | Rocket      | U+1F680    |
 | ✅    | Check mark  | U+2705     |
 | ⚠️    | Warning     | U+26A0     |
@@ -34,7 +34,7 @@ This file contains various markdown constructs to test the linting pipeline.
 ### CJK Characters (tests double-width)
 
 | 言語   | 状態   | バージョン |
-| : ---- | : ---- | : -------- |
+| :----- | :----- | :--------- |
 | 日本語 | Active | 2.6        |
 | 中文   | Active | 2.6        |
 | 한국어 | Active | 2.6        |
@@ -42,7 +42,7 @@ This file contains various markdown constructs to test the linting pipeline.
 ### Mixed Content
 
 | Type  | Sample    | Width |
-| : --- | : ------- | : --- |
+| :---- | :-------- | :---- |
 | Emoji | 🌍🌎🌏    | 6     |
 | CJK   | 日本語    | 6     |
 | Mixed | Hello世界 | 8     |
@@ -50,7 +50,7 @@ This file contains various markdown constructs to test the linting pipeline.
 ### Alignment Variations
 
 | Left | Center | Right |
-| : --- | :----: | -----: |
+| :--- | :----: | -----: |
 | ←    | ◆      | →     |
 | left | center | right |
 
@@ -144,7 +144,7 @@ Run `npm install` to install dependencies.
 ## Raw Table (before fix)
 
 | Header |
-| : ---- |
+| :----- |
 | data   |
 
 ---
@@ -152,7 +152,7 @@ Run `npm install` to install dependencies.
 ## Summary
 
 | Rule  | Purpose          |
-| : --- | : -------------- |
+| :---- | :--------------- |
 | MD055 | Trailing pipes   |
 | MD060 | Column alignment |
 | MD040 | Code fence lang  |

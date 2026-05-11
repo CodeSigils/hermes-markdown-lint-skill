@@ -9,8 +9,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const SCRIPT_DIR = __dirname;
-const FIX_TABLES = path.join(SCRIPT_DIR, 'references', 'fix-tables.js');
-const PAD_TABLES = path.join(SCRIPT_DIR, 'references', 'pad-tables.js');
+const FORMAT_TABLES = path.join(SCRIPT_DIR, 'references', 'format-tables.js');
 const CONFIG = path.join(SCRIPT_DIR, 'references', '.markdownlint.json');
 const CHECK_FENCES = path.join(SCRIPT_DIR, 'scripts', 'check-fences.js');
 
@@ -78,26 +77,20 @@ if (VALIDATE) {
     const argsToPass = ['--validate'];
     if (ALL || fs.statSync(TARGET).isDirectory()) argsToPass.push('--all');
     argsToPass.push(TARGET);
-    process.exit(runNodeScript(FIX_TABLES, ...argsToPass));
+    process.exit(runNodeScript(FORMAT_TABLES, ...argsToPass));
 }
 
-// Step 1: Normalize table separators and pad cell content
+// Step 1: Format tables (fix separators + pad cells) in a single pass
 if (!CHECK && !DRY_RUN) {
     const argsToPass = [];
     if (ALL || fs.statSync(TARGET).isDirectory()) argsToPass.push('--all');
     argsToPass.push(TARGET);
-    
-    let status = runNodeScript(FIX_TABLES, ...argsToPass);
-    if (status !== 0) process.exit(status);
-    
-    status = runNodeScript(PAD_TABLES, ...argsToPass);
+    const status = runNodeScript(FORMAT_TABLES, ...argsToPass);
     if (status !== 0) process.exit(status);
 } else if (DRY_RUN) {
     console.log("=== Dry Run Mode ===");
-    console.log(`Would fix tables with: node ${FIX_TABLES}`);
-    runNodeScript(FIX_TABLES, '--check', TARGET);
-    console.log(`Would pad table cells with: node ${PAD_TABLES}`);
-    runNodeScript(PAD_TABLES, '--check', TARGET);
+    console.log(`Would format tables with: node ${FORMAT_TABLES}`);
+    runNodeScript(FORMAT_TABLES, '--check', TARGET);
     console.log("Would run markdownlint with --fix");
     process.exit(0);
 }
