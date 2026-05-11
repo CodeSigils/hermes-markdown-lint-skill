@@ -1,9 +1,12 @@
 # Markdown Lint Skill for Hermes
 
-Auto-fix Markdown files to enforce [GitHub Flavored Markdown (GFM)](https://github.github.com/gfm/) rules.
-A skill for the [Hermes Agent](https://github.com/nousresearch/hermes-agent) ecosystem.
+[![Version](https://img.shields.io/badge/version-v2.9.0-blue.svg)](https://github.com/CodeSigils/hermes-markdown-lint-skill/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Hermes Skill](https://img.shields.io/badge/Hermes-Skill-8A2BE2.svg)](https://hermes-agent.nousresearch.com/)
 
-Uses **markdownlint** via `npx` and **fix-tables.js** for table formatting — zero install required.
+A zero-dependency Hermes Agent skill that automatically lints and fixes Markdown files to enforce [GitHub Flavored Markdown (GFM)](https://github.github.com/gfm/) rules. 
+
+Powered by **markdownlint** via `npx` and a custom AST-like **fix-tables.js** pipeline for flawless table formatting — absolutely no global installations required.
 
 ---
 
