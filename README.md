@@ -77,7 +77,7 @@ The most common table error is **column count mismatch** between the header, sep
 
 ```bash
 # Add to CI or pre-commit to catch broken tables
-node ${HERMES_SKILL_DIR}/lint.js --validate docs/
+node lint.js --validate .
 ```
 
 This validates:
@@ -165,7 +165,21 @@ npx markdownlint-cli2 --config skills/markdown-lint/references/.markdownlint.jso
 
 ### CI / Pre-commit
 
-GitHub Actions: `npx markdownlint-cli2 .`
+The project uses GitHub Actions to validate every push and PR. You can run the same checks locally:
+
+```bash
+# 1. Unit tests for the table formatter
+node test/format-tables.test.js
+
+# 2. Check for unclosed code fences or bad closers
+node lint.js --fences .
+
+# 3. Validate table column consistency
+node lint.js --validate .
+
+# 4. Final lint check
+node lint.js --check .
+```
 
 Pre-commit:
 

@@ -14,7 +14,7 @@ const CONFIG = path.join(SCRIPT_DIR, 'references', '.markdownlint.json');
 const CHECK_FENCES = path.join(SCRIPT_DIR, 'scripts', 'check-fences.js');
 
 function usage() {
-    console.error("Usage: node lint.js [--check] [--all] [--fences] [--validate] [--dry-run] <path>");
+    console.error("Usage: node lint.js [--check] [--all] [--fences] [--validate] [--dry-run] <path>...");
     console.error("  --check      Read-only check (exit 0 if clean)");
     console.error("  --all        Treat <path> as a directory, fix all .md files");
     console.error("  --fences     Check fenced code blocks (unmatched markers, bad closers)");
@@ -28,7 +28,7 @@ let ALL = false;
 let FENCES = false;
 let VALIDATE = false;
 let DRY_RUN = false;
-let TARGET = "";
+const TARGETS = [];
 
 const args = process.argv.slice(2);
 for (let i = 0; i < args.length; i++) {
@@ -39,14 +39,16 @@ for (let i = 0; i < args.length; i++) {
     else if (arg === '--validate') VALIDATE = true;
     else if (arg === '--dry-run' || arg === '-n') DRY_RUN = true;
     else if (arg.startsWith('-')) usage();
-    else TARGET = arg;
+    else TARGETS.push(arg);
 }
 
-if (!TARGET) usage();
+if (TARGETS.length === 0) usage();
 
-// Normalize TARGET directory path to remove trailing slash if present
-if (ALL || (fs.existsSync(TARGET) && fs.statSync(TARGET).isDirectory())) {
-    TARGET = TARGET.replace(/[/\\]$/, '');
+// Normalize TARGET directory paths to remove trailing slash if present
+for (let i = 0; i < TARGETS.length; i++) {
+    if (ALL || (fs.existsSync(TARGETS[i]) && fs.statSync(TARGETS[i]).isDirectory())) {
+        TARGETS[i] = TARGETS[i].replace(/[/\\]$/, '');
+    }
 }
 
 function runNodeScript(scriptPath, ...scriptArgs) {
@@ -70,39 +72,56 @@ function runNpx(args) {
 }
 
 if (FENCES) {
-    process.exit(runNodeScript(CHECK_FENCES, TARGET));
+    let exitCode = 0;
+    for (const target of TARGETS) {
+        const status = runNodeScript(CHECK_FENCES, target);
+        if (status !== 0) exitCode = status;
+    }
+    process.exit(exitCode);
 }
 
 if (VALIDATE) {
-    const argsToPass = ['--validate'];
-    if (ALL || fs.statSync(TARGET).isDirectory()) argsToPass.push('--all');
-    argsToPass.push(TARGET);
-    process.exit(runNodeScript(FORMAT_TABLES, ...argsToPass));
+    let exitCode = 0;
+    for (const target of TARGETS) {
+        const argsToPass = ['--validate'];
+        if (ALL || (fs.existsSync(target) && fs.statSync(target).isDirectory())) argsToPass.push('--all');
+        argsToPass.push(target);
+        const status = runNodeScript(FORMAT_TABLES, ...argsToPass);
+        if (status !== 0) exitCode = status;
+    }
+    process.exit(exitCode);
 }
 
 // Step 1: Format tables (fix separators + pad cells) in a single pass
 if (!CHECK && !DRY_RUN) {
-    const argsToPass = [];
-    if (ALL || fs.statSync(TARGET).isDirectory()) argsToPass.push('--all');
-    argsToPass.push(TARGET);
-    const status = runNodeScript(FORMAT_TABLES, ...argsToPass);
-    if (status !== 0) process.exit(status);
+    for (const target of TARGETS) {
+        const argsToPass = [];
+        if (ALL || (fs.existsSync(target) && fs.statSync(target).isDirectory())) argsToPass.push('--all');
+        argsToPass.push(target);
+        const status = runNodeScript(FORMAT_TABLES, ...argsToPass);
+        if (status !== 0) process.exit(status);
+    }
 } else if (DRY_RUN) {
     console.log("=== Dry Run Mode ===");
-    console.log(`Would format tables with: node ${FORMAT_TABLES}`);
-    runNodeScript(FORMAT_TABLES, '--check', TARGET);
+    for (const target of TARGETS) {
+        console.log(`Would format tables with: node ${FORMAT_TABLES} ${target}`);
+        runNodeScript(FORMAT_TABLES, '--check', target);
+    }
     console.log("Would run markdownlint with --fix");
     process.exit(0);
 }
 
 // Step 2: markdownlint with skill config
 const lintArgs = ['markdownlint-cli2', '--config', CONFIG];
-const targetPath = (ALL || fs.statSync(TARGET).isDirectory()) ? `${TARGET}/**/*.md` : TARGET;
-lintArgs.push(targetPath);
+for (const target of TARGETS) {
+    const isDir = fs.existsSync(target) && fs.statSync(target).isDirectory();
+    const targetPath = (ALL || isDir) ? `${target}/**/*.md` : target;
+    lintArgs.push(targetPath);
+}
 
 if (!CHECK) {
     lintArgs.push('--fix');
 }
 
 const status = runNpx(lintArgs);
-process.exit(status ?? 1);
+process.exit(status ?? 0);

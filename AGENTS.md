@@ -154,7 +154,7 @@ Exit 1 if column mismatches. Always run before pushing.
 Always run a lint check first:
 
 ```bash
-/usr/share/nodejs/corepack/shims/npx --yes markdownlint-cli2@latest --config skills/markdown-lint/references/.markdownlint.json <file>
+node lint.js --check <file>
 ```
 
 Fix any lint errors before committing.
@@ -164,7 +164,7 @@ Fix any lint errors before committing.
 Run lint check on both:
 
 ```bash
-/usr/share/nodejs/corepack/shims/npx --yes markdownlint-cli2@latest --config skills/markdown-lint/references/.markdownlint.json README.md skills/markdown-lint/SKILL.md
+node lint.js --check README.md skills/markdown-lint/SKILL.md AGENTS.md
 ```
 
 ### After Editing the Config
@@ -176,7 +176,7 @@ Verify the config loads correctly by cross-referencing it against the rules docu
 Run against kitchensink.md to verify the skill works end-to-end:
 
 ```bash
-/usr/share/nodejs/corepack/shims/npx --yes markdownlint-cli2@latest --config skills/markdown-lint/references/.markdownlint.json test/kitchensink.md
+node lint.js --check test/kitchensink.md
 ```
 
 ### Table Validation (Critical)
@@ -185,10 +185,10 @@ Before committing any markdown changes, validate table column consistency:
 
 ```bash
 # Validate column counts in all tables
-node skills/markdown-lint/references/format-tables.js --validate filename.md
+node lint.js --validate <file>
 
 # Validate all .md in directory
-node skills/markdown-lint/references/format-tables.js --validate --all docs/
+node lint.js --validate --all <dir>
 ```
 
 This catches:
@@ -235,11 +235,8 @@ Tests validate:
 Create a test file with various table styles, then run:
 
 ```bash
-# Single-pass: format tables (fix separators + pad cells)
-node skills/markdown-lint/references/format-tables.js test-file.md
-
-# Lint and auto-fix remaining issues
-npx markdownlint-cli2 --config skills/markdown-lint/references/.markdownlint.json test-file.md --fix
+# Format tables and lint everything in one command
+node lint.js test-file.md
 ```
 
 ## Before / After Examples
