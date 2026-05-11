@@ -92,7 +92,7 @@ usage() {
     echo "Usage: $0 [--check] [--all] [--fences] [--validate] [--dry-run] <path>"
     echo "  --check      Read-only check (exit 0 if clean)"
     echo "  --all        Treat <path> as a directory, fix all .md files"
-    echo "  --fences     Check fenced code blocks (empty openers, bad closers)"
+    echo "  --fences     Check fenced code blocks (unmatched markers, bad closers)"
     echo "  --validate   Validate table column consistency (exit 1 if mismatches)"
     echo "  --dry-run    Show what would be fixed without applying changes"
     exit 1

@@ -133,7 +133,7 @@ ${HERMES_SKILL_DIR}/lint.sh --all <dir>
 ${HERMES_SKILL_DIR}/lint.sh --fences <path>
 ```
 
-Exit 0 = all fences clean. Checks: no empty openers, no bare-lang closers, matched counts.
+Exit 0 = all fences clean. Checks: unmatched block markers, no bare-lang closers, matched counts.
 
 ### Validate table columns
 
