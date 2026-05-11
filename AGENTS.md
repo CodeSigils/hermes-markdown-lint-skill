@@ -382,7 +382,7 @@ Changelog format:
 ### Key Changes in v2.8
 
 - Add `--fences` mode to `lint.js` for fenced code block validation
-- Add `scripts/check-fences.sh` — validates code fences across .md files
+- Add `scripts/check-fences.js` — validates code fences natively in Node.js
 - Disable MD055 (table-pipe-style) — no longer enforces leading/trailing `|` on tables
 - Disable MD033 (no-inline-html) — inline HTML is allowed in GFM
 - Sync `skills/markdown-lint/lint.js` with root `lint.js` (all flags available)

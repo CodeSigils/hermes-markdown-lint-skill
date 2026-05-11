@@ -6,7 +6,7 @@
 
 A zero-dependency Hermes Agent skill that automatically lints and fixes Markdown files to enforce [GitHub Flavored Markdown (GFM)](https://github.github.com/gfm/) rules.
 
-Powered by **pure Node.js** — a custom pipeline of `fix-tables.js`, `pad-tables.js`, and `markdownlint-cli2` for flawless, GFM-compliant table formatting. No global installations, no bash required.
+Powered by **pure Node.js** — `format-tables.js` for single-pass table formatting and `markdownlint-cli2` for GFM rule enforcement. No global installations, no bash required.
 
 ---
 
@@ -57,15 +57,14 @@ node ${HERMES_SKILL_DIR}/lint.js --validate <path>  # Validate table column cons
 node ${HERMES_SKILL_DIR}/lint.js --fences <path>   # Check fenced code blocks
 ```
 
-Or use the two-step pipeline manually:
+Or run steps manually:
 
 ```bash
-node skills/markdown-lint/references/fix-tables.js <path> && node skills/markdown-lint/references/pad-tables.js <path> && npx markdownlint-cli2 --config skills/markdown-lint/references/.markdownlint.json <path> --fix
+node skills/markdown-lint/references/format-tables.js <path> && npx markdownlint-cli2 --config skills/markdown-lint/references/.markdownlint.json <path> --fix
 ```
 
-Step 1 normalizes table separators.
-Step 2 pads table cells for MD060 alignment.
-Step 3 fixes everything else.
+Step 1 formats all tables in a single pass (fixes separators + pads cells).
+Step 2 fixes everything else.
 
 ### Preventing Broken Tables
 
@@ -109,7 +108,7 @@ If a table cell contains a pipe character, escape it to prevent column misparsin
 
 ### What It Does
 
-The three-step pipeline (`fix-tables.js` → `pad-tables.js` → `markdownlint-cli2`) fixes GFM violations automatically:
+The pipeline (`format-tables.js` → `markdownlint-cli2`) fixes GFM violations automatically:
 
 **Table separators** — normalizes raw dashes to GFM-compliant aligned separators:
 
@@ -230,7 +229,7 @@ Learn more about creating and managing Hermes skills:
 
 ### Key Changes in v2.7
 
-- Add `--validate` mode to `fix-tables.js` and `lint.js` to catch table column mismatches
+- Add `--validate` mode to `format-tables.js` and `lint.js` to catch table column mismatches
 - Add "Preventing Broken Tables" section with escaped pipe guidance
 
 ### Key Changes in v2.6
