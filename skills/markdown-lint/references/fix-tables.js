@@ -119,8 +119,18 @@ function _fixFileInContent(content) {
     let changed = 0;
     const fixedLines = [];
 
+    let inFence = false;
+
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
+
+        // Track fenced code blocks — never modify content inside them
+        if (/^(`{3,}|~{3,})/.test(line.trim())) {
+            inFence = !inFence;
+            continue;
+        }
+        if (inFence) continue;
+
         if (!_isSeparatorLine(line)) continue;
 
         if (i === 0) continue;

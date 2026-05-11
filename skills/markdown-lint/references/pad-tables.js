@@ -95,9 +95,23 @@ function findTables(lines) {
     let headerLine = -1;
     let dataStart = -1;
 
+    let inFence = false;
+
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         const trimmed = line.trim();
+
+        // Track fenced code blocks — never treat content inside them as tables
+        if (/^(`{3,}|~{3,})/.test(trimmed)) {
+            inFence = !inFence;
+            if (inTable) {
+                tables.push({ start: tableStart, end: i - 1, headerLine, dataStart });
+                inTable = false; tableStart = -1; headerLine = -1; dataStart = -1;
+            }
+            continue;
+        }
+        if (inFence) continue;
+
         const isTableLine = trimmed.startsWith('|') && trimmed !== "|";
 
         if (isTableLine) {
