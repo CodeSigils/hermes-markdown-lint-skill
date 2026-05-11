@@ -32,6 +32,28 @@ Load this skill whenever you create or edit a Markdown file.
 
 This skill uses **npx** which comes with Node.js. Hermes already has Node.js available.
 
+## Skill Structure
+
+```text
+.
+├── AGENTS.md
+├── lint.sh                      # Developer wrapper
+├── README.md
+├── skills/
+│   └── markdown-lint/           # <-- The actual skill payload
+│       ├── SKILL.md
+│       ├── lint.sh              # Canonical entry point
+│       ├── scripts/
+│       │   ├── check-fences.js  # Fenced code block checker
+│       │   └── post-write.sh    # Auto-lint hook
+│       └── references/
+│           ├── fix-tables.js
+│           ├── pad-tables.js
+│           └── .markdownlint.json
+└── test/
+    └── kitchensink.md
+```
+
 ## Quick Start
 
 ### One-liner (recommended)

@@ -11,6 +11,28 @@ This skill lints and auto-fixes Markdown files to enforce GitHub Flavored Markdo
 - **Hermes hooks**: Use `skills/<skill-name>/scripts/post-write.sh` via hooks config
 - **Verification**: Cross-reference config against SKILL.md rules tables
 
+### Skill Structure
+
+```text
+.
+├── AGENTS.md
+├── lint.sh                      # Developer wrapper
+├── README.md
+├── skills/
+│   └── markdown-lint/           # <-- The actual skill payload
+│       ├── SKILL.md
+│       ├── lint.sh              # Canonical entry point
+│       ├── scripts/
+│       │   ├── check-fences.js  # Fenced code block checker
+│       │   └── post-write.sh    # Auto-lint hook
+│       └── references/
+│           ├── fix-tables.js
+│           ├── pad-tables.js
+│           └── .markdownlint.json
+└── test/
+    └── kitchensink.md
+```
+
 ## MD Rules Enforced
 
 | Rule  | Description                         | Enabled              |
@@ -212,7 +234,10 @@ Create a test file with various table styles, then run:
 # Step 1: normalize table separators
 node skills/markdown-lint/references/fix-tables.js test-file.md
 
-# Step 2: lint and auto-fix remaining issues
+# Step 2: pad table cells
+node skills/markdown-lint/references/pad-tables.js test-file.md
+
+# Step 3: lint and auto-fix remaining issues
 npx markdownlint-cli2 --config skills/markdown-lint/references/.markdownlint.json test-file.md --fix
 ```
 
@@ -390,4 +415,5 @@ Restart Hermes for hook to activate.
 | `skills/markdown-lint/scripts/check-fences.js`       | Fenced code block checker                               |
 | `skills/markdown-lint/scripts/post-write.sh`         | Auto-lint hook                                          |
 | `skills/markdown-lint/references/fix-tables.js`      | Table separator normalizer                              |
+| `skills/markdown-lint/references/pad-tables.js`      | Table cell padder for alignment                         |
 | `test/kitchensink.md`                                | Comprehensive test fixture                              |
