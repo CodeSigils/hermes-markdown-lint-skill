@@ -6,7 +6,7 @@
 
 A zero-dependency Hermes Agent skill that automatically lints and fixes Markdown files to enforce [GitHub Flavored Markdown (GFM)](https://github.github.com/gfm/) rules.
 
-Powered by **markdownlint** via `npx` and a custom AST-like **fix-tables.js** pipeline for flawless table formatting — absolutely no global installations required.
+Powered by **pure Node.js** — a custom pipeline of `fix-tables.js`, `pad-tables.js`, and `markdownlint-cli2` for flawless, GFM-compliant table formatting. No global installations, no bash required.
 
 ---
 
@@ -16,7 +16,7 @@ Powered by **markdownlint** via `npx` and a custom AST-like **fix-tables.js** pi
 
 Before installing, ensure your environment meets the following requirements:
 
-- **Hermes CLI** — Required to install the skill and configure the `post-write` shell hooks.
+- **Hermes CLI** — Required to install the skill. The `post-write.js` hook is an optional safety net.
 - **Node.js (v18+)** — The linting pipeline relies on native Node.js scripts and `npx` to dynamically fetch `markdownlint-cli2` without requiring global installations.
 - **Cross-Platform** — The pipeline runs natively on Linux, macOS, and Windows. No WSL or Git Bash required!
 
@@ -28,9 +28,9 @@ hermes skills install CodeSigils/hermes-markdown-lint-skill/markdown-lint --forc
 
 The `--force` flag is required because the security scanner flags post-write hooks as dangerous (expected for a linting skill).
 
-### Post installation: Auto-Lint on Write
+### Post-Install: Hook (Optional Safety Net)
 
-To auto-lint every markdown file Hermes writes, add a shell hook to your config.
+The skill already instructs the AI agent to automatically lint every markdown file it writes. For guaranteed enforcement even if the agent skips the instruction, you can add a system-level hook:
 
 **Edit `~/.hermes/config.yaml`:**
 
@@ -42,12 +42,12 @@ hooks:
 hooks_auto_accept: true
 ```
 
-Restart Hermes (CLI or gateway) for the hook to activate. Set `hooks_auto_accept: true` to lint silently without prompts.
+Restart Hermes for the hook to activate. This is **optional** — the mandatory lint rule in `SKILL.md` handles the common case.
 
 ### Quick Start
 
 ```bash
-# One-liner (recommended — self-contained, finds npx automatically)
+# One-liner (recommended — pure Node.js, cross-platform)
 node ${HERMES_SKILL_DIR}/lint.js <path>
 
 # Options
@@ -178,8 +178,8 @@ Learn more about creating and managing Hermes skills:
 
 ### Key Changes in v2.8
 
-- Add `--fences` mode to `lint.js` for fenced code block validation (EMPTY_LANG, BAD_CLOSER, COUNT_MISMATCH, DOUBLE_FENCE)
-- Add `scripts/check-fences.sh` — validates code fences across .md files
+- Add `--fences` mode to `lint.js` for fenced code block validation
+- Add `scripts/check-fences.js` — validates code fences natively in Node.js
 - Disable MD055 (table-pipe-style) — no longer enforces leading/trailing `|` on tables
 - Disable MD033 (no-inline-html) — inline HTML is allowed in GFM
 - Sync `skills/markdown-lint/lint.js` with root `lint.js` (all flags now available)
@@ -191,7 +191,7 @@ Learn more about creating and managing Hermes skills:
 
 ### Key Changes in v2.6
 
-- Add shell hook `scripts/post-write.js` for auto-lint on write_file
+- Add Node.js hook `scripts/post-write.js` for auto-lint on write_file
 - Add to `~/.hermes/config.yaml` to enable auto-lint
 - Enable MD032 (blanks-around-lists) — lists must be surrounded by blank lines
 - Enable MD060 (table-column-style) — table pipes must align with header content
@@ -209,8 +209,8 @@ Learn more about creating and managing Hermes skills:
 
 ### Key Changes in v2.3
 
-- Add `lint.js`: self-contained bash wrapper that resolves npx across environments
-  (PATH, corepack, zed/node) — no PATH dependency for end users
+- Add `lint.js`: self-contained Node.js entry point that resolves npx across environments
+  (PATH, corepack, nvm, fnm) — no PATH dependency for end users
 
 ### Key Changes in v2.1
 
