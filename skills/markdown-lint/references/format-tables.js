@@ -359,4 +359,15 @@ function main() {
 
 if (require.main === module) main();
 
-module.exports = { processFile, findMdFiles, validateTableColumnCounts };
+module.exports = {
+    processFile,
+    findMdFiles,
+    validateTableColumnCounts,
+    // Exported for unit testing
+    _isSeparatorLine: isSeparatorLine,
+    _buildSeparator: buildSeparator,
+    _parseTableRow: parseTableRow,
+    _formatTableInPlace: formatTableInPlace,
+    _findTables: findTables,
+    _stringWidth: stringWidth,
+};
