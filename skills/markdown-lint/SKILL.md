@@ -34,7 +34,7 @@ Before installing, ensure your environment meets the following requirements:
 
 - **Hermes CLI** — Required to install the skill and configure the `post-write` shell hooks.
 - **Node.js (v18+)** — The linting pipeline relies on native Node.js scripts and `npx` to dynamically fetch `markdownlint-cli2` without requiring global installations.
-- **Bash Environment** — The entry point and hooks are written in Bash. Windows users will need WSL, Git Bash, or a similar Unix-like compatibility layer.
+- **Cross-Platform** — The pipeline runs natively on Linux, macOS, and Windows. No WSL or Git Bash required!
 
 ## Skill Structure
 
@@ -96,12 +96,23 @@ Step 3 fixes everything else.
 npx markdownlint-cli2 <path>
 ```
 
+## Agent Rule: Always Lint After Writing Markdown
+
+> [!IMPORTANT]
+> After **every** `write_file` call that targets a `.md` file, you MUST immediately run the linter on that file — without being asked. This is non-negotiable and applies to every file write, including edits, refactors, and new files.
+
+```bash
+node ${HERMES_SKILL_DIR}/lint.js <path>
+```
+
+Do NOT skip this step. Do NOT wait for the user to ask. Do NOT batch multiple writes and lint later — lint each file immediately after it is written.
+
 ## Workflows
 
-### 1. After Creating a New File
+### 1. After Creating or Editing a Markdown File
 
-1. Create the file
-2. Run the fix command:
+1. Write the file using `write_file`.
+2. **Immediately** run the linter (this is mandatory — see rule above):
 
 ```bash
 node ${HERMES_SKILL_DIR}/lint.js <path>

@@ -107,6 +107,11 @@ Follow these principles in all work:
 7. **Learn from mistakes** — if something fails, understand why before retrying.
 8. **Use best practices proactively** — add input validation, security checks, proper error handling without being asked.
 
+> [!IMPORTANT]
+> **Mandatory Rule**: After **every** `write_file` call that targets a `.md` file, you MUST immediately run:
+> `node ${HERMES_SKILL_DIR}/lint.js <path>`
+> Do NOT skip this step. Do NOT wait for the user to ask. Lint each file immediately after writing it.
+
 ## Quick Start
 
 ### Lint a file (read-only check)
