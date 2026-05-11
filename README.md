@@ -38,7 +38,7 @@ To auto-lint every markdown file Hermes writes, add a shell hook to your config.
 hooks:
   post_tool_call:
     - matcher: "write_file"
-      command: "~/.hermes/skills/CodeSigils/hermes-markdown-lint-skill/markdown-lint/scripts/post-write.sh"
+      command: "~/.hermes/skills/markdown-lint/scripts/post-write.sh"
 hooks_auto_accept: true
 ```
 

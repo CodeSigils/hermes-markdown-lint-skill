@@ -237,7 +237,7 @@ Hermes supports `post_tool_call` hooks via `~/.hermes/config.yaml`:
 hooks:
   post_tool_call:
     - matcher: "write_file"
-      command: "~/.hermes/skills/CodeSigils/hermes-markdown-lint-skill/markdown-lint/scripts/post-write.sh"
+      command: "~/.hermes/skills/markdown-lint/scripts/post-write.sh"
 ```
 
 > **Note:** OpenCode does NOT support hooks in `opencode.jsonc`. Do not document OpenCode hook configs — use git pre-commit hooks or shell aliases instead.
