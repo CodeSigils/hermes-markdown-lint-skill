@@ -113,21 +113,40 @@ The three-step pipeline (`fix-tables.js` → `pad-tables.js` → `markdownlint-c
 
 **Table separators** — normalizes raw dashes to GFM-compliant aligned separators:
 
+Before:
+
 ```markdown
-<!-- Before -->          <!-- After -->
-| Name  | Age |     | Name  | Age |
-| : --- | : --- | : --- | : --- | ---: |
-| Alice | 25  |     | Alice | 25  |
+| Name  | Age |
+| : --- | : --- |
+| Alice | 25  |
+```
+
+After:
+
+```markdown
+| Name  | Age |
+| : --- | ---: |
+| Alice | 25  |
 ```
 
 **Headings** — adds required blank lines around headings:
 
+Before:
+
 ```markdown
-<!-- Before -->          <!-- After -->
 Some text
-## My Heading            ## My Heading
+## My Heading
 More text
-                         More text
+```
+
+After:
+
+```markdown
+Some text
+
+## My Heading
+
+More text
 ```
 
 **Tabs & blank lines** — converts tabs to spaces and collapses multiple blank lines to one.
