@@ -117,7 +117,7 @@ Before:
 
 ```markdown
 | Name  | Age |
-| : --- | : --- |
+| ---   | --- |
 | Alice | 25  |
 ```
 
@@ -125,8 +125,8 @@ After:
 
 ```markdown
 | Name  | Age |
-| : --- | ---: |
-| Alice | 25  |
+| :---- | --: |
+| Alice |  25 |
 ```
 
 **Headings** — adds required blank lines around headings:
