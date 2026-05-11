@@ -3,7 +3,7 @@ name: markdown-lint
 description: >
   Lint and auto-fix GitHub Flavored Markdown (GFM) files. Run after creating
   or editing any .md file to enforce consistent formatting. Uses markdownlint
-  via npx for zero-install linting and fix-tables.js for table separators.
+  via npx for zero-install linting and format-tables.js for single-pass table formatting.
 license: MIT
 metadata:
   version: 2.9.0
@@ -51,8 +51,7 @@ Before installing, ensure your environment meets the following requirements:
 │       │   ├── check-fences.js  # Fenced code block checker
 │       │   └── post-write.js    # Auto-lint hook
 │       └── references/
-│           ├── fix-tables.js
-│           ├── pad-tables.js
+│           ├── format-tables.js
 │           └── .markdownlint.json
 └── test/
     └── kitchensink.md
@@ -66,7 +65,7 @@ Before installing, ensure your environment meets the following requirements:
 node ${HERMES_SKILL_DIR}/lint.js <path>
 ```
 
-This runs the full two-step pipeline in one command: fix tables, then lint and auto-fix everything else.
+This runs the full pipeline in one command: format tables (fix separators + pad cells), then lint and auto-fix everything else.
 
 ### Options
 
@@ -78,17 +77,16 @@ node ${HERMES_SKILL_DIR}/lint.js --validate <path> # Validate table column consi
 node ${HERMES_SKILL_DIR}/lint.js --fences <path>  # Check fenced code blocks
 ```
 
-### Two-step pipeline (manual)
+### Manual pipeline
 
 If you prefer running steps separately:
 
 ```bash
-node ${HERMES_SKILL_DIR}/references/fix-tables.js <path> && node ${HERMES_SKILL_DIR}/references/pad-tables.js <path> && npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix
+node ${HERMES_SKILL_DIR}/references/format-tables.js <path> && npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix
 ```
 
-Step 1 normalizes table separators to `| :--- | :--- |` left-aligned style.
-Step 2 pads table cells to match header widths.
-Step 3 fixes everything else.
+Step 1 formats all tables in a single pass (fixes separators + pads cells).
+Step 2 fixes everything else.
 
 ### Lint only (read-only check)
 
@@ -187,81 +185,24 @@ Rules **disabled** (too strict for prose documentation):
 | MD052 | no-bare-reference-link      | Common in prose                             |
 | MD055 | table-pipe-style            | No leading/trailing pipes enforced          |
 
-## pad-tables.js
+## format-tables.js
 
-Pads table data rows so every `|` aligns with the column boundaries set by the
-header. Required by **MD060** — compact tables like `| A | Long desc |` have
-misaligned pipes and fail MD060.
-
-**Pipeline:** fix-tables.js normalizes the separator format (`:---`), then
-pad-tables.js widens all rows to match actual column widths.
+Single-pass table formatter that combines separator normalization and cell padding
+into one file read/write cycle. Required by **MD060** — ensures every `|` in every
+row aligns with the column boundaries set by the header.
 
 **Features:**
 
-- Computes max column width from header + all data rows (string-width aware)
+- Fixes separator alignment (`:---`, `---:`, `:---:`)
+- Computes max column width from header + all data rows (string-width aware for emoji/CJK)
 - Rebuilds header, separator, and every data row with consistent pipe positions
-- Idempotent — skips files that are already aligned
+- Fence-aware — never modifies table syntax inside fenced code blocks
+- Idempotent — skips files that are already correctly formatted
 
 ```bash
-# Check if padding is needed (read-only)
-node ${HERMES_SKILL_DIR}/references/pad-tables.js --check <path>
+# Check if formatting is needed (read-only)
+node ${HERMES_SKILL_DIR}/references/format-tables.js --check <path>
 ```
-
-## fix-tables.js
-
-Normalizes Markdown table separators from old-style `|------|------|` to GFM-compliant
-`| :--- | :--- | :--- |` style with left-aligned cells (`---`).
-
-**Features:**
-
-- Uses `string-width` for column alignment (handles emoji/CJK correctly)
-- Detects already-correct separators and skips them
-- Verbose output option
-
-### Location
-
-```text
-${HERMES_SKILL_DIR}/references/fix-tables.js
-```
-
-### Usage
-
-```bash
-# Fix specific file
-node ${HERMES_SKILL_DIR}/lint.js <path>
-
-# Check only (read-only, exit 0 if clean)
-node ${HERMES_SKILL_DIR}/lint.js --check <path>
-
-# Fix all .md in directory
-node ${HERMES_SKILL_DIR}/lint.js --all <directory>
-
-# Check fenced code blocks
-node ${HERMES_SKILL_DIR}/lint.js --fences <path>
-```
-
-### Auto-Lint on Write (Hermes Shell Hook)
-
-Hermes supports `post_tool_call` hooks via `~/.hermes/config.yaml`:
-
-```yaml
-hooks:
-  post_tool_call:
-    - matcher: "write_file"
-      command: "node ~/.hermes/skills/markdown-lint/scripts/post-write.js"
-```
-
-> **Note:** OpenCode does NOT support hooks in `opencode.jsonc`. Do not document OpenCode hook configs — use git pre-commit hooks or shell aliases instead.
-
-The script receives JSON payload via stdin (Hermes shell hook protocol) and lints the file automatically.
-
-### How It Works
-
-1. Scans for lines matching the table separator pattern
-2. Detects column alignment from separator dashes
-3. Replaces old-style separator with `| :--- |` matching the exact column count
-4. Auto-width: calculates width based on header column lengths
-5. Leaves all data rows and already-correct separators untouched
 
 ## Troubleshooting
 
@@ -334,11 +275,11 @@ Exit code 0 = all fences clean. The checker verifies:
 
 ## Quick Reference
 
-| Task            | Command                                                                                                                                                                                                                                                  |
-| :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Fix file        | `node ${HERMES_SKILL_DIR}/lint.js <path>`                                                                                                                                                                                                                |
-| Fix all         | `node ${HERMES_SKILL_DIR}/lint.js --all .`                                                                                                                                                                                                               |
-| Check only      | `node ${HERMES_SKILL_DIR}/lint.js --check <path>`                                                                                                                                                                                                        |
-| Check fences    | `node ${HERMES_SKILL_DIR}/lint.js --fences <path>`                                                                                                                                                                                                       |
-| Validate tables | `node ${HERMES_SKILL_DIR}/lint.js --validate <path>`                                                                                                                                                                                                     |
-| Manual steps    | `node ${HERMES_SKILL_DIR}/references/fix-tables.js <path> && node ${HERMES_SKILL_DIR}/references/pad-tables.js <path> && /usr/share/nodejs/corepack/shims/npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix` |
+| Task            | Command                                                                                                                                                        |
+| :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fix file        | `node ${HERMES_SKILL_DIR}/lint.js <path>`                                                                                                                      |
+| Fix all         | `node ${HERMES_SKILL_DIR}/lint.js --all .`                                                                                                                     |
+| Check only      | `node ${HERMES_SKILL_DIR}/lint.js --check <path>`                                                                                                              |
+| Check fences    | `node ${HERMES_SKILL_DIR}/lint.js --fences <path>`                                                                                                             |
+| Validate tables | `node ${HERMES_SKILL_DIR}/lint.js --validate <path>`                                                                                                           |
+| Manual steps    | `node ${HERMES_SKILL_DIR}/references/format-tables.js <path> && npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix` |

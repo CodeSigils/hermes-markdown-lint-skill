@@ -26,8 +26,7 @@ This skill lints and auto-fixes Markdown files to enforce GitHub Flavored Markdo
 │       │   ├── check-fences.js  # Fenced code block checker
 │       │   └── post-write.js    # Auto-lint hook
 │       └── references/
-│           ├── fix-tables.js
-│           ├── pad-tables.js
+│           ├── format-tables.js
 │           └── .markdownlint.json
 └── test/
     └── kitchensink.md
@@ -186,10 +185,10 @@ Before committing any markdown changes, validate table column consistency:
 
 ```bash
 # Validate column counts in all tables
-node skills/markdown-lint/references/fix-tables.js --validate filename.md
+node skills/markdown-lint/references/format-tables.js --validate filename.md
 
 # Validate all .md in directory
-node skills/markdown-lint/references/fix-tables.js --validate --all docs/
+node skills/markdown-lint/references/format-tables.js --validate --all docs/
 ```
 
 This catches:
@@ -221,28 +220,25 @@ This catches unmatched block markers, bare-lang closers, and count mismatches �
 ### Run Test Suite
 
 ```bash
-node test/fix-tables.test.js
+node test/format-tables.test.js
 ```
 
-All 28 tests must pass. Tests validate:
+Tests validate:
 
 - Separator detection (valid/invalid separators)
 - Width calculation (string-width for emoji/CJK)
 - Alignment preservation (left/center/right)
-- Fix behavior (fixes old-style, skips correct)
+- Single-pass fix behavior (fixes separators + pads cells in one read/write)
 
 ### Manual Testing
 
 Create a test file with various table styles, then run:
 
 ```bash
-# Step 1: normalize table separators
-node skills/markdown-lint/references/fix-tables.js test-file.md
+# Single-pass: format tables (fix separators + pad cells)
+node skills/markdown-lint/references/format-tables.js test-file.md
 
-# Step 2: pad table cells
-node skills/markdown-lint/references/pad-tables.js test-file.md
-
-# Step 3: lint and auto-fix remaining issues
+# Lint and auto-fix remaining issues
 npx markdownlint-cli2 --config skills/markdown-lint/references/.markdownlint.json test-file.md --fix
 ```
 
@@ -344,28 +340,21 @@ After:
 
 ### Common Errors
 
-| Error                          | Cause                           | Fix                     |
-| :----------------------------- | :------------------------------ | :---------------------- |
-| MD018: No space after hash     | Missing space after `#`         | Add space: `## Heading` |
-| MD047: Single trailing newline | File doesn't end with newline   | Add blank line at end   |
-| MD055: No trailing pipe        | Table row missing trailing pipe | Add trailing pipe       |
-| MD056: Table column width      | Separator width mismatch        | Run the fix-tables tool |
-| MD060: Table pipe position     | Pipes not aligned               | Run the fix-tables tool |
+| Error                          | Cause                           | Fix                        |
+| :----------------------------- | :------------------------------ | :------------------------- |
+| MD018: No space after hash     | Missing space after `#`         | Add space: `## Heading`    |
+| MD047: Single trailing newline | File doesn't end with newline   | Add blank line at end      |
+| MD055: No trailing pipe        | Table row missing trailing pipe | Add trailing pipe          |
+| MD056: Table column width      | Separator width mismatch        | Run the format-tables tool |
+| MD060: Table pipe position     | Pipes not aligned               | Run the format-tables tool |
 
-### fix-tables.js Issues
+### format-tables.js Issues
 
 **Problem**: Tables with emoji/CJK don't align visually.
 
 **Cause**: Using code-unit length instead of visual width.
 
-**Fix**: Install `string-width` package for proper double-width handling:
-
-```bash
-cd skills/markdown-lint/references
-npm install string-width
-```
-
-Without it, falls back to `.length` count — works for ASCII but not emoji/CJK.
+**Fix**: `format-tables.js` includes a built-in visual width calculator — no external packages required.
 
 ## Version Policy
 
@@ -387,6 +376,8 @@ Changelog format:
 - Replaced `jq` dependency with zero-dependency Node.js extraction in `post-write.js`.
 - Replaced brittle bash regex `check-fences.sh` with a native `check-fences.js` script that correctly permits empty language fences.
 - Significantly improved `lint.js` bulk execution performance (node processes run once instead of per-file).
+- **Refactored entirely to pure Node.js**: Replaced `lint.sh` and `post-write.sh` with native `.js` scripts.
+- **Single-pass table formatting**: Merged `fix-tables.js` + `pad-tables.js` into `format-tables.js` — halves I/O per file.
 
 ### Key Changes in v2.8
 
@@ -419,6 +410,5 @@ Restart Hermes for hook to activate.
 | `skills/markdown-lint/references/.markdownlint.json` | Lint rules config                                       |
 | `skills/markdown-lint/scripts/check-fences.js`       | Fenced code block checker                               |
 | `skills/markdown-lint/scripts/post-write.js`         | Auto-lint hook                                          |
-| `skills/markdown-lint/references/fix-tables.js`      | Table separator normalizer                              |
-| `skills/markdown-lint/references/pad-tables.js`      | Table cell padder for alignment                         |
+| `skills/markdown-lint/references/format-tables.js`   | Single-pass table formatter (separators + cell padding) |
 | `test/kitchensink.md`                                | Comprehensive test fixture                              |
