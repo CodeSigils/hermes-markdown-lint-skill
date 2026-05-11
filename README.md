@@ -109,14 +109,28 @@ If a table cell contains a pipe character, escape it to prevent column misparsin
 
 ### What It Does
 
-The two-step pipeline fixes GFM violations that markdownlint detects — and the one thing it can't handle alone:
+The three-step pipeline (`fix-tables.js` → `pad-tables.js` → `markdownlint-cli2`) fixes GFM violations automatically:
 
-| Problem                                 | Fix                                         |
-| : ------------------------------------- | : ----------------------------------------- |
-| Raw dashes in table separators          | GFM-compliant separators                    |
-| Heading without surrounding blank lines | Blank lines added before and after headings |
-| Tabs instead of spaces in indentation   | Converted to spaces                         |
-| Multiple consecutive blank lines        | Collapsed to single blank line              |
+**Table separators** — normalizes raw dashes to GFM-compliant aligned separators:
+
+```markdown
+<!-- Before -->          <!-- After -->
+| Name  | Age |     | Name  | Age |
+| : --- | : --- | : --- | : --- | ---: |
+| Alice | 25  |     | Alice | 25  |
+```
+
+**Headings** — adds required blank lines around headings:
+
+```markdown
+<!-- Before -->          <!-- After -->
+Some text
+## My Heading            ## My Heading
+More text
+                         More text
+```
+
+**Tabs & blank lines** — converts tabs to spaces and collapses multiple blank lines to one.
 
 ### Configuration
 
