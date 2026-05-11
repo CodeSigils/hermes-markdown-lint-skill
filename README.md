@@ -84,17 +84,17 @@ This validates:
 
 If a table cell contains a pipe character, escape it to prevent column misparsing:
 
-| Before (broken)                   | After (fixed)                     |
-| :---------------------------------| :---------------------------------|
-| `"tab" &#124; "space"`            | `"tab" &#124; "space"`            |
-| `"lf" &#124; "crlf" &#124; "cr"`  | `"lf" &#124; "crlf" &#124; "cr"`  |
+| Before (broken)                  | After (fixed)                    |
+| : ------------------------------ | : ------------------------------ |
+| `"tab" &#124; "space"`           | `"tab" &#124; "space"`           |
+| `"lf" &#124; "crlf" &#124; "cr"` | `"lf" &#124; "crlf" &#124; "cr"` |
 
 ### What It Does
 
 The two-step pipeline fixes GFM violations that markdownlint detects — and the one thing it can't handle alone:
 
 | Problem                                 | Fix                                         |
-| :-------------------------------------- | :------------------------------------------ |
+| : ------------------------------------- | : ----------------------------------------- |
 | Raw dashes in table separators          | GFM-compliant separators                    |
 | Heading without surrounding blank lines | Blank lines added before and after headings |
 | Tabs instead of spaces in indentation   | Converted to spaces                         |
