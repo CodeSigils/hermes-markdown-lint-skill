@@ -84,10 +84,10 @@ This validates:
 
 If a table cell contains a pipe character, escape it to prevent column misparsing:
 
-| Before (broken) | After (fixed) |
-| :------------- | :------------ |
-| `"tab" &#124; "space"` | `"tab" &#124; "space"` |
-| `"lf" &#124; "crlf" &#124; "cr"` | `"lf" &#124; "crlf" &#124; "cr"` |
+| Before (broken)                   | After (fixed)                     |
+| :---------------------------------| :---------------------------------|
+| `"tab" &#124; "space"`            | `"tab" &#124; "space"`            |
+| `"lf" &#124; "crlf" &#124; "cr"`  | `"lf" &#124; "crlf" &#124; "cr"`  |
 
 ### What It Does
 
