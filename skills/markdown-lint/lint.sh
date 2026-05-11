@@ -18,7 +18,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FIX_TABLES="$SCRIPT_DIR/references/fix-tables.js"
 PAD_TABLES="$SCRIPT_DIR/references/pad-tables.js"
 CONFIG="$SCRIPT_DIR/references/.markdownlint.json"
-CHECK_FENCES="$SCRIPT_DIR/scripts/check-fences.sh"
+CHECK_FENCES="$SCRIPT_DIR/scripts/check-fences.js"
 
 # Resolve npx — cross-platform (macOS, Linux, WSL, Debian, Ubuntu, Fedora)
 resolve_npx() {
@@ -122,13 +122,13 @@ if [[ -z "$TARGET" ]]; then
 fi
 
 if [[ "$FENCES" == true ]]; then
-    "$CHECK_FENCES" "$TARGET"
+    node "$CHECK_FENCES" "$TARGET"
     exit $?
 fi
 
 if [[ "$VALIDATE" == true ]]; then
-    if [[ -d "$TARGET" ]]; then
-        find "$TARGET" -name "*.md" -exec node "$FIX_TABLES" --validate {} \;
+    if [[ "$ALL" == true || -d "$TARGET" ]]; then
+        node "$FIX_TABLES" --validate --all "$TARGET"
     else
         node "$FIX_TABLES" --validate "$TARGET"
     fi
@@ -137,9 +137,9 @@ fi
 
 # Step 1: Normalize table separators and pad cell content (skip if --check or --dry-run)
 if [[ "$CHECK" != true && "$DRY_RUN" != true ]]; then
-    if [[ -d "$TARGET" ]]; then
-        find "$TARGET" -name "*.md" -exec node "$FIX_TABLES" {} \;
-        find "$TARGET" -name "*.md" -exec node "$PAD_TABLES" {} \;
+    if [[ "$ALL" == true || -d "$TARGET" ]]; then
+        node "$FIX_TABLES" --all "$TARGET"
+        node "$PAD_TABLES" --all "$TARGET"
     else
         node "$FIX_TABLES" "$TARGET"
         node "$PAD_TABLES" "$TARGET"
@@ -156,16 +156,16 @@ fi
 
 # Step 2: markdownlint with skill config
 if [[ "$CHECK" == true ]]; then
-    if [[ -d "$TARGET" ]]; then
+    if [[ "$ALL" == true || -d "$TARGET" ]]; then
         TARGET_DIR="${TARGET%/}"
-        run_npx markdownlint-cli2 --config "$CONFIG" $(find "$TARGET_DIR" -name "*.md" -type f)
+        run_npx markdownlint-cli2 --config "$CONFIG" "$TARGET_DIR/**/*.md"
     else
         run_npx markdownlint-cli2 --config "$CONFIG" "$TARGET"
     fi
 else
-    if [[ -d "$TARGET" ]]; then
+    if [[ "$ALL" == true || -d "$TARGET" ]]; then
         TARGET_DIR="${TARGET%/}"
-        run_npx markdownlint-cli2 --config "$CONFIG" $(find "$TARGET_DIR" -name "*.md" -type f) --fix
+        run_npx markdownlint-cli2 --config "$CONFIG" "$TARGET_DIR/**/*.md" --fix
     else
         run_npx markdownlint-cli2 --config "$CONFIG" "$TARGET" --fix
     fi

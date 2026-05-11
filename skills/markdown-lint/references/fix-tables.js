@@ -17,13 +17,36 @@
 
 const fs = require('fs');
 const path = require('path');
-// Uses string-width for visual width (emoji/CJK are double-width)
-let stringWidth;
-try {
-    stringWidth = require('string-width');
-} catch {
-    // Fallback if not installed - counts code units instead of visual width
-    stringWidth = s => [...s].length;
+// Simple visual width calculator without external dependencies
+function stringWidth(str) {
+    let width = 0;
+    for (const char of str) {
+        const code = char.codePointAt(0);
+        if (
+            (code >= 0x1100 && code <= 0x115F) || // Hangul Jamo
+            (code >= 0x2E80 && code <= 0x303E) || // CJK Radicals / Punctuation
+            (code >= 0x3040 && code <= 0x33FF) || // Hiragana, Katakana, Bopomofo, etc
+            (code >= 0x3400 && code <= 0x4DBF) || // CJK Ext A
+            (code >= 0x4E00 && code <= 0x9FFF) || // CJK Unified Ideographs
+            (code >= 0xAC00 && code <= 0xD7A3) || // Hangul Syllables
+            (code >= 0xF900 && code <= 0xFAFF) || // CJK Compatibility Ideographs
+            (code >= 0xFF00 && code <= 0xFF60) || // Fullwidth Forms
+            (code >= 0xFFE0 && code <= 0xFFE6) || // Fullwidth Forms
+            (code >= 0x1F300 && code <= 0x1F9FF) || // Emojis
+            (code >= 0x2600 && code <= 0x27BF)    // Misc Symbols
+        ) {
+            width += 2;
+        } else if (code >= 0x0300 && code <= 0x036F) {
+            // Combining Diacritical Marks (0 width)
+            width += 0;
+        } else if (code === 0xFE0F) {
+            // Emoji variation selector (0 width)
+            width += 0;
+        } else {
+            width += 1;
+        }
+    }
+    return width;
 }
 
 function _parseCellsRaw(line) {
@@ -315,6 +338,11 @@ function main() {
         process.exit(1);
     }
 
+    if (directory) {
+        const matches = findMdFiles(directory);
+        files.push(...matches);
+    }
+
     if (validate) {
         const total = validateFiles(files);
         if (total > 0) {
@@ -324,11 +352,6 @@ function main() {
             console.log('All tables have consistent column counts.');
             process.exit(0);
         }
-    }
-
-    if (directory) {
-        const matches = findMdFiles(directory);
-        files.push(...matches);
     }
 
     let total = 0;

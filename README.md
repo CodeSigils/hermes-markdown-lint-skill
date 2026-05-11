@@ -148,7 +148,7 @@ markdown-lint/
 ├── SKILL.md
 ├── lint.sh
 ├── scripts/
-│   ├── check-fences.sh          # Fenced code block checker
+│   ├── check-fences.js          # Fenced code block checker
 │   └── post-write.sh
 ├── references/
 │   ├── fix-tables.js
@@ -156,6 +156,12 @@ markdown-lint/
 └── test/
     └── kitchensink.md
 ```
+
+### Key Changes in v2.9
+
+- Replaced `jq` dependency with zero-dependency Node.js extraction in `post-write.sh`.
+- Replaced brittle bash regex `check-fences.sh` with a native `check-fences.js` script.
+- Significantly improved `lint.sh` bulk execution performance (node processes run once instead of per-file).
 
 ### Key Changes in v2.8
 

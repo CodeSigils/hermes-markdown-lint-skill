@@ -11,8 +11,8 @@ LINT="$SCRIPT_DIR/lint.sh"
 # Read JSON payload from stdin
 payload="$(cat -)"
 
-# Extract file path using jq
-file_path="$(echo "$payload" | jq -r '.tool_input.path' 2>/dev/null)" || file_path=""
+# Extract file path using node (zero dependency alternative to jq)
+file_path="$(echo "$payload" | node -e "try{console.log(JSON.parse(require('fs').readFileSync(0,'utf8')).tool_input.path||'')}catch(e){}" 2>/dev/null)" || file_path=""
 
 # Skip if not a markdown file or file doesn't exist
 if [[ -z "$file_path" ]]; then

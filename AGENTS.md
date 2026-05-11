@@ -13,64 +13,64 @@ This skill lints and auto-fixes Markdown files to enforce GitHub Flavored Markdo
 
 ## MD Rules Enforced
 
-| Rule | Description | Enabled |
-| :--- | :---------- | :------- |
-| MD001 | Heading increments | Yes |
-| MD002 | First heading should be h1 | Yes |
-| MD003 | Atx style headings | Yes |
-| MD004 | Bullet list style | Yes |
-| MD005 | Table pipe alignment | Yes |
-| MD010 | No hard tabs | Yes |
-| MD018 | No space after hash | Yes |
-| MD019 | No multiple spaces after hash | Yes |
-| MD022 | Blank lines around headings | Yes |
-| MD023 | Heading space after hash | Yes |
-| MD024 | Multiple headings with same content | Yes |
-| MD025 | Multiple top-level headings | Yes |
-| MD026 | No space after hyphen in atx | Yes |
-| MD027 | Space after marker | Yes |
-| MD028 | Inside block quote | Yes |
-| MD029 | Ordered list item prefix | Yes |
-| MD030 | List marker space | Yes |
-| MD031 | Blank lines around lists | Yes |
-| MD032 | Blanks around lists | Yes |
-| MD033 | No inline HTML | No |
-| MD034 | No bare URLs | Yes |
-| MD035 | Horizontal rule style | Yes |
-| MD036 | No space after emphasis | Yes |
-| MD037 | No space in emphasis | Yes |
-| MD038 | No space in code span | Yes |
-| MD039 | No space after code span | Yes |
-| MD040 | Code fence language | No (blank allowed) |
-| MD041 | First heading in file | Yes |
-| MD042 | No empty links | Yes |
-| MD043 | Valid heading structure | Yes |
-| MD044 | Proper names | Yes |
-| MD045 | Emphasis used correctly | Yes |
-| MD046 | Code block style | Yes |
-| MD047 | Single trailing newline | Yes |
-| MD049 | No empty link text | Yes |
-| MD050 | Strong/emphasis style | Yes |
-| MD051 | Links should be inline | Yes |
-| MD052 | Links without text | Yes |
-| MD053 | Code fence language | Yes |
-| MD054 | Sass/SCSS areas | Yes |
-| MD055 | Table pipe style | Yes (trailing pipes) |
-| MD056 | Table column count | Yes |
-| MD057 | Table pipe separation | Yes |
-| MD058 | Table collapsed border | Yes |
-| MD059 | Emphasis in heading | Yes |
-| MD060 | Table column alignment | Yes |
-| MD061 | Table hex color | Yes |
-| MD062 | Emphasis in heading | Yes |
-| MD063 | Punctuation at start of heading | Yes |
-| MD064 | Link text variation | Yes |
-| MD065 | No GFM disabled | Yes |
-| MD066 | No trailing spaces | Yes |
-| MD067 | Code vs pre | Yes |
-| MD068 | Colons in definition | Yes |
-| MD069 | Atx style closed | Yes |
-| MD070 | No space after marker | Yes |
+| Rule  | Description                         | Enabled              |
+| : --- | : --------------------------------- | : ------------------ |
+| MD001 | Heading increments                  | Yes                  |
+| MD002 | First heading should be h1          | Yes                  |
+| MD003 | Atx style headings                  | Yes                  |
+| MD004 | Bullet list style                   | Yes                  |
+| MD005 | Table pipe alignment                | Yes                  |
+| MD010 | No hard tabs                        | Yes                  |
+| MD018 | No space after hash                 | Yes                  |
+| MD019 | No multiple spaces after hash       | Yes                  |
+| MD022 | Blank lines around headings         | Yes                  |
+| MD023 | Heading space after hash            | Yes                  |
+| MD024 | Multiple headings with same content | Yes                  |
+| MD025 | Multiple top-level headings         | Yes                  |
+| MD026 | No space after hyphen in atx        | Yes                  |
+| MD027 | Space after marker                  | Yes                  |
+| MD028 | Inside block quote                  | Yes                  |
+| MD029 | Ordered list item prefix            | Yes                  |
+| MD030 | List marker space                   | Yes                  |
+| MD031 | Blank lines around lists            | Yes                  |
+| MD032 | Blanks around lists                 | Yes                  |
+| MD033 | No inline HTML                      | No                   |
+| MD034 | No bare URLs                        | Yes                  |
+| MD035 | Horizontal rule style               | Yes                  |
+| MD036 | No space after emphasis             | Yes                  |
+| MD037 | No space in emphasis                | Yes                  |
+| MD038 | No space in code span               | Yes                  |
+| MD039 | No space after code span            | Yes                  |
+| MD040 | Code fence language                 | No (blank allowed)   |
+| MD041 | First heading in file               | Yes                  |
+| MD042 | No empty links                      | Yes                  |
+| MD043 | Valid heading structure             | Yes                  |
+| MD044 | Proper names                        | Yes                  |
+| MD045 | Emphasis used correctly             | Yes                  |
+| MD046 | Code block style                    | Yes                  |
+| MD047 | Single trailing newline             | Yes                  |
+| MD049 | No empty link text                  | Yes                  |
+| MD050 | Strong/emphasis style               | Yes                  |
+| MD051 | Links should be inline              | Yes                  |
+| MD052 | Links without text                  | Yes                  |
+| MD053 | Code fence language                 | Yes                  |
+| MD054 | Sass/SCSS areas                     | Yes                  |
+| MD055 | Table pipe style                    | Yes (trailing pipes) |
+| MD056 | Table column count                  | Yes                  |
+| MD057 | Table pipe separation               | Yes                  |
+| MD058 | Table collapsed border              | Yes                  |
+| MD059 | Emphasis in heading                 | Yes                  |
+| MD060 | Table column alignment              | Yes                  |
+| MD061 | Table hex color                     | Yes                  |
+| MD062 | Emphasis in heading                 | Yes                  |
+| MD063 | Punctuation at start of heading     | Yes                  |
+| MD064 | Link text variation                 | Yes                  |
+| MD065 | No GFM disabled                     | Yes                  |
+| MD066 | No trailing spaces                  | Yes                  |
+| MD067 | Code vs pre                         | Yes                  |
+| MD068 | Colons in definition                | Yes                  |
+| MD069 | Atx style closed                    | Yes                  |
+| MD070 | No space after marker               | Yes                  |
 
 ## Agent Best Practices
 
@@ -178,7 +178,7 @@ This catches:
 Fenced code blocks are easily corrupted by shell tools (backtick content interpreted as command substitution). Before committing, always run:
 
 ```bash
-skills/markdown-lint/scripts/check-fences.sh <file-or-dir>
+node skills/markdown-lint/scripts/check-fences.js <file-or-dir>
 ```
 
 Or via lint.sh:
@@ -187,7 +187,7 @@ Or via lint.sh:
 ${HERMES_SKILL_DIR}/lint.sh --fences <path>
 ```
 
-This catches empty openers, bare-lang closers, and count mismatches — the exact issues that today's bulk edit would have caught mid-flight.
+This catches unmatched block markers, bare-lang closers, and count mismatches — the exact issues that today's bulk edit would have caught mid-flight. (Note: empty languages on openers are valid per MD040).
 
 ## Testing
 
@@ -223,17 +223,17 @@ npx markdownlint-cli2 --config skills/markdown-lint/references/.markdownlint.jso
 Before (not compliant):
 
 ```markdown
-| Name | Age | Role |
-| --- | -- | --- |
-| Alice | 25 | Developer |
+| Name  | Age | Role      |
+| : --- | : --- | : ------- |
+| Alice | 25  | Developer |
 ```
 
 After (GFM compliant, no trailing pipes):
 
 ```markdown
-| Name     | Age | Role      |
-| :------- | --: | :-------- |
-| Alice    | 25  | Developer |
+| Name  | Age | Role      |
+| : --- | ---: | : ------- |
+| Alice | 25  | Developer |
 ```
 
 ### Headings (MD018)
@@ -314,13 +314,13 @@ After:
 
 ### Common Errors
 
-| Error | Cause | Fix |
-| :--- | :---- | :--- |
-| MD018: No space after hash | Missing space after `#` | Add space: `## Heading` |
-| MD047: Single trailing newline | File doesn't end with newline | Add blank line at end |
-| MD055: No trailing pipe | Table row missing trailing pipe | Add trailing pipe |
-| MD056: Table column width | Separator width mismatch | Run the fix-tables tool |
-| MD060: Table pipe position | Pipes not aligned | Run the fix-tables tool |
+| Error                          | Cause                           | Fix                     |
+| : ---------------------------- | : ----------------------------- | : --------------------- |
+| MD018: No space after hash     | Missing space after `#`         | Add space: `## Heading` |
+| MD047: Single trailing newline | File doesn't end with newline   | Add blank line at end   |
+| MD055: No trailing pipe        | Table row missing trailing pipe | Add trailing pipe       |
+| MD056: Table column width      | Separator width mismatch        | Run the fix-tables tool |
+| MD060: Table pipe position     | Pipes not aligned               | Run the fix-tables tool |
 
 ### fix-tables.js Issues
 
@@ -352,6 +352,12 @@ Changelog format:
 - Another change
 ```
 
+### Key Changes in v2.9
+
+- Replaced `jq` dependency with zero-dependency Node.js extraction in `post-write.sh`.
+- Replaced brittle bash regex `check-fences.sh` with a native `check-fences.js` script that correctly permits empty language fences.
+- Significantly improved `lint.sh` bulk execution performance (node processes run once instead of per-file).
+
 ### Key Changes in v2.8
 
 - Add `--fences` mode to `lint.sh` for fenced code block validation
@@ -376,12 +382,12 @@ Restart Hermes for hook to activate.
 
 ## Files to Know
 
-| File | Purpose |
-| :--- | :------ |
-| `lint.sh` | Pipeline wrapper — canonical entry point with all flags |
-| `skills/markdown-lint/SKILL.md` | Skill instructions for Hermes |
-| `skills/markdown-lint/references/.markdownlint.json` | Lint rules config |
-| `skills/markdown-lint/scripts/check-fences.sh` | Fenced code block checker |
-| `skills/markdown-lint/scripts/post-write.sh` | Auto-lint hook |
-| `skills/markdown-lint/references/fix-tables.js` | Table separator normalizer |
-| `test/kitchensink.md` | Comprehensive test fixture |
+| File                                                 | Purpose                                                 |
+| : -------------------------------------------------- | : ----------------------------------------------------- |
+| `lint.sh`                                            | Pipeline wrapper — canonical entry point with all flags |
+| `skills/markdown-lint/SKILL.md`                      | Skill instructions for Hermes                           |
+| `skills/markdown-lint/references/.markdownlint.json` | Lint rules config                                       |
+| `skills/markdown-lint/scripts/check-fences.js`       | Fenced code block checker                               |
+| `skills/markdown-lint/scripts/post-write.sh`         | Auto-lint hook                                          |
+| `skills/markdown-lint/references/fix-tables.js`      | Table separator normalizer                              |
+| `test/kitchensink.md`                                | Comprehensive test fixture                              |
