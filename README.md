@@ -38,7 +38,7 @@ To auto-lint every markdown file Hermes writes, add a shell hook to your config.
 hooks:
   post_tool_call:
     - matcher: "write_file"
-      command: "~/.hermes/skills/markdown-lint/scripts/post-write.sh"
+      command: "node ~/.hermes/skills/markdown-lint/scripts/post-write.js"
 hooks_auto_accept: true
 ```
 
@@ -48,13 +48,13 @@ Restart Hermes (CLI or gateway) for the hook to activate. Set `hooks_auto_accept
 
 ```bash
 # One-liner (recommended — self-contained, finds npx automatically)
-${HERMES_SKILL_DIR}/lint.sh <path>
+node ${HERMES_SKILL_DIR}/lint.js <path>
 
 # Options
-${HERMES_SKILL_DIR}/lint.sh --check <path>     # Read-only check
-${HERMES_SKILL_DIR}/lint.sh --all <dir>       # Fix all .md in directory
-${HERMES_SKILL_DIR}/lint.sh --validate <path>  # Validate table column consistency
-${HERMES_SKILL_DIR}/lint.sh --fences <path>   # Check fenced code blocks
+node ${HERMES_SKILL_DIR}/lint.js --check <path>     # Read-only check
+node ${HERMES_SKILL_DIR}/lint.js --all <dir>       # Fix all .md in directory
+node ${HERMES_SKILL_DIR}/lint.js --validate <path>  # Validate table column consistency
+node ${HERMES_SKILL_DIR}/lint.js --fences <path>   # Check fenced code blocks
 ```
 
 Or use the two-step pipeline manually:
@@ -78,7 +78,7 @@ The most common table error is **column count mismatch** between the header, sep
 
 ```bash
 # Add to CI or pre-commit to catch broken tables
-${HERMES_SKILL_DIR}/lint.sh --validate docs/
+node ${HERMES_SKILL_DIR}/lint.js --validate docs/
 ```
 
 This validates:
@@ -110,7 +110,7 @@ The two-step pipeline fixes GFM violations that markdownlint detects — and the
 ### Configuration
 
 The skill includes a bundled config at `references/.markdownlint.json`.
-`lint.sh` uses it automatically — no setup required.
+`lint.js` uses it automatically — no setup required.
 
 ### Testing
 
@@ -152,15 +152,15 @@ Learn more about creating and managing Hermes skills:
 ```text
 .
 ├── AGENTS.md
-├── lint.sh                      # Developer wrapper
+├── lint.js                      # Developer wrapper
 ├── README.md
 ├── skills/
 │   └── markdown-lint/           # <-- The actual skill payload
 │       ├── SKILL.md
-│       ├── lint.sh              # Canonical entry point
+│       ├── lint.js              # Canonical entry point
 │       ├── scripts/
 │       │   ├── check-fences.js  # Fenced code block checker
-│       │   └── post-write.sh    # Auto-lint hook
+│       │   └── post-write.js    # Auto-lint hook
 │       └── references/
 │           ├── fix-tables.js
 │           ├── pad-tables.js
@@ -171,26 +171,26 @@ Learn more about creating and managing Hermes skills:
 
 ### Key Changes in v2.9
 
-- Replaced `jq` dependency with zero-dependency Node.js extraction in `post-write.sh`.
+- Replaced `jq` dependency with zero-dependency Node.js extraction in `post-write.js`.
 - Replaced brittle bash regex `check-fences.sh` with a native `check-fences.js` script.
-- Significantly improved `lint.sh` bulk execution performance (node processes run once instead of per-file).
+- Significantly improved `lint.js` bulk execution performance (node processes run once instead of per-file).
 
 ### Key Changes in v2.8
 
-- Add `--fences` mode to `lint.sh` for fenced code block validation (EMPTY_LANG, BAD_CLOSER, COUNT_MISMATCH, DOUBLE_FENCE)
+- Add `--fences` mode to `lint.js` for fenced code block validation (EMPTY_LANG, BAD_CLOSER, COUNT_MISMATCH, DOUBLE_FENCE)
 - Add `scripts/check-fences.sh` — validates code fences across .md files
 - Disable MD055 (table-pipe-style) — no longer enforces leading/trailing `|` on tables
 - Disable MD033 (no-inline-html) — inline HTML is allowed in GFM
-- Sync `skills/markdown-lint/lint.sh` with root `lint.sh` (all flags now available)
+- Sync `skills/markdown-lint/lint.js` with root `lint.js` (all flags now available)
 
 ### Key Changes in v2.7
 
-- Add `--validate` mode to `fix-tables.js` and `lint.sh` to catch table column mismatches
+- Add `--validate` mode to `fix-tables.js` and `lint.js` to catch table column mismatches
 - Add "Preventing Broken Tables" section with escaped pipe guidance
 
 ### Key Changes in v2.6
 
-- Add shell hook `scripts/post-write.sh` for auto-lint on write_file
+- Add shell hook `scripts/post-write.js` for auto-lint on write_file
 - Add to `~/.hermes/config.yaml` to enable auto-lint
 - Enable MD032 (blanks-around-lists) — lists must be surrounded by blank lines
 - Enable MD060 (table-column-style) — table pipes must align with header content
@@ -208,7 +208,7 @@ Learn more about creating and managing Hermes skills:
 
 ### Key Changes in v2.3
 
-- Add `lint.sh`: self-contained bash wrapper that resolves npx across environments
+- Add `lint.js`: self-contained bash wrapper that resolves npx across environments
   (PATH, corepack, zed/node) — no PATH dependency for end users
 
 ### Key Changes in v2.1

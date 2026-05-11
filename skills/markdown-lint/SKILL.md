@@ -41,15 +41,15 @@ Before installing, ensure your environment meets the following requirements:
 ```text
 .
 ├── AGENTS.md
-├── lint.sh                      # Developer wrapper
+├── lint.js                      # Developer wrapper
 ├── README.md
 ├── skills/
 │   └── markdown-lint/           # <-- The actual skill payload
 │       ├── SKILL.md
-│       ├── lint.sh              # Canonical entry point
+│       ├── lint.js              # Canonical entry point
 │       ├── scripts/
 │       │   ├── check-fences.js  # Fenced code block checker
-│       │   └── post-write.sh    # Auto-lint hook
+│       │   └── post-write.js    # Auto-lint hook
 │       └── references/
 │           ├── fix-tables.js
 │           ├── pad-tables.js
@@ -63,7 +63,7 @@ Before installing, ensure your environment meets the following requirements:
 ### One-liner (recommended)
 
 ```text
-${HERMES_SKILL_DIR}/lint.sh <path>
+node ${HERMES_SKILL_DIR}/lint.js <path>
 ```
 
 This runs the full two-step pipeline in one command: fix tables, then lint and auto-fix everything else.
@@ -71,11 +71,11 @@ This runs the full two-step pipeline in one command: fix tables, then lint and a
 ### Options
 
 ```bash
-${HERMES_SKILL_DIR}/lint.sh <path>           # Fix file or directory
-${HERMES_SKILL_DIR}/lint.sh --check <path>   # Read-only check (exit 0 if clean)
-${HERMES_SKILL_DIR}/lint.sh --all <dir>      # Fix all .md in directory
-${HERMES_SKILL_DIR}/lint.sh --validate <path> # Validate table column consistency
-${HERMES_SKILL_DIR}/lint.sh --fences <path>  # Check fenced code blocks
+node ${HERMES_SKILL_DIR}/lint.js <path>           # Fix file or directory
+node ${HERMES_SKILL_DIR}/lint.js --check <path>   # Read-only check (exit 0 if clean)
+node ${HERMES_SKILL_DIR}/lint.js --all <dir>      # Fix all .md in directory
+node ${HERMES_SKILL_DIR}/lint.js --validate <path> # Validate table column consistency
+node ${HERMES_SKILL_DIR}/lint.js --fences <path>  # Check fenced code blocks
 ```
 
 ### Two-step pipeline (manual)
@@ -104,7 +104,7 @@ npx markdownlint-cli2 <path>
 2. Run the fix command:
 
 ```bash
-${HERMES_SKILL_DIR}/lint.sh <path>
+node ${HERMES_SKILL_DIR}/lint.js <path>
 ```
 
 Done — the file is GFM-compliant.
@@ -112,7 +112,7 @@ Done — the file is GFM-compliant.
 ### 2. Batch Fix All Markdown in a Project
 
 ```bash
-${HERMES_SKILL_DIR}/lint.sh --all .
+node ${HERMES_SKILL_DIR}/lint.js --all .
 ```
 
 ### 3. CI / Pre-commit Check (read-only)
@@ -217,16 +217,16 @@ ${HERMES_SKILL_DIR}/references/fix-tables.js
 
 ```bash
 # Fix specific file
-${HERMES_SKILL_DIR}/lint.sh <path>
+node ${HERMES_SKILL_DIR}/lint.js <path>
 
 # Check only (read-only, exit 0 if clean)
-${HERMES_SKILL_DIR}/lint.sh --check <path>
+node ${HERMES_SKILL_DIR}/lint.js --check <path>
 
 # Fix all .md in directory
-${HERMES_SKILL_DIR}/lint.sh --all <directory>
+node ${HERMES_SKILL_DIR}/lint.js --all <directory>
 
 # Check fenced code blocks
-${HERMES_SKILL_DIR}/lint.sh --fences <path>
+node ${HERMES_SKILL_DIR}/lint.js --fences <path>
 ```
 
 ### Auto-Lint on Write (Hermes Shell Hook)
@@ -237,7 +237,7 @@ Hermes supports `post_tool_call` hooks via `~/.hermes/config.yaml`:
 hooks:
   post_tool_call:
     - matcher: "write_file"
-      command: "~/.hermes/skills/markdown-lint/scripts/post-write.sh"
+      command: "node ~/.hermes/skills/markdown-lint/scripts/post-write.js"
 ```
 
 > **Note:** OpenCode does NOT support hooks in `opencode.jsonc`. Do not document OpenCode hook configs — use git pre-commit hooks or shell aliases instead.
@@ -262,14 +262,14 @@ In some Hermes environments, npx may not be in PATH. Use the full path explicitl
 /usr/share/nodejs/corepack/shims/npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix
 ```
 
-The bundled `lint.sh` handles this automatically — prefer it over running npx directly.
+The bundled `lint.js` handles this automatically — prefer it over running npx directly.
 
 ### Config file not found
 
-The bundled `lint.sh` auto-locates the config — use it:
+The bundled `lint.js` auto-locates the config — use it:
 
 ```bash
-${HERMES_SKILL_DIR}/lint.sh <path>
+node ${HERMES_SKILL_DIR}/lint.js <path>
 ```
 
 Or pass the config explicitly with a full npx path:
@@ -283,8 +283,8 @@ Or pass the config explicitly with a full npx path:
 Known behavior. Run twice if needed:
 
 ```bash
-${HERMES_SKILL_DIR}/lint.sh <path>
-${HERMES_SKILL_DIR}/lint.sh <path>
+node ${HERMES_SKILL_DIR}/lint.js <path>
+node ${HERMES_SKILL_DIR}/lint.js <path>
 ```
 
 ## Verification
@@ -292,7 +292,7 @@ ${HERMES_SKILL_DIR}/lint.sh <path>
 Run the lint check to verify GFM compliance:
 
 ```bash
-${HERMES_SKILL_DIR}/lint.sh --check <path>
+node ${HERMES_SKILL_DIR}/lint.js --check <path>
 ```
 
 Exit code 0 means no violations.
@@ -302,7 +302,7 @@ Exit code 0 means no violations.
 Fenced code blocks are a common source of subtle corruption (e.g. backtick content interpreted as shell, broken opener/closer pairs). Run the dedicated fence checker:
 
 ```bash
-${HERMES_SKILL_DIR}/lint.sh --fences <path>
+node ${HERMES_SKILL_DIR}/lint.js --fences <path>
 ```
 
 Or directly:
@@ -325,9 +325,9 @@ Exit code 0 = all fences clean. The checker verifies:
 
 | Task            | Command                                                                                                                                                                                                                                                  |
 | : ------------- | : ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Fix file        | `${HERMES_SKILL_DIR}/lint.sh <path>`                                                                                                                                                                                                                     |
-| Fix all         | `${HERMES_SKILL_DIR}/lint.sh --all .`                                                                                                                                                                                                                    |
-| Check only      | `${HERMES_SKILL_DIR}/lint.sh --check <path>`                                                                                                                                                                                                             |
-| Check fences    | `${HERMES_SKILL_DIR}/lint.sh --fences <path>`                                                                                                                                                                                                            |
-| Validate tables | `${HERMES_SKILL_DIR}/lint.sh --validate <path>`                                                                                                                                                                                                          |
+| Fix file        | `node ${HERMES_SKILL_DIR}/lint.js <path>`                                                                                                                                                                                                                |
+| Fix all         | `node ${HERMES_SKILL_DIR}/lint.js --all .`                                                                                                                                                                                                               |
+| Check only      | `node ${HERMES_SKILL_DIR}/lint.js --check <path>`                                                                                                                                                                                                        |
+| Check fences    | `node ${HERMES_SKILL_DIR}/lint.js --fences <path>`                                                                                                                                                                                                       |
+| Validate tables | `node ${HERMES_SKILL_DIR}/lint.js --validate <path>`                                                                                                                                                                                                     |
 | Manual steps    | `node ${HERMES_SKILL_DIR}/references/fix-tables.js <path> && node ${HERMES_SKILL_DIR}/references/pad-tables.js <path> && /usr/share/nodejs/corepack/shims/npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix` |

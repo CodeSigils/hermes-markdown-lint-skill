@@ -7,8 +7,8 @@ This skill lints and auto-fixes Markdown files to enforce GitHub Flavored Markdo
 ## Official Standards
 
 - **Skill structure**: Use `skills/<skill-name>/SKILL.md` as the entry point
-- **Entry commands**: Use `skills/<skill-name>/lint.sh` or documented CLI tools
-- **Hermes hooks**: Use `skills/<skill-name>/scripts/post-write.sh` via hooks config
+- **Entry commands**: Use `skills/<skill-name>/lint.js` or documented CLI tools
+- **Hermes hooks**: Use `skills/<skill-name>/scripts/post-write.js` via hooks config
 - **Verification**: Cross-reference config against SKILL.md rules tables
 
 ### Skill Structure
@@ -16,15 +16,15 @@ This skill lints and auto-fixes Markdown files to enforce GitHub Flavored Markdo
 ```text
 .
 ├── AGENTS.md
-├── lint.sh                      # Developer wrapper
+├── lint.js                      # Developer wrapper
 ├── README.md
 ├── skills/
 │   └── markdown-lint/           # <-- The actual skill payload
 │       ├── SKILL.md
-│       ├── lint.sh              # Canonical entry point
+│       ├── lint.js              # Canonical entry point
 │       ├── scripts/
 │       │   ├── check-fences.js  # Fenced code block checker
-│       │   └── post-write.sh    # Auto-lint hook
+│       │   └── post-write.js    # Auto-lint hook
 │       └── references/
 │           ├── fix-tables.js
 │           ├── pad-tables.js
@@ -100,7 +100,7 @@ Follow these principles in all work:
 
 1. **Read first, then act** — read existing files before editing. Understand the current state.
 2. **Verify before committing** — test changes. Run linters. Don't assume it works.
-3. **Use tools actively** — file read/search instead of grep/cat. Run lint.sh before push.
+3. **Use tools actively** — file read/search instead of grep/cat. Run lint.js before push.
 4. **Be incremental** — commit logical chunks. One concern per commit.
 5. **Handle errors gracefully** — show actionable error messages. Don't hide failures.
 6. **Preserve working behavior** — don't break what's already correct. The formatter is idempotent.
@@ -112,25 +112,25 @@ Follow these principles in all work:
 ### Lint a file (read-only check)
 
 ```text
-${HERMES_SKILL_DIR}/lint.sh --check <file>
+node ${HERMES_SKILL_DIR}/lint.js --check <file>
 ```
 
 ### Fix a file
 
 ```markdown
-${HERMES_SKILL_DIR}/lint.sh <file>
+node ${HERMES_SKILL_DIR}/lint.js <file>
 ```
 
 ### Fix all markdown files in directory
 
 ```bash
-${HERMES_SKILL_DIR}/lint.sh --all <dir>
+node ${HERMES_SKILL_DIR}/lint.js --all <dir>
 ```
 
 ### Check code fences
 
 ```bash
-${HERMES_SKILL_DIR}/lint.sh --fences <path>
+node ${HERMES_SKILL_DIR}/lint.js --fences <path>
 ```
 
 Exit 0 = all fences clean. Checks: unmatched block markers, no bare-lang closers, matched counts.
@@ -138,7 +138,7 @@ Exit 0 = all fences clean. Checks: unmatched block markers, no bare-lang closers
 ### Validate table columns
 
 ```bash
-${HERMES_SKILL_DIR}/lint.sh --validate <path>
+node ${HERMES_SKILL_DIR}/lint.js --validate <path>
 ```
 
 Exit 1 if column mismatches. Always run before pushing.
@@ -203,10 +203,10 @@ Fenced code blocks are easily corrupted by shell tools (backtick content interpr
 node skills/markdown-lint/scripts/check-fences.js <file-or-dir>
 ```
 
-Or via lint.sh:
+Or via lint.js:
 
 ```bash
-${HERMES_SKILL_DIR}/lint.sh --fences <path>
+node ${HERMES_SKILL_DIR}/lint.js --fences <path>
 ```
 
 This catches unmatched block markers, bare-lang closers, and count mismatches — the exact issues that today's bulk edit would have caught mid-flight. (Note: empty languages on openers are valid per MD040).
@@ -328,7 +328,7 @@ After:
 
 ## Key Conventions
 
-- `lint.sh` is the canonical interface — use it instead of running npx directly
+- `lint.js` is the canonical interface — use it instead of running npx directly
 - npx path in Hermes environments: `/usr/share/nodejs/corepack/shims/npx`
 - MD055 (table-pipe-style) is disabled — leading/trailing `|` on tables is optional
 - MD033 (no-inline-html) is disabled — inline HTML is allowed in GFM
@@ -379,17 +379,17 @@ Changelog format:
 
 ### Key Changes in v2.9
 
-- Replaced `jq` dependency with zero-dependency Node.js extraction in `post-write.sh`.
+- Replaced `jq` dependency with zero-dependency Node.js extraction in `post-write.js`.
 - Replaced brittle bash regex `check-fences.sh` with a native `check-fences.js` script that correctly permits empty language fences.
-- Significantly improved `lint.sh` bulk execution performance (node processes run once instead of per-file).
+- Significantly improved `lint.js` bulk execution performance (node processes run once instead of per-file).
 
 ### Key Changes in v2.8
 
-- Add `--fences` mode to `lint.sh` for fenced code block validation
+- Add `--fences` mode to `lint.js` for fenced code block validation
 - Add `scripts/check-fences.sh` — validates code fences across .md files
 - Disable MD055 (table-pipe-style) — no longer enforces leading/trailing `|` on tables
 - Disable MD033 (no-inline-html) — inline HTML is allowed in GFM
-- Sync `skills/markdown-lint/lint.sh` with root `lint.sh` (all flags available)
+- Sync `skills/markdown-lint/lint.js` with root `lint.js` (all flags available)
 
 ## Post-Install: Auto-Lint on Write
 
@@ -399,7 +399,7 @@ To auto-lint every markdown file Hermes writes, add hook to `~/.hermes/config.ya
 hooks:
   post_tool_call:
     - matcher: write_file
-      command: "~/.hermes/skills/markdown-lint/scripts/post-write.sh"
+      command: "node ~/.hermes/skills/markdown-lint/scripts/post-write.js"
 hooks_auto_accept: true
 ```
 
@@ -409,11 +409,11 @@ Restart Hermes for hook to activate.
 
 | File                                                 | Purpose                                                 |
 | : -------------------------------------------------- | : ----------------------------------------------------- |
-| `lint.sh`                                            | Pipeline wrapper — canonical entry point with all flags |
+| `lint.js`                                            | Pipeline wrapper — canonical entry point with all flags |
 | `skills/markdown-lint/SKILL.md`                      | Skill instructions for Hermes                           |
 | `skills/markdown-lint/references/.markdownlint.json` | Lint rules config                                       |
 | `skills/markdown-lint/scripts/check-fences.js`       | Fenced code block checker                               |
-| `skills/markdown-lint/scripts/post-write.sh`         | Auto-lint hook                                          |
+| `skills/markdown-lint/scripts/post-write.js`         | Auto-lint hook                                          |
 | `skills/markdown-lint/references/fix-tables.js`      | Table separator normalizer                              |
 | `skills/markdown-lint/references/pad-tables.js`      | Table cell padder for alignment                         |
 | `test/kitchensink.md`                                | Comprehensive test fixture                              |
