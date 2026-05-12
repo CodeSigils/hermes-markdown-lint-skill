@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 /**
- * Markdown Lint Pipeline — wraps fix-tables.js + pad-tables.js + markdownlint-cli2
+ * Markdown Lint Pipeline
+ *
+ * Pipeline:
+ *   1. format-tables.js (single-pass table normalization)
+ *   2. markdownlint-cli2 (general GFM rule enforcement)
+ *
  * Pure Node.js implementation for cross-platform compatibility.
  */
 
@@ -44,7 +49,6 @@ for (let i = 0; i < args.length; i++) {
 
 if (TARGETS.length === 0) usage();
 
-// Normalize TARGET directory paths to remove trailing slash if present
 for (let i = 0; i < TARGETS.length; i++) {
     if (ALL || (fs.existsSync(TARGETS[i]) && fs.statSync(TARGETS[i]).isDirectory())) {
         TARGETS[i] = TARGETS[i].replace(/[/\\]$/, '');
@@ -92,7 +96,6 @@ if (VALIDATE) {
     process.exit(exitCode);
 }
 
-// Step 1: Format tables (fix separators + pad cells) in a single pass
 if (!CHECK && !DRY_RUN) {
     for (const target of TARGETS) {
         const argsToPass = [];
@@ -111,7 +114,6 @@ if (!CHECK && !DRY_RUN) {
     process.exit(0);
 }
 
-// Step 2: markdownlint with skill config
 const lintArgs = ['markdownlint-cli2', '--config', CONFIG];
 for (const target of TARGETS) {
     const isDir = fs.existsSync(target) && fs.statSync(target).isDirectory();
