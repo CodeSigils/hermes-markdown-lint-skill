@@ -4,19 +4,64 @@ Lints and auto-fixes Markdown files to enforce GitHub Flavored Markdown (GFM) ru
 
 > **Note:** Compatible with any LLM agent (Claude Code, OpenAI, OpenCode, etc.).
 
-## Skill Location
+## Agent Contract
 
-Canonical entry point: `skills/markdown-lint/SKILL.md`
+Agents modifying Markdown files in this repository MUST:
 
-Helper scripts:
+1. Run lint validation after every `write_file` targeting `.md`
+2. Check fenced code blocks before committing
+3. Validate table column consistency before pushing
+4. Use `lint.js` as the canonical entry point — not `npx` directly
+5. Prefer auto-fix (`lint.js <path>`) before manual formatting
 
-| File                                                 | Purpose                                  |
-| :--------------------------------------------------- | :--------------------------------------- |
-| `skills/markdown-lint/lint.js`                       | Pipeline wrapper — canonical entry point |
-| `skills/markdown-lint/scripts/check-fences.js`       | Validates fenced code blocks             |
-| `skills/markdown-lint/scripts/post-write.js`         | Auto-lint hook (optional)                |
-| `skills/markdown-lint/references/format-tables.js`   | Single-pass table formatter              |
-| `skills/markdown-lint/references/.markdownlint.json` | Lint rules config                        |
+Agents SHOULD NOT:
+
+- Rewrite semantic prose for style-only reasons
+- Alter code fence languages without certainty
+- Normalize intentionally preserved formatting
+- Modify generated content sections directly
+- Batch multiple writes and lint later — lint each file immediately
+
+## Validate Changes
+
+### After writing a `.md` file
+
+Run lint immediately:
+
+```bash
+node ${HERMES_SKILL_DIR}/lint.js <path>
+```
+
+Do not skip this step.
+
+### Before committing
+
+1. Check fenced blocks: `node ${HERMES_SKILL_DIR}/lint.js --fences <path>`
+2. Validate tables: `node ${HERMES_SKILL_DIR}/lint.js --validate <path>`
+3. Final lint: `node ${HERMES_SKILL_DIR}/lint.js --check <path>`
+
+### After editing the config
+
+Verify `${HERMES_SKILL_DIR}/references/.markdownlint.json` against the Rules Enforced section. Every enabled rule must appear in both.
+
+## Quick Reference
+
+```bash
+# Lint (read-only)
+node ${HERMES_SKILL_DIR}/lint.js --check <file>
+
+# Fix
+node ${HERMES_SKILL_DIR}/lint.js <file>
+
+# Fix all in directory
+node ${HERMES_SKILL_DIR}/lint.js --all <dir>
+
+# Check fenced code blocks
+node ${HERMES_SKILL_DIR}/lint.js --fences <path>
+
+# Validate table columns (exit 1 on mismatch)
+node ${HERMES_SKILL_DIR}/lint.js --validate <path>
+```
 
 ## Rules Enforced
 
@@ -51,57 +96,39 @@ These rules are configured in `.markdownlint.json`:
 | MD055 | Table pipe style               | disabled         |
 | MD060 | Table pipe alignment           | `left`           |
 
-## Quick Reference
+## Resolve Failures
 
-```bash
-# Lint (read-only)
-node ${HERMES_SKILL_DIR}/lint.js --check <file>
+### Severity Levels
 
-# Fix
-node ${HERMES_SKILL_DIR}/lint.js <file>
+| Level    | CI     | Merge   | Description                            |
+| :------- | :----- | :------ | :------------------------------------- |
+| BLOCKING | fails  | blocked | Table column mismatch, unclosed fences |
+| WARNING  | passes | allowed | MD018, MD047, MD056, MD060             |
+| INFO     | passes | allowed | MD040, MD055 (disabled rules)          |
 
-# Fix all in directory
-node ${HERMES_SKILL_DIR}/lint.js --all <dir>
+### Common Errors
 
-# Check fenced code blocks
-node ${HERMES_SKILL_DIR}/lint.js --fences <path>
+| Error                          | Severity | Cause                      | Fix                    |
+| :----------------------------- | :------- | :------------------------- | :--------------------- |
+| MD018: No space after hash     | WARNING  | Missing space after `#`    | `## Heading`           |
+| MD047: Single trailing newline | WARNING  | File missing final newline | Add blank line at end  |
+| MD056: Table column count      | BLOCKING | Separator width mismatch   | Run `format-tables.js` |
+| MD060: Table pipe position     | WARNING  | Pipes misaligned           | Run `format-tables.js` |
+| Unclosed code fence            | BLOCKING | Opener/closer mismatch     | Run `--fences` check   |
 
-# Validate table columns (exit 1 on mismatch)
-node ${HERMES_SKILL_DIR}/lint.js --validate <path>
-```
+### Code Fence Rules (MD040 disabled)
 
-## Workflow
+Blank fences are valid for output examples:
 
-### After writing a `.md` file
+````markdown
 
-Run lint immediately:
+output here
 
-```bash
-node ${HERMES_SKILL_DIR}/lint.js <path>
-```
+````
 
-Do not skip this step.
+Use `text` for intentional blank-fence examples. Use `markdown` for examples of markdown output.
 
-### Before committing
-
-1. Check fenced blocks: `node ${HERMES_SKILL_DIR}/lint.js --fences <path>`
-2. Validate tables: `node ${HERMES_SKILL_DIR}/lint.js --validate <path>`
-3. Final lint: `node ${HERMES_SKILL_DIR}/lint.js --check <path>`
-
-### After editing the config
-
-Verify `${HERMES_SKILL_DIR}/references/.markdownlint.json` against this file. Every enabled rule must appear in both.
-
-## Common Errors
-
-| Error                          | Cause                      | Fix                    |
-| :----------------------------- | :------------------------- | :--------------------- |
-| MD018: No space after hash     | Missing space after `#`    | `## Heading`           |
-| MD047: Single trailing newline | File missing final newline | Add blank line at end  |
-| MD056: Table column count      | Separator width mismatch   | Run `format-tables.js` |
-| MD060: Table pipe position     | Pipes misaligned           | Run `format-tables.js` |
-
-## Before / After Examples
+## Fix Common Issues
 
 ### Tables
 
@@ -134,18 +161,6 @@ After:
 ```markdown
 ## No space
 ```
-
-### Code Fences (MD040 disabled)
-
-Blank fences are valid for output:
-
-````markdown
-
-output here
-
-````
-
-Use `text` for intentional blank-fence examples. Use `markdown` for examples of markdown output.
 
 ### Lists (MD032)
 
@@ -189,9 +204,23 @@ hooks:
 hooks_auto_accept: true
 ```
 
-Restart Hermes. This is optional — the mandatory lint rule above handles the common case.
+Restart Hermes. This is optional — the mandatory lint rule handles the common case.
 
 ## Version Policy
 
 - Update `metadata.version` in `SKILL.md` frontmatter on changes
 - Document changes in `README.md` changelog
+
+## Skill Location
+
+Canonical entry point: `skills/markdown-lint/SKILL.md`
+
+Helper scripts:
+
+| File                                                 | Purpose                                  |
+| :--------------------------------------------------- | :--------------------------------------- |
+| `skills/markdown-lint/lint.js`                       | Pipeline wrapper — canonical entry point |
+| `skills/markdown-lint/scripts/check-fences.js`       | Validates fenced code blocks             |
+| `skills/markdown-lint/scripts/post-write.js`         | Auto-lint hook (optional)                |
+| `skills/markdown-lint/references/format-tables.js`   | Single-pass table formatter              |
+| `skills/markdown-lint/references/.markdownlint.json` | Lint rules config                        |
