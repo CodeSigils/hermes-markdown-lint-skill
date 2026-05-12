@@ -72,7 +72,7 @@ test("buildSeparator: left alignment", () => {
 
 test("buildSeparator: right alignment", () => {
     const sep = _buildSeparator([4, 4], ["right", "right"]);
-    assert.match(sep, /----:/);
+    assert.match(sep, /---:/);
 });
 
 test("buildSeparator: center alignment", () => {
@@ -180,6 +180,18 @@ test("formatTableInPlace: pads cells to column width", () => {
     const tables = _findTables(lines);
     _formatTableInPlace(lines, tables[0]);
     assert.ok(lines[2].includes("Al "), "Short cell should be padded");
+});
+
+test("formatTableInPlace: preserves semantic alignment padding", () => {
+    const lines = [
+        "| Left | Center | Right |",
+        "| :--- | :----: | ---: |",
+        "| x | y | z |",
+    ];
+    const tables = _findTables(lines);
+    _formatTableInPlace(lines, tables[0]);
+    assert.strictEqual(lines[1], "| :--- | :----: | ----: |");
+    assert.strictEqual(lines[2], "| x    |   y    |     z |");
 });
 
 test("formatTableInPlace: idempotent on already-correct table", () => {

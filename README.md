@@ -4,9 +4,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Hermes Skill](https://img.shields.io/badge/Hermes-Skill-8A2BE2.svg)](https://hermes-agent.nousresearch.com/)
 
-A zero-dependency Hermes Agent skill that automatically lints and fixes Markdown files to enforce [GitHub Flavored Markdown (GFM)](https://github.github.com/gfm/) rules.
+A self-contained Hermes Agent skill that automatically lints and fixes Markdown files to enforce [GitHub Flavored Markdown (GFM)](https://github.github.com/gfm/) rules.
 
-Powered by **pure Node.js** — `format-tables.js` for single-pass table formatting and `markdownlint-cli2` for GFM rule enforcement. No global installations, no bash required.
+Powered by **pure Node.js scripts** — `format-tables.js` for single-pass table formatting and `markdownlint-cli2` via `npx` for GFM rule enforcement. No committed `node_modules`, package install step, or bash runtime required.
 
 ---
 
@@ -16,7 +16,7 @@ This repository follows **autonomous agent governance standards** — explicit b
 
 ### What This Means
 
-- **AGENTS.md** defines a formal contract: what agents MUST do, what they SHOULD NOT do
+- **AGENTS.md** defines a formal contract for any Markdown file creation or edit
 - **Severity levels** (BLOCKING/WARNING/INFO) make validation failures actionable
 - **Imperative section headers** (Validate Changes, Resolve Failures) for machine readability
 - **Safe automation boundaries** prevent destructive "helpful AI" behavior
@@ -70,7 +70,7 @@ The `--force` flag is required because the security scanner flags post-write hoo
 
 ### Post-Install: Hook (Optional Safety Net)
 
-The skill already instructs the AI agent to automatically lint every markdown file it writes. For guaranteed enforcement even if the agent skips the instruction, you can add a system-level hook:
+The skill already instructs the AI agent to automatically lint every Markdown file it creates or edits. For guaranteed enforcement even if the agent skips the instruction, you can add a system-level hook:
 
 **Edit `~/.hermes/config.yaml`:**
 
@@ -97,14 +97,12 @@ node ${HERMES_SKILL_DIR}/lint.js --validate <path>  # Validate table column cons
 node ${HERMES_SKILL_DIR}/lint.js --fences <path>    # Check fenced code blocks
 ```
 
-Or run steps manually:
+The canonical wrapper runs two stages internally:
 
-```bash
-node skills/markdown-lint/references/format-tables.js <path> && npx markdownlint-cli2 --config skills/markdown-lint/references/.markdownlint.json <path> --fix
-```
+1. `format-tables.js` formats all tables in a single pass
+2. `markdownlint-cli2` fixes or checks everything else through the bundled config
 
-Step 1 formats all tables in a single pass (fixes separators + pads cells).
-Step 2 fixes everything else.
+Agents should call `lint.js`; direct `npx markdownlint-cli2` commands are only for debugging the skill internals.
 
 ### Preventing Broken Tables
 
@@ -143,7 +141,7 @@ If a table cell contains a pipe character, escape it to prevent column misparsin
 ```markdown
 | Type    | Value                      |
 | :------ | :------------------------- |
-| Options | "tab" &#124; "space"   |
+| Options | "tab" &#124; "space"       |
 ```
 
 ### What It Does
@@ -206,7 +204,7 @@ Key policy choices:
 Run against the test fixture:
 
 ```bash
-npx markdownlint-cli2 --config skills/markdown-lint/references/.markdownlint.json test/kitchensink.md
+node lint.js --check test/kitchensink.md
 ```
 
 ### CI / Pre-commit
@@ -234,9 +232,13 @@ Pre-commit:
 
 ```yaml
 # .pre-commit-config.yaml
-- repo: https://github.com/pre-commit/pre-commit-hooks
+- repo: local
   hooks:
-    - id: markdownlint
+    - id: hermes-markdown-lint
+      name: Hermes Markdown lint
+      entry: node lint.js --check .
+      language: system
+      pass_filenames: false
 ```
 
 ---
@@ -275,6 +277,40 @@ Learn more about creating and managing Hermes skills:
 └── test/
     └── format-tables.test.js
 ```
+
+### Changelog
+
+#### v2.9.1
+
+- Strengthened the agent contract: lint after any Markdown file creation or edit, not only a specific write tool.
+- Added MUST-level agent requirements to the installed `SKILL.md`.
+- Fixed MD060 `aligned` table formatting for right- and center-aligned columns.
+- Restored README changelog tracking and corrected stale direct-`npx` guidance.
+- Strengthened `check-consistency.js` to compare documented rule tables against `.markdownlint.json`.
+- Aligned `SKILL.md` frontmatter with the official Hermes `version` and `author` fields.
+- Removed redundant GitHub Actions workflow; `ci.yml` is now the canonical validation workflow.
+
+#### v2.9.0
+
+- Replaced shell wrappers with native Node.js entry points.
+- Merged table separator fixing and cell padding into `format-tables.js`.
+- Added repository consistency checks to keep config and docs synchronized.
+
+#### v2.8.0
+
+- Added `--fences` mode for fenced code block validation.
+- Disabled MD055 so leading and trailing table pipes remain optional.
+- Disabled MD033 so inline HTML remains valid in Markdown.
+
+#### v2.7.0
+
+- Added `--validate` mode for table column consistency checks.
+- Documented escaped pipe handling for table cells.
+
+#### v2.6.0
+
+- Added optional `post-write.js` hook for automatic linting after Markdown writes.
+- Enabled stricter list and table alignment validation.
 
 ## License
 

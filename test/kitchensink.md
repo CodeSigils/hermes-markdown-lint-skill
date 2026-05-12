@@ -9,10 +9,10 @@ This file contains various markdown constructs to test the linting pipeline.
 ### Basic Table
 
 | Name    | Age | Role      |
-| :------ | ---: | :-------- |
-| Alice   | 25  | Developer |
-| Bob     | 30  | Designer  |
-| Charlie | 28  | Manager   |
+| :------ | --: | :-------- |
+| Alice   |  25 | Developer |
+| Bob     |  30 | Designer  |
+| Charlie |  28 | Manager   |
 
 ### Table with Trailing Pipe
 
@@ -50,8 +50,8 @@ This file contains various markdown constructs to test the linting pipeline.
 ### Alignment Variations
 
 | Left | Center | Right |
-| :--- | :----: | -----: |
-| ←    | ◆      | →     |
+| :--- | :----: | ----: |
+| ←    |   ◆    |     → |
 | left | center | right |
 
 ---

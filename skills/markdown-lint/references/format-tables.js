@@ -104,7 +104,7 @@ function buildSeparator(colWidths, alignments) {
     const parts = colWidths.map((w, i) => {
         const align = alignments[i] || "left";
         const dashes = Math.max(3, w);
-        if (align === "right")  return "-".repeat(dashes) + ":";
+        if (align === "right")  return "-".repeat(Math.max(2, dashes - 1)) + ":";
         if (align === "center") return ":" + "-".repeat(Math.max(1, dashes - 2)) + ":";
         return ":" + "-".repeat(Math.max(2, dashes - 1));
     });
@@ -184,7 +184,15 @@ function formatTableInPlace(lines, table) {
     function formatRow(row) {
         const parts = row.map((cell, i) => {
             const w = colWidths[i] || stringWidth(cell);
-            return cell + " ".repeat(Math.max(0, w - stringWidth(cell)));
+            const padding = Math.max(0, w - stringWidth(cell));
+            const align = alignments[i] || "left";
+            if (align === "right") return " ".repeat(padding) + cell;
+            if (align === "center") {
+                const left = Math.floor(padding / 2);
+                const right = padding - left;
+                return " ".repeat(left) + cell + " ".repeat(right);
+            }
+            return cell + " ".repeat(padding);
         });
         return "| " + parts.join(" | ") + " |";
     }
