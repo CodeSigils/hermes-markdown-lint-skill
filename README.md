@@ -94,7 +94,7 @@ If a table cell contains a pipe character, escape it to prevent column misparsin
 
 ```markdown
 | Type    | Value |
-| : ----- | : --- |
+| :----- | :--- |
 | Options | "tab" | "space" |
 ```
 
@@ -102,7 +102,7 @@ If a table cell contains a pipe character, escape it to prevent column misparsin
 
 ```markdown
 | Type    | Value                |
-| : ----- | : ------------------ |
+| :----- | :------------------ |
 | Options | "tab" &#124; "space" |
 ```
 

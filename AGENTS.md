@@ -109,7 +109,7 @@ Before:
 
 ```markdown
 | Name  | Age |
-| : --- | : --- |
+| ---   | --- |
 | Alice | 25  |
 ```
 

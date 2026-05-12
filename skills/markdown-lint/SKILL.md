@@ -148,42 +148,78 @@ npx markdownlint-cli2 --config ~/.hermes/skills/markdown-lint/references/.markdo
 
 ## GFM Rules Reference
 
-markdownlint implements MD001-MD060 rules. Key rules enforced:
+markdownlint implements MD001-MD069 rules. Config lives in `references/.markdownlint.json`.
 
-| Rule  | Title                  | Description                                |
-| :---- | :--------------------- | :----------------------------------------- |
-| MD003 | heading-style          | Use ATX headings (`#` style)               |
-| MD007 | ul-indent              | Unordered list indent = 2 spaces           |
-| MD009 | no-trailing-spaces     | No trailing spaces                         |
-| MD010 | no-hard-tabs           | No hard tabs                               |
-| MD012 | no-multiple-blanks     | Max one blank line between paragraphs      |
-| MD022 | blanks-around-headings | Blank line before and after headings       |
-| MD026 | no-duplicate-heading   | No duplicate headings in the same document |
-| MD029 | ol-prefix              | Ordered list prefix style                  |
-| MD030 | list-marker-space      | Spaces after list markers                  |
-| MD031 | blanks-around-fences   | Blank line around fenced code blocks       |
-| MD032 | blanks-around-lists    | Lists should be surrounded by blank lines  |
-| MD035 | hr-style               | Horizontal rule style `---`                |
-| MD041 | first-line-h1         | First line should be a top-level heading   |
-| MD045 | no-alt-text           | Images must have alternate text (alt)      |
-| MD046 | code-block-style      | Use fenced code blocks                     |
-| MD047 | single-trailing-newline | File should end with a single newline    |
-| MD048 | code-fence-style       | Use backticks for code fences              |
-| MD060 | table-column-style     | Table pipes must align with header columns |
+### Explicitly configured rules
 
-Rules **disabled** (too strict for prose documentation):
+| Rule | Title | Description | Config |
+| :--- | :--- | :--- | :--- |
+| MD003 | heading-style | Use ATX headings (`#` style) | `atx` |
+| MD007 | ul-indent | Unordered list indent | 2 spaces |
+| MD009 | no-trailing-spaces | Trailing spaces | 2 allowed |
+| MD010 | no-hard-tabs | No hard tabs | enabled |
+| MD012 | no-multiple-blanks | Multiple blanks | max 1 |
+| MD014 | hr-style | Horizontal rule style | `---` |
+| MD024 | multiple-headings | Same text in multiple sections | disabled |
+| MD025 | multiple-h1 | Multiple top-level headings | disabled |
+| MD026 | no-punctuation-at-end | No trailing punctuation on headings | `. ,;:!` |
+| MD029 | ol-prefix | Ordered list prefix style | enabled |
+| MD030 | list-marker-space | Spaces after list markers | enabled |
+| MD032 | blanks-around-lists | Lists surrounded by blank lines | enabled |
+| MD033 | no-inline-html | Inline HTML | disabled |
+| MD034 | no-bare-urls | Bare URLs | disabled |
+| MD035 | hr-style | HR style | `---` |
+| MD036 | emphasis-instead-of-heading | Emphasis instead of heading | disabled |
+| MD040 | fenced-code-language | Fenced code language | disabled |
+| MD041 | first-line-h1 | First line is H1 | `dashed` |
+| MD045 | no-alt-text | Images need alt text | enabled |
+| MD046 | code-block-style | Fenced code blocks | `fenced` |
+| MD047 | single-trailing-newline | File ends with newline | enabled |
+| MD048 | code-fence-style | Backtick fences | `backtick` |
+| MD051 | no-bare-reference-link | Bare reference links | disabled |
+| MD052 | no-bare-reference-link | Links without text | disabled |
+| MD055 | table-pipe-style | Consistent leading/trailing pipes | disabled |
+| MD060 | table-column-style | Pipes align with columns | `left` |
 
-| Rule  | Title                       | Why Disabled                                |
-| :---- | :-------------------------- | :------------------------------------------ |
-| MD013 | line-length                 | Prose lines are naturally longer            |
-| MD024 | multiple-headings           | Same h2 text in different sections is valid |
-| MD025 | multiple-h1                 | Multiple top-level headings allowed         |
-| MD033 | no-inline-html              | Inline HTML is allowed in GFM               |
-| MD034 | no-bare-urls                | Bare URLs auto-link in GFM                  |
-| MD036 | emphasis-instead-of-heading | Valid use case for emphasis                 |
-| MD040 | fenced-code-language        | Code fences don't always need a language    |
-| MD052 | no-bare-reference-link      | Common in prose                             |
-| MD055 | table-pipe-style            | No leading/trailing pipes enforced          |
+### Default-on rules (not in config)
+
+These rules are always enforced by markdownlint unless explicitly disabled:
+
+| Rule | Title | Description |
+| :--- | :--- | :--- |
+| MD001 | heading-increment | Heading levels increment by 1 |
+| MD002 | first-heading-h1 | First heading is H1 |
+| MD005 | no-irregular-width | Table pipe alignment |
+| MD018 | no-missing-space-atx | No space after `#` |
+| MD019 | no-multiple-space-atx | No multiple spaces after `#` |
+| MD022 | blanks-around-headings | Blank lines around headings |
+| MD023 | heading-start-left | Heading starts at column 1 |
+| MD027 | no-reversed-space | Space after marker |
+| MD028 | no-blanks-blockquote | Blank line in blockquote |
+| MD031 | blanks-around-fences | Blank lines around fences |
+| MD041 | first-line-h1 | First line is H1 |
+| MD042 | no-empty-links | Empty link text |
+| MD043 | required-headings | Required heading structure |
+| MD044 | proper-names | Proper names (e.g. "JavaScript") |
+| MD049 | no-empty-link-text | Empty link text |
+| MD050 | strong-style | Strong/emphasis style |
+| MD053 | blank-lines-start | Fence starts/ends with blank line |
+| MD056 | table-column-count | Table column count matches |
+| MD057 | tables-separated | Tables need separation by blank lines |
+| MD058 | no-table-span | Table collapsed borders not allowed |
+| MD059 | no-emphasis-as-heading | Emphasis used as heading |
+| MD061 | link-image-refs | Link/image references need separation |
+| MD062 | emphasis-as-heading | Emphasis used as heading |
+| MD063 | punctuation-at-end | Punctuation at start of heading |
+| MD064 | link-text | Link text variation |
+| MD066 | no-trailing-spaces | No trailing spaces |
+| MD067 | code-increments | Code block increments not allowed |
+| MD068 | definition-punctuation | Colons in definition lists |
+| MD069 | heading-closed | Atx style headings need closing ## |
+| MD070 | no-hard-tabs-list | No hard tabs in list indentation |
+
+> [!NOTE]
+> AGENTS.md has a trimmed table showing only the rules in `.markdownlint.json` for quick reference.
 
 ## format-tables.js
 
