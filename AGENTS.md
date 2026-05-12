@@ -22,6 +22,16 @@ Agents SHOULD NOT:
 - Modify generated content sections directly
 - Batch multiple writes and lint later — lint each file immediately
 
+## Design Philosophy
+
+This repository treats Markdown linting as **agent-safe repository governance**:
+
+- Formatting must be deterministic and idempotent
+- Configuration, documentation, and script behavior must stay in sync
+- Table formatting preserves semantic alignment (`:---`, `---:`, `:---:`)
+- Fenced code blocks are safety boundaries and must not be rewritten as prose
+- `lint.js` is the canonical entry point for all automated and manual runs
+
 ## Validate Changes
 
 ### After writing a `.md` file
@@ -36,13 +46,18 @@ Do not skip this step.
 
 ### Before committing
 
-1. Check fenced blocks: `node ${HERMES_SKILL_DIR}/lint.js --fences <path>`
-2. Validate tables: `node ${HERMES_SKILL_DIR}/lint.js --validate <path>`
-3. Final lint: `node ${HERMES_SKILL_DIR}/lint.js --check <path>`
+1. Check repository consistency: `node scripts/check-consistency.js`
+2. Check fenced blocks: `node ${HERMES_SKILL_DIR}/lint.js --fences <path>`
+3. Validate tables: `node ${HERMES_SKILL_DIR}/lint.js --validate <path>`
+4. Final lint: `node ${HERMES_SKILL_DIR}/lint.js --check <path>`
 
 ### After editing the config
 
-Verify `${HERMES_SKILL_DIR}/references/.markdownlint.json` against the Rules Enforced section. Every enabled rule must appear in both.
+Update the Rules Enforced sections in `AGENTS.md`, `README.md`, and `skills/markdown-lint/SKILL.md`. Then run:
+
+```bash
+node scripts/check-consistency.js
+```
 
 ## Quick Reference
 
@@ -65,36 +80,36 @@ node ${HERMES_SKILL_DIR}/lint.js --validate <path>
 
 ## Rules Enforced
 
-These rules are configured in `.markdownlint.json`:
+These rules are configured in `skills/markdown-lint/references/.markdownlint.json`:
 
-| Rule  | Description                    | Config           |
-| :---- | :----------------------------- | :--------------- |
-| MD003 | Atx style headings             | `atx`            |
-| MD007 | List indent                    | 2 spaces         |
-| MD009 | No trailing spaces             | 2 spaces allowed |
-| MD010 | No hard tabs                   | enabled          |
-| MD012 | Multiple blanks                | max 1            |
-| MD014 | No dollar signs before commands without output | enabled |
-| MD024 | Multiple headings same content | disabled         |
-| MD025 | Multiple top-level headings    | disabled         |
-| MD026 | No punctuation after heading   | `. ,;:!`         |
-| MD029 | Ordered list style             | enabled          |
-| MD030 | List marker space              | enabled          |
-| MD032 | Blanks around lists            | enabled          |
-| MD033 | No inline HTML                 | disabled         |
-| MD034 | No bare URLs                   | disabled         |
-| MD035 | Horizontal rule style          | `---`            |
-| MD036 | Emphasis in headings           | disabled         |
-| MD040 | Fenced code language           | disabled         |
-| MD041 | First line is top-level heading | enabled         |
-| MD045 | No alt text (images)           | enabled          |
-| MD046 | Code block style               | `fenced`         |
-| MD047 | Single trailing newline        | enabled          |
-| MD048 | Code fence style               | `backtick`       |
-| MD051 | Links inline                   | disabled         |
-| MD052 | Links without text             | disabled         |
-| MD055 | Table pipe style               | disabled         |
-| MD060 | Table pipe alignment           | `left`           |
+| Rule  | Description                               | Config           |
+| :---- | :---------------------------------------- | :--------------- |
+| MD003 | Atx style headings                        | `atx`            |
+| MD007 | List indent                               | 2 spaces         |
+| MD009 | No trailing spaces                        | 2 spaces allowed |
+| MD010 | No hard tabs                              | enabled          |
+| MD012 | Multiple blanks                           | max 1            |
+| MD014 | No dollar signs before commands without output | enabled    |
+| MD024 | Multiple headings same content            | disabled         |
+| MD025 | Multiple top-level headings               | disabled         |
+| MD026 | No punctuation after heading              | `. ,;:!`         |
+| MD029 | Ordered list style                        | ordered          |
+| MD030 | List marker space                         | enabled          |
+| MD032 | Blanks around lists                       | enabled          |
+| MD033 | No inline HTML                            | disabled         |
+| MD034 | No bare URLs                              | disabled         |
+| MD035 | Horizontal rule style                     | `---`            |
+| MD036 | Emphasis in headings                      | disabled         |
+| MD040 | Fenced code language                      | disabled         |
+| MD041 | First line is top-level heading           | enabled          |
+| MD045 | No alt text (images)                      | enabled          |
+| MD046 | Code block style                          | `fenced`         |
+| MD047 | Single trailing newline                   | enabled          |
+| MD048 | Code fence style                          | `backtick`       |
+| MD051 | Links inline                              | disabled         |
+| MD052 | Links without text                        | disabled         |
+| MD055 | Table pipe style                          | disabled         |
+| MD060 | Table column alignment                    | `aligned`        |
 
 ## Resolve Failures
 
@@ -103,8 +118,8 @@ These rules are configured in `.markdownlint.json`:
 | Level    | CI     | Merge   | Description                            |
 | :------- | :----- | :------ | :------------------------------------- |
 | BLOCKING | fails  | blocked | Table column mismatch, unclosed fences |
-| WARNING  | passes | allowed | MD018, MD047, MD056, MD060             |
-| INFO     | passes | allowed | MD040, MD055 (disabled rules)          |
+| WARNING  | fails  | blocked | markdownlint rule violation            |
+| INFO     | passes | allowed | Disabled-rule guidance                 |
 
 ### Common Errors
 
@@ -136,7 +151,7 @@ Before:
 
 ```markdown
 | Name  | Age |
-| ---   | --- |
+| ---   | ---: |
 | Alice | 25  |
 ```
 
@@ -144,8 +159,8 @@ After:
 
 ```markdown
 | Name  | Age |
-| :---- | :-- |
-| Alice | 25  |
+| :---- | --: |
+| Alice |  25 |
 ```
 
 ### Headings
@@ -195,6 +210,7 @@ After: `---`
 - MD040 is disabled — blank fences are allowed for output examples
 - MD055 is disabled — leading/trailing `|` on tables is optional
 - MD033 is disabled — inline HTML is allowed
+- MD060 is `aligned` — preserve semantic table alignment
 - Use `${HERMES_SKILL_DIR}` or absolute paths in scripts
 
 ## Post-Install: Auto-Lint on Write
@@ -215,6 +231,7 @@ Restart Hermes. This is optional — the mandatory lint rule handles the common 
 
 - Update `metadata.version` in `SKILL.md` frontmatter on changes
 - Document changes in `README.md` changelog
+- Run `node scripts/check-consistency.js` after rule/config/doc edits
 
 ## Skill Location
 
@@ -224,6 +241,8 @@ Helper scripts:
 
 | File                                                 | Purpose                                  |
 | :--------------------------------------------------- | :--------------------------------------- |
+| `lint.js`                                            | Root developer wrapper                   |
+| `scripts/check-consistency.js`                       | Checks config/docs consistency           |
 | `skills/markdown-lint/lint.js`                       | Pipeline wrapper — canonical entry point |
 | `skills/markdown-lint/scripts/check-fences.js`       | Validates fenced code blocks             |
 | `skills/markdown-lint/scripts/post-write.js`         | Auto-lint hook (optional)                |
