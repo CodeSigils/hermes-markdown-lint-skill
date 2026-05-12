@@ -14,9 +14,7 @@
     "max": 1
   },
   "MD013": false,
-  "MD014": {
-    "style": "---"
-  },
+  "MD014": true,
   "MD024": false,
   "MD025": false,
   "MD026": {
@@ -34,9 +32,7 @@
   },
   "MD036": false,
   "MD040": false,
-  "MD041": {
-    "style": "dashed"
-  },
+  "MD041": true,
   "MD045": true,
   "MD046": {
     "style": "fenced"
