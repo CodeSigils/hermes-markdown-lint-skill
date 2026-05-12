@@ -1,13 +1,13 @@
 ---
 name: markdown-lint
 description: >
-  Lint and auto-fix GitHub Flavored Markdown (GFM) files. Run after creating
-  or editing any .md file to enforce consistent formatting. Uses markdownlint
-  via npx for zero-install linting and fix-tables.js for table separators.
+  Lint and auto-fix GitHub Flavored Markdown (GFM) files. Run immediately after
+  creating or editing any .md file to enforce consistent formatting. Uses
+  markdownlint-cli2 via npx and format-tables.js for single-pass table formatting.
+version: 2.9.1
+author: CodeSigils
 license: MIT
 metadata:
-  version: 2.8.0
-  author: CodeSigils
   hermes:
     tags: [markdown, lint, gfm, github, formatting, quality, documentation]
     category: devtools
@@ -17,9 +17,21 @@ metadata:
 
 Auto-fix Markdown files to enforce GitHub Flavored Markdown (GFM) rules.
 
-This skill uses **markdownlint** via `npx` — zero install, works anywhere Node.js works.
+This skill uses bundled Node.js scripts plus **markdownlint-cli2** via `npx`.
 
 Load this skill whenever you create or edit a Markdown file.
+
+## Agent Requirements
+
+Agents using this skill MUST:
+
+1. Run `node ${HERMES_SKILL_DIR}/lint.js <path>` immediately after creating or editing any `.md` file
+2. Use `node ${HERMES_SKILL_DIR}/lint.js --check <path>` for read-only validation
+3. Use `node ${HERMES_SKILL_DIR}/lint.js --fences <path>` before committing Markdown with fenced code blocks
+4. Use `node ${HERMES_SKILL_DIR}/lint.js --validate <path>` before pushing Markdown tables
+5. Avoid direct `npx markdownlint-cli2` calls unless debugging this skill itself
+
+Do not batch multiple Markdown edits and lint later. Lint each changed Markdown file immediately.
 
 ## When to Use
 
@@ -30,277 +42,65 @@ Load this skill whenever you create or edit a Markdown file.
 
 ## Prerequisites
 
-This skill uses **npx** which comes with Node.js. Hermes already has Node.js available.
+Before installing, ensure your environment meets the following requirements:
 
-## Quick Start
+- **Hermes CLI** — Required to install the skill. The `post-write.js` hook is an optional safety net.
+- **Node.js (v18+)** — The linting pipeline relies on native Node.js scripts and `npx` to dynamically fetch `markdownlint-cli2` without requiring global installations.
+- **Cross-Platform** — The pipeline runs natively on Linux, macOS, and Windows. No WSL or Git Bash required!
 
-### One-liner (recommended)
+## Skill Structure
 
 ```text
-${HERMES_SKILL_DIR}/lint.sh <path>
-```
-
-This runs the full two-step pipeline in one command: fix tables, then lint and auto-fix everything else.
-
-### Options
-
-```bash
-${HERMES_SKILL_DIR}/lint.sh <path>           # Fix file or directory
-${HERMES_SKILL_DIR}/lint.sh --check <path>   # Read-only check (exit 0 if clean)
-${HERMES_SKILL_DIR}/lint.sh --all <dir>      # Fix all .md in directory
-${HERMES_SKILL_DIR}/lint.sh --validate <path> # Validate table column consistency
-${HERMES_SKILL_DIR}/lint.sh --fences <path>  # Check fenced code blocks
-```
-
-### Two-step pipeline (manual)
-
-If you prefer running steps separately:
-
-```bash
-node ${HERMES_SKILL_DIR}/references/fix-tables.js <path> && npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix
-```
-
-Step 1 normalizes table separators to `| :--- | :--- |` left-aligned style.
-Step 2 fixes everything else.
-
-### Lint only (read-only check)
-
-```bash
-npx markdownlint-cli2 <path>
-```
-
-## Workflows
-
-### 1. After Creating a New File
-
-1. Create the file
-2. Run the fix command:
-
-```bash
-${HERMES_SKILL_DIR}/lint.sh <path>
-```
-
-Done — the file is GFM-compliant.
-
-### 2. Batch Fix All Markdown in a Project
-
-```bash
-${HERMES_SKILL_DIR}/lint.sh --all .
-```
-
-### 3. CI / Pre-commit Check (read-only)
-
-```bash
-npx markdownlint-cli2 <path>
-```
-
-## Configuration
-
-### Using bundled config
-
-Copy the reference config to your project:
-
-```bash
-cp ~/.hermes/skills/markdown-lint/references/.markdownlint.json ./.markdownlint.json
-```
-
-Or pass explicitly:
-
-```bash
-npx markdownlint-cli2 --config ~/.hermes/skills/markdown-lint/references/.markdownlint.json <path> --fix
+.
+├── AGENTS.md
+├── lint.js                      # Developer wrapper
+├── README.md
+├── skills/
+│   └── markdown-lint/           # <-- The actual skill payload
+│       ├── SKILL.md
+│       ├── lint.js              # Canonical entry point
+│       ├── scripts/
+│       │   ├── check-fences.js  # Fenced code block checker
+│       │   └── post-write.js    # Auto-lint hook
+│       └── references/
+│           ├── format-tables.js
+│           └── .markdownlint.json
+└── test/
+    └── kitchensink.md
 ```
 
 ## GFM Rules Reference
 
-markdownlint implements MD001-MD060 rules. Key rules enforced:
+markdownlint implements MD001-MD069 rules. Config lives in `references/.markdownlint.json`.
 
-| Rule | Title | Description |
-| :--- | :---- | :---------- |
-| MD003 | heading-style | Use ATX headings (`#` style) |
-| MD007 | ul-indent | Unordered list indent = 2 spaces |
-| MD009 | no-trailing-spaces | No trailing spaces |
-| MD010 | no-hard-tabs | No hard tabs |
-| MD012 | no-multiple-blanks | Max one blank line between paragraphs |
-| MD022 | blanks-around-headings | Blank line before and after headings |
-| MD026 | no-duplicate-heading | No duplicate headings in the same document |
-| MD029 | ol-prefix | Ordered list prefix style |
-| MD030 | list-marker-space | Spaces after list markers |
-| MD031 | blanks-around-fences | Blank line around fenced code blocks |
-| MD032 | blanks-around-lists | Lists should be surrounded by blank lines |
-| MD035 | hr-style | Horizontal rule style `---` |
-| MD046 | code-block-style | Use fenced code blocks |
-| MD047 | single-h1 | File should start with a single h1 heading |
-| MD048 | code-fence-style | Use backticks for code fences |
-| MD060 | table-column-style | Table pipes must align with header columns |
+### Explicitly configured rules
 
-Rules **disabled** (too strict for prose documentation):
-
-| Rule | Title | Why Disabled |
-| :--- | :---- | :----------- |
-| MD013 | line-length | Prose lines are naturally longer |
-| MD024 | multiple-headings | Same h2 text in different sections is valid |
-| MD025 | multiple-h1 | Multiple top-level headings allowed |
-| MD033 | no-inline-html | Inline HTML is allowed in GFM |
-| MD034 | no-bare-urls | Bare URLs auto-link in GFM |
-| MD036 | emphasis-instead-of-heading | Valid use case for emphasis |
-| MD040 | fenced-code-language | Code fences don't always need a language |
-| MD041 | first-line-heading | Frontmatter makes this noisy |
-| MD045 | no-image-size | Images need dimensions sometimes |
-| MD052 | no-bare-reference-link | Common in prose |
-| MD055 | table-pipe-style | No leading/trailing pipes enforced |
-
-## pad-tables.js
-
-Pads table data rows so every `|` aligns with the column boundaries set by the
-header. Required by **MD060** — compact tables like `| A | Long desc |` have
-misaligned pipes and fail MD060.
-
-**Pipeline:** fix-tables.js normalizes the separator format (`:---`), then
-pad-tables.js widens all rows to match actual column widths.
-
-**Features:**
-
-- Computes max column width from header + all data rows (string-width aware)
-- Rebuilds header, separator, and every data row with consistent pipe positions
-- Idempotent — skips files that are already aligned
-
-```bash
-# Check if padding is needed (read-only)
-node ${HERMES_SKILL_DIR}/references/pad-tables.js --check <path>
-```
-
-## fix-tables.js
-
-Normalizes Markdown table separators from old-style `|------|------|` to GFM-compliant
-`| :--- | :--- | :--- |` style with left-aligned cells (`---`).
-
-**Features:**
-
-- Uses `string-width` for column alignment (handles emoji/CJK correctly)
-- Detects already-correct separators and skips them
-- Verbose output option
-
-### Location
-
-```text
-${HERMES_SKILL_DIR}/references/fix-tables.js
-```
-
-### Usage
-
-```bash
-# Fix specific file
-${HERMES_SKILL_DIR}/lint.sh <path>
-
-# Check only (read-only, exit 0 if clean)
-${HERMES_SKILL_DIR}/lint.sh --check <path>
-
-# Fix all .md in directory
-${HERMES_SKILL_DIR}/lint.sh --all <directory>
-
-# Check fenced code blocks
-${HERMES_SKILL_DIR}/lint.sh --fences <path>
-```
-
-### Auto-Lint on Write (Hermes Shell Hook)
-
-Hermes supports `post_tool_call` hooks via `~/.hermes/config.yaml`:
-
-```yaml
-hooks:
-  post_tool_call:
-    - matcher: "write_file"
-      command: "~/.hermes/skills/markdown-lint/scripts/post-write.sh"
-```
-
-> **Note:** OpenCode does NOT support hooks in `opencode.jsonc`. Do not document OpenCode hook configs — use git pre-commit hooks or shell aliases instead.
-
-The script receives JSON payload via stdin (Hermes shell hook protocol) and lints the file automatically.
-
-### How It Works
-
-1. Scans for lines matching the table separator pattern
-2. Detects column alignment from separator dashes
-3. Replaces old-style separator with `| :--- |` matching the exact column count
-4. Auto-width: calculates width based on header column lengths
-5. Leaves all data rows and already-correct separators untouched
-
-## Troubleshooting
-
-### markdownlint-cli2: command not found
-
-In some Hermes environments, npx may not be in PATH. Use the full path explicitly:
-
-```bash
-/usr/share/nodejs/corepack/shims/npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix
-```
-
-The bundled `lint.sh` handles this automatically — prefer it over running npx directly.
-
-### Config file not found
-
-The bundled `lint.sh` auto-locates the config — use it:
-
-```bash
-${HERMES_SKILL_DIR}/lint.sh <path>
-```
-
-Or pass the config explicitly with a full npx path:
-
-```bash
-/usr/share/nodejs/corepack/shims/npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix
-```
-
-### `--fix` does not fix everything in one pass
-
-Known behavior. Run twice if needed:
-
-```bash
-${HERMES_SKILL_DIR}/lint.sh <path>
-${HERMES_SKILL_DIR}/lint.sh <path>
-```
-
-## Verification
-
-Run the lint check to verify GFM compliance:
-
-```bash
-${HERMES_SKILL_DIR}/lint.sh --check <path>
-```
-
-Exit code 0 means no violations.
-
-### Code Fence Check
-
-Fenced code blocks are a common source of subtle corruption (e.g. backtick content interpreted as shell, broken opener/closer pairs). Run the dedicated fence checker:
-
-```bash
-${HERMES_SKILL_DIR}/lint.sh --fences <path>
-```
-
-Or directly:
-
-```bash
-${HERMES_SKILL_DIR}/scripts/check-fences.sh <path>
-```
-
-Exit code 0 = all fences clean. The checker verifies:
-
-- Every opener has a language tag (no empty ` ``` ` openers)
-
-- Every closer is bare (` ``` ` with nothing after)
-
-- Backtick/tilde count matches between opener and closer
-
-- No double-fence bug (adjacent fence lines merged as one block)
-
-## Quick Reference
-
-| Task | Command |
-| :--- | :------ |
-| Fix file | `${HERMES_SKILL_DIR}/lint.sh <path>` |
-| Fix all | `${HERMES_SKILL_DIR}/lint.sh --all .` |
-| Check only | `${HERMES_SKILL_DIR}/lint.sh --check <path>` |
-| Check fences | `${HERMES_SKILL_DIR}/lint.sh --fences <path>` |
-| Validate tables | `${HERMES_SKILL_DIR}/lint.sh --validate <path>` |
-| Manual steps | `node ${HERMES_SKILL_DIR}/references/fix-tables.js <path> && /usr/share/nodejs/corepack/shims/npx markdownlint-cli2 --config ${HERMES_SKILL_DIR}/references/.markdownlint.json <path> --fix` |
+| Rule  | Title                       | Description                                    | Config           |
+| :---- | :-------------------------- | :--------------------------------------------- | :--------------- |
+| MD003 | heading-style               | Use ATX headings (`#` style)                   | `atx`            |
+| MD007 | ul-indent                   | Unordered list indent                          | 2 spaces         |
+| MD009 | no-trailing-spaces          | Trailing spaces                                | 2 spaces allowed |
+| MD010 | no-hard-tabs                | No hard tabs                                   | enabled          |
+| MD012 | no-multiple-blanks          | Multiple blanks                                | max 1            |
+| MD013 | line-length                 | Line length                                    | disabled         |
+| MD014 | commands-show-output        | No dollar signs before commands without output | enabled          |
+| MD024 | multiple-headings           | Same text in multiple sections                 | disabled         |
+| MD025 | multiple-h1                 | Multiple top-level headings                    | disabled         |
+| MD026 | no-punctuation-at-end       | No trailing punctuation on headings            | `.,;:!`          |
+| MD029 | ol-prefix                   | Ordered list prefix style                      | ordered          |
+| MD030 | list-marker-space           | Spaces after list markers                      | enabled          |
+| MD032 | blanks-around-lists         | Lists surrounded by blank lines                | enabled          |
+| MD033 | no-inline-html              | Inline HTML                                    | disabled         |
+| MD034 | no-bare-urls                | Bare URLs                                      | disabled         |
+| MD035 | hr-style                    | Horizontal rule style                          | `---`            |
+| MD036 | emphasis-instead-of-heading | Emphasis instead of heading                    | disabled         |
+| MD040 | fenced-code-language        | Fenced code language                           | disabled         |
+| MD041 | first-line-heading          | First line is a top-level heading              | enabled          |
+| MD045 | no-alt-text                 | Images need alt text                           | enabled          |
+| MD046 | code-block-style            | Fenced code blocks                             | `fenced`         |
+| MD047 | single-trailing-newline     | File ends with newline                         | enabled          |
+| MD048 | code-fence-style            | Backtick fences                                | `backtick`       |
+| MD051 | no-bare-reference-link      | Bare reference links                           | disabled         |
+| MD052 | no-bare-reference-link      | Links without text                             | disabled         |
+| MD055 | table-pipe-style            | Consistent leading/trailing pipes              | disabled         |
+| MD060 | table-column-style          | Pipes align with columns                       | `aligned`        |

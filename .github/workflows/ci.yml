@@ -1,0 +1,33 @@
+name: markdown-lint-ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Repository consistency
+        run: node scripts/check-consistency.js
+
+      - name: Table formatter tests
+        run: node test/format-tables.test.js
+
+      - name: Fence validation
+        run: node lint.js --fences .
+
+      - name: Table validation
+        run: node lint.js --validate .
+
+      - name: Markdown lint check
+        run: node lint.js --check .

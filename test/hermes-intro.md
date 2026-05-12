@@ -6,7 +6,7 @@ flexibility and control over their AI-powered workflows.
 ## Why Hermes?
 
 | Feature        | Description                                                |
-| : ------------ | : -------------------------------------------------------- |
+| :------------- | :--------------------------------------------------------- |
 | Multi-provider | Works with OpenAI, Anthropic, Ollama, OpenRouter, and more |
 | Skill system   | Extend capabilities with reusable skill modules            |
 | Memory         | Cross-session memory that persists context                 |
@@ -53,7 +53,7 @@ skills:
 ## Supported Models
 
 | Provider   | Models                                  |
-| : -------- | : ------------------------------------- |
+| :--------- | :-------------------------------------- |
 | OpenAI     | GPT-4o, GPT-4o Mini, o1-preview         |
 | Anthropic  | Claude 3.5 Sonnet, Claude 3 Opus        |
 | Ollama     | Any local model (qwen, llama3, mistral) |
