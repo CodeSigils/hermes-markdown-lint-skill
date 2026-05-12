@@ -10,6 +10,32 @@ Powered by **pure Node.js** — `format-tables.js` for single-pass table formatt
 
 ---
 
+## Agent Behavioral Standards
+
+This repository follows **autonomous agent governance standards** — explicit behavioral contracts for LLM agents.
+
+### What This Means
+
+- **AGENTS.md** defines a formal contract: what agents MUST do, what they SHOULD NOT do
+- **Severity levels** (BLOCKING/WARNING/INFO) make validation failures actionable
+- **Imperative section headers** (Validate Changes, Resolve Failures) for machine readability
+- **Safe automation boundaries** prevent destructive "helpful AI" behavior
+
+### Why It Matters
+
+As LLM agents increasingly work autonomously in repositories, explicit governance becomes critical:
+
+- Deterministic validation prevents silent regressions
+- Severity levels enable safe autonomous PRs
+- Behavioral contracts create reproducible contributor expectations
+- Machine-readable sections enable programmatic enforcement
+
+This is part of a broader shift toward **AI-native repository standards** — where human and agent workflows are equally well-specified.
+
+Learn more: See [AGENTS.md](AGENTS.md) for the full behavioral contract.
+
+---
+
 ## For End Users
 
 ### Prerequisites
