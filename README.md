@@ -141,8 +141,8 @@ If a table cell contains a pipe character, escape it to prevent column misparsin
 **After (fixed)** — escape with `&#124;`:
 
 ```markdown
-| Type    | Value                    |
-| :------ | :----------------------- |
+| Type    | Value                |
+| :------ | :------------------- |
 | Options | "tab" &#124; "space" |
 ```
 
@@ -378,4 +378,4 @@ See [skills/markdown-lint/SKILL.md](skills/markdown-lint/SKILL.md) for the full 
 
 ## License
 
-MIT License. See [LICENSE](LICENSE).
+MIT License. See [LICENSE).
