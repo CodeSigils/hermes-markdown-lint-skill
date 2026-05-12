@@ -74,7 +74,7 @@ These rules are configured in `.markdownlint.json`:
 | MD009 | No trailing spaces             | 2 spaces allowed |
 | MD010 | No hard tabs                   | enabled          |
 | MD012 | Multiple blanks                | max 1            |
-| MD014 | HR style                       | `---`            |
+| MD014 | No dollar signs before commands without output | enabled |
 | MD024 | Multiple headings same content | disabled         |
 | MD025 | Multiple top-level headings    | disabled         |
 | MD026 | No punctuation after heading   | `. ,;:!`         |
@@ -86,7 +86,7 @@ These rules are configured in `.markdownlint.json`:
 | MD035 | Horizontal rule style          | `---`            |
 | MD036 | Emphasis in headings           | disabled         |
 | MD040 | Fenced code language           | disabled         |
-| MD041 | First heading style            | `dashed`         |
+| MD041 | First line is top-level heading | enabled         |
 | MD045 | No alt text (images)           | enabled          |
 | MD046 | Code block style               | `fenced`         |
 | MD047 | Single trailing newline        | enabled          |
@@ -144,8 +144,8 @@ After:
 
 ```markdown
 | Name  | Age |
-| :---- | --: |
-| Alice |  25 |
+| :---- | :-- |
+| Alice | 25  |
 ```
 
 ### Headings
@@ -167,22 +167,27 @@ After:
 Before:
 
 ```markdown
+Intro paragraph
 - Item one
 - Item two
+Next paragraph
 ```
 
 After:
 
 ```markdown
-- Item one
+Intro paragraph
 
+- Item one
 - Item two
+
+Next paragraph
 ```
 
 ### Horizontal Rules (MD035)
 
-Before: `---`  
-After: `***`
+Before: `***`  
+After: `---`
 
 ## Key Conventions
 
