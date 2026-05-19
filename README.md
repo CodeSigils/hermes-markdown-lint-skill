@@ -1,12 +1,12 @@
 # Markdown Lint Skill for Hermes
 
-[![Version](https://img.shields.io/badge/version-v2.9.1-blue.svg)](https://github.com/CodeSigils/hermes-markdown-lint-skill/releases)
+[![Version](https://img.shields.io/badge/version-v2.10.0-blue.svg)](https://github.com/CodeSigils/hermes-markdown-lint-skill/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Hermes Skill](https://img.shields.io/badge/Hermes-Skill-8A2BE2.svg)](https://hermes-agent.nousresearch.com/)
 
 A self-contained Hermes Agent skill that automatically lints and fixes Markdown files to enforce [GitHub Flavored Markdown (GFM)](https://github.github.com/gfm/) rules.
 
-Powered by **pure Node.js scripts** — `format-tables.js` for single-pass table formatting and `markdownlint-cli2` via `npx` for GFM rule enforcement. No committed `node_modules`, package install step, or bash runtime required.
+Powered by **pure Node.js scripts** — `format-tables.js` for single-pass table formatting and `markdownlint-cli2` via `npx` for GFM rule enforcement. The installed `SKILL.md` is intentionally compact so frequent Markdown edits do not load the full rule reference into agent context. No committed `node_modules`, package install step, or bash runtime required.
 
 ---
 
@@ -273,12 +273,20 @@ Learn more about creating and managing Hermes skills:
 │       │   └── post-write.js    # Auto-lint hook (optional)
 │       └── references/
 │           ├── format-tables.js # Single-pass table formatter
+│           ├── rules.md         # Full rule reference
 │           └── .markdownlint.json
 └── test/
     └── format-tables.test.js
 ```
 
 ### Changelog
+
+#### v2.10.0
+
+- Slimmed the installed `SKILL.md` hot path to reduce Hermes token overhead during frequent Markdown edits.
+- Moved the full markdownlint rule table into `skills/markdown-lint/references/rules.md`.
+- Updated consistency checks so rule-table drift is validated against the dedicated rule reference instead of the runtime skill prompt.
+- Evaluated Oxc tooling: Oxlint is JavaScript/TypeScript-focused and Oxfmt may be worth a future formatter spike, but neither replaces Markdown-specific fence/table validation today.
 
 #### v2.9.1
 

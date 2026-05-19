@@ -5,7 +5,7 @@
  *
  * Verifies:
  * - markdownlint config exists and matches documented rule rows
- * - AGENTS.md and SKILL.md rule tables include every explicitly configured rule
+ * - AGENTS.md and references/rules.md rule tables include every explicitly configured rule
  * - README.md carries current version, changelog, and canonical lint guidance
  * - GitHub Actions uses ci.yml as the single validation workflow
  */
@@ -20,6 +20,7 @@ const CONFIG = path.join(ROOT, "skills", "markdown-lint", "references", ".markdo
 const AGENTS = path.join(ROOT, "AGENTS.md");
 const README = path.join(ROOT, "README.md");
 const SKILL = path.join(ROOT, "skills", "markdown-lint", "SKILL.md");
+const RULES_DOC = path.join(ROOT, "skills", "markdown-lint", "references", "rules.md");
 const CI = path.join(ROOT, ".github", "workflows", "ci.yml");
 const TEST_WORKFLOW = path.join(ROOT, ".github", "workflows", "test.yml");
 
@@ -108,7 +109,7 @@ function configDisplay(rule, value) {
     fail(`No display mapping for ${rule}`);
 }
 
-function assertRuleDocs(config, agentsContent, skillContent) {
+function assertRuleDocs(config, agentsContent, rulesContent) {
     const configuredRules = Object.keys(config)
         .filter((key) => key.startsWith("MD"))
         .sort();
@@ -119,7 +120,7 @@ function assertRuleDocs(config, agentsContent, skillContent) {
     }
 
     const agentsRows = findRuleTable(agentsContent, "AGENTS.md");
-    const skillRows = findRuleTable(skillContent, "SKILL.md");
+    const rulesRows = findRuleTable(rulesContent, "references/rules.md");
 
     for (const [rule, title, agentsDesc, skillDesc, expectedConfig] of EXPECTED_RULES) {
         const actualConfig = configDisplay(rule, config[rule]);
@@ -134,12 +135,29 @@ function assertRuleDocs(config, agentsContent, skillContent) {
             fail(`AGENTS.md ${rule} mismatch`);
         }
 
-        const skillRow = skillRows.get(rule);
-        if (!skillRow) fail(`SKILL.md missing ${rule}`);
-        const [, actualTitle, actualSkillDesc, actualSkillConfig] = skillRow;
-        if (actualTitle !== title || actualSkillDesc !== skillDesc || actualSkillConfig !== expectedConfig) {
-            fail(`SKILL.md ${rule} mismatch`);
+        const rulesRow = rulesRows.get(rule);
+        if (!rulesRow) fail(`references/rules.md missing ${rule}`);
+        const [, actualTitle, actualRulesDesc, actualRulesConfig] = rulesRow;
+        if (actualTitle !== title || actualRulesDesc !== skillDesc || actualRulesConfig !== expectedConfig) {
+            fail(`references/rules.md ${rule} mismatch`);
         }
+    }
+}
+
+function assertSkillIsCompact(skillContent) {
+    const required = [
+        "The hot path is intentionally short to reduce Hermes context overhead.",
+        "Full rule table: `references/rules.md`",
+        "Avoid direct `npx markdownlint-cli2` calls unless debugging this skill itself.",
+    ];
+    for (const needle of required) {
+        if (!skillContent.includes(needle)) {
+            fail(`SKILL.md missing expected compact-skill text: ${needle}`);
+        }
+    }
+
+    if (skillContent.includes("| MD003 |") || skillContent.includes("## GFM Rules Reference")) {
+        fail("SKILL.md should not carry the full rule table; use references/rules.md");
     }
 }
 
@@ -206,8 +224,10 @@ const config = JSON.parse(read(CONFIG));
 const agentsContent = read(AGENTS);
 const readmeContent = read(README);
 const skillContent = read(SKILL);
+const rulesContent = read(RULES_DOC);
 
-assertRuleDocs(config, agentsContent, skillContent);
+assertRuleDocs(config, agentsContent, rulesContent);
+assertSkillIsCompact(skillContent);
 assertReadme(readmeContent, skillContent);
 assertWorkflow();
 

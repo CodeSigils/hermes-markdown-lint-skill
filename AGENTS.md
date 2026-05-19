@@ -53,7 +53,7 @@ Do not skip this step.
 
 ### After editing the config
 
-Update the Rules Enforced sections in `AGENTS.md` and `skills/markdown-lint/SKILL.md`, plus the README policy summary and changelog when behavior changes. Then run:
+Update the Rules Enforced section in `AGENTS.md`, `skills/markdown-lint/references/rules.md`, plus the README policy summary and changelog when behavior changes. Then run:
 
 ```bash
 node scripts/check-consistency.js
@@ -249,4 +249,5 @@ Helper scripts:
 | `skills/markdown-lint/scripts/check-fences.js`       | Validates fenced code blocks             |
 | `skills/markdown-lint/scripts/post-write.js`         | Auto-lint hook (optional)                |
 | `skills/markdown-lint/references/format-tables.js`   | Single-pass table formatter              |
+| `skills/markdown-lint/references/rules.md`           | Full documented rule table               |
 | `skills/markdown-lint/references/.markdownlint.json` | Lint rules config                        |
